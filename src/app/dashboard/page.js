@@ -9,7 +9,6 @@ export default function DashboardPage() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if user is authenticated
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
 
@@ -36,7 +35,6 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-gray-50">
       <Toaster position="top-right" />
       
-      {/* Navigation */}
       <nav className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -56,32 +54,10 @@ export default function DashboardPage() {
         </div>
       </nav>
 
-      {/* Main content */}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white overflow-hidden shadow-xl rounded-lg">
-            <div className="p-6">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                Your Profile
-              </h2>
-              
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Name</label>
-                  <div className="mt-1 text-gray-900">{user.name}</div>
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Email</label>
-                  <div className="mt-1 text-gray-900">{user.email}</div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Account ID</label>
-                  <div className="mt-1 text-gray-500 text-sm">{user.id}</div>
-                </div>
-              </div>
-            </div>
+            
           </div>
         </div>
       </main>

@@ -17,7 +17,6 @@ export async function POST(req) {
 
     await connectDB();
 
-    // Find pending registration
     const pendingUser = await PendingUser.findOne({ email });
     if (!pendingUser) {
       return NextResponse.json(
@@ -26,7 +25,6 @@ export async function POST(req) {
       );
     }
 
-    // Check if OTP has expired (4 minutes)
     if (new Date() > new Date(pendingUser.otpExpiry)) {
       await PendingUser.findByIdAndDelete(pendingUser._id);
       return NextResponse.json(
@@ -35,7 +33,6 @@ export async function POST(req) {
       );
     }
 
-    // Convert both OTPs to strings for comparison
     if (String(pendingUser.otp) !== String(otp)) {
       return NextResponse.json(
         { error: 'Invalid OTP' },
@@ -43,7 +40,6 @@ export async function POST(req) {
       );
     }
 
-    // Check if user already exists (double-check)
     const existingUser = await User.findOne({ email: pendingUser.email });
     if (existingUser) {
       await PendingUser.findByIdAndDelete(pendingUser._id);
@@ -53,7 +49,6 @@ export async function POST(req) {
       );
     }
 
-    // Create verified user only after OTP is verified
     const user = await User.create({
       name: pendingUser.name,
       email: pendingUser.email,
@@ -61,10 +56,8 @@ export async function POST(req) {
       isVerified: true
     });
 
-    // Delete pending registration
     await PendingUser.findByIdAndDelete(pendingUser._id);
 
-    // Generate JWT token
     const token = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,

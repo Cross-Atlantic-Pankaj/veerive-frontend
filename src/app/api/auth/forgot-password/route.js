@@ -1,28 +1,26 @@
 import { NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
 import connectDB from '@/lib/db';
 import User from '@/models/User';
-import PendingUser from '@/models/PendingUser';
 import { generateOTP, sendOTPEmail } from '@/lib/mail';
 
 export async function POST(req) {
   try {
-    const { name, email, password } = await req.json();
+    const { email } = await req.json();
 
-    if (!name || !email || !password) {
+    if (!email) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        { error: 'Email is required' },
         { status: 400 }
       );
     }
 
     await connectDB();
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return NextResponse.json(
-        { error: 'User already exists' },
-        { status: 400 }
+        { error: 'User not found' },
+        { status: 404 }
       );
     }
 
@@ -30,27 +28,21 @@ export async function POST(req) {
     const otpExpiry = new Date();
     otpExpiry.setMinutes(otpExpiry.getMinutes() + 4);
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    await PendingUser.findOneAndDelete({ email });
-
-    await PendingUser.create({
-      name,
-      email,
-      password: hashedPassword,
-      otp,
-      otpExpiry
-    });
+    user.otp = {
+      code: otp,
+      expiresAt: otpExpiry
+    };
+    await user.save();
 
     await sendOTPEmail(email, otp);
 
     return NextResponse.json({
-      message: 'OTP sent to your email for verification',
+      message: 'OTP sent to your email for password reset',
       email: email
     }, { status: 200 });
 
   } catch (error) {
-    console.error('Signup error:', error);
+    console.error('Forgot password error:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

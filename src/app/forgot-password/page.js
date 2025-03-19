@@ -5,16 +5,13 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function SignupPage() {
+export default function ForgotPasswordPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+  const [email, setEmail] = useState('');
   const [showOtpForm, setShowOtpForm] = useState(false);
   const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [timeLeft, setTimeLeft] = useState(240);
 
   useEffect(() => {
@@ -37,25 +34,17 @@ export default function SignupPage() {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSignup = async (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/auth/signup', {
+      const res = await fetch('/api/auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
@@ -73,19 +62,20 @@ export default function SignupPage() {
     }
   };
 
-  const handleVerifyOtp = async (e) => {
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const res = await fetch('/api/auth/verify-otp', {
+      const res = await fetch('/api/auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: formData.email,
+          email,
           otp,
+          newPassword,
         }),
       });
 
@@ -95,11 +85,8 @@ export default function SignupPage() {
         throw new Error(data.error || 'Something went wrong');
       }
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      
-      toast.success('Account created successfully');
-      router.push('/dashboard');
+      toast.success('Password reset successfully');
+      router.push('/login');
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -116,36 +103,16 @@ export default function SignupPage() {
           <div className="mb-8 text-center">
             <div className="w-20 h-20 mx-auto bg-white/20 rounded-full flex items-center justify-center mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
               </svg>
             </div>
             <h2 className="text-2xl font-bold text-white">
-              {showOtpForm ? 'Verify Email' : 'Create Account'}
+              {showOtpForm ? 'Reset Password' : 'Forgot Password'}
             </h2>
           </div>
 
           {!showOtpForm ? (
-            <form onSubmit={handleSignup} className="space-y-6">
-              <div>
-                <div className="relative">
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    required
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="w-full px-10 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
-                    placeholder="Full Name"
-                  />
-                  <span className="absolute left-4 top-3.5 text-white/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-
+            <form onSubmit={handleSendOtp} className="space-y-6">
               <div>
                 <div className="relative">
                   <input
@@ -153,8 +120,8 @@ export default function SignupPage() {
                     name="email"
                     type="email"
                     required
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
                     placeholder="Email ID"
                   />
@@ -167,37 +134,17 @@ export default function SignupPage() {
               </div>
 
               <div>
-                <div className="relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    required
-                    value={formData.password}
-                    onChange={handleChange}
-                    className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
-                    placeholder="Password"
-                  />
-                  <span className="absolute left-4 top-3.5 text-white/60">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  </span>
-                </div>
-              </div>
-
-              <div>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all duration-200"
                 >
-                  {isLoading ? 'Creating account...' : 'Create Account'}
+                  {isLoading ? 'Sending OTP...' : 'Send OTP'}
                 </button>
               </div>
             </form>
           ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-6">
+            <form onSubmit={handleResetPassword} className="space-y-6">
               <div>
                 <div className="relative">
                   <input
@@ -223,12 +170,32 @@ export default function SignupPage() {
               </div>
 
               <div>
+                <div className="relative">
+                  <input
+                    id="newPassword"
+                    name="newPassword"
+                    type="password"
+                    required
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white/50"
+                    placeholder="New Password"
+                  />
+                  <span className="absolute left-4 top-3.5 text-white/60">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <div>
                 <button
                   type="submit"
                   disabled={isLoading}
                   className="w-full py-3 px-4 bg-gradient-to-r from-purple-500 to-indigo-500 text-white rounded-lg font-medium hover:from-purple-600 hover:to-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 transition-all duration-200"
                 >
-                  {isLoading ? 'Verifying...' : 'Verify OTP'}
+                  {isLoading ? 'Resetting Password...' : 'Reset Password'}
                 </button>
               </div>
             </form>
@@ -236,7 +203,7 @@ export default function SignupPage() {
 
           <div className="mt-6 text-center">
             <p className="text-white/60 text-sm">
-              Already have an account?{' '}
+              Remember your password?{' '}
               <Link href="/login" className="text-white font-medium hover:text-purple-200">
                 Sign in
               </Link>
