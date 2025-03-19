@@ -10,11 +10,21 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true
+    required: function () {
+      return !this.googleId; // Only required if not signing in with Google
+    }
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true // Allows users without Google ID
   },
   name: {
     type: String,
     required: true
+  },
+  avatar: {
+    type: String // Store Google profile picture
   },
   otp: {
     code: String,
@@ -30,4 +40,4 @@ const userSchema = new mongoose.Schema({
   }
 });
 
-module.exports = mongoose.models.User || mongoose.model('User', userSchema); 
+module.exports = mongoose.models.User || mongoose.model('User', userSchema);
