@@ -6,6 +6,9 @@ import Link from 'next/link';
 import toast, { Toaster } from 'react-hot-toast';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
+const LINKEDIN_CLIENT_ID = process.env.NEXT_PUBLIC_LINKEDIN_CLIENT_ID;
+const LINKEDIN_REDIRECT_URI = process.env.NEXT_PUBLIC_LINKEDIN_REDIRECT_URI;
+
 export default function LoginPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -62,6 +65,11 @@ export default function LoginPage() {
     } catch (error) {
       toast.error(error.message);
     }
+  };
+
+  const handleLinkedInLogin = () => {
+    const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(LINKEDIN_REDIRECT_URI)}&scope=email%20profile`;
+    window.location.href = linkedInAuthUrl;
   };
 
   return (
@@ -148,6 +156,15 @@ export default function LoginPage() {
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => toast.error('Google login failed')}
               />
+            </div>
+
+            <div className="flex justify-center mt-4">
+              <button
+                onClick={handleLinkedInLogin}
+                className="w-full py-3 px-4 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+              >
+                Sign in with LinkedIn
+              </button>
             </div>
 
             <div className="mt-6 text-center">
