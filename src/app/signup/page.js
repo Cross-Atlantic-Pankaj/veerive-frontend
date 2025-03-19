@@ -76,8 +76,10 @@ export default function SignupPage() {
 
       // Store token in localStorage
       localStorage.setItem('token', data.token);
-      toast.success('Account verified successfully');
-      router.push('/dashboard'); // Redirect to dashboard or home page
+      localStorage.setItem('user', JSON.stringify(data.user));
+      
+      toast.success('Account created successfully');
+      router.push('/dashboard');
     } catch (error) {
       toast.error(error.message);
     } finally {
@@ -86,16 +88,20 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <Toaster position="top-right" />
+      
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Create your account
+          {showOtpForm ? 'Verify your email' : 'Create your account'}
         </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          {showOtpForm ? 'Enter the OTP sent to your email' : 'Sign up to get started'}
+        </p>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow-xl rounded-lg sm:px-10 border border-gray-100">
           {!showOtpForm ? (
             <form onSubmit={handleSignup} className="space-y-6">
               <div>
@@ -107,10 +113,12 @@ export default function SignupPage() {
                     id="name"
                     name="name"
                     type="text"
+                    autoComplete="name"
                     required
                     value={formData.name}
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter your full name"
                   />
                 </div>
               </div>
@@ -124,10 +132,12 @@ export default function SignupPage() {
                     id="email"
                     name="email"
                     type="email"
+                    autoComplete="email"
                     required
                     value={formData.email}
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Enter your email"
                   />
                 </div>
               </div>
@@ -141,10 +151,12 @@ export default function SignupPage() {
                     id="password"
                     name="password"
                     type="password"
+                    autoComplete="new-password"
                     required
                     value={formData.password}
                     onChange={handleChange}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    placeholder="Create a password"
                   />
                 </div>
               </div>
@@ -153,9 +165,9 @@ export default function SignupPage() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
-                  {isLoading ? 'Creating account...' : 'Sign up'}
+                  {isLoading ? 'Creating account...' : 'Create account'}
                 </button>
               </div>
             </form>
@@ -175,15 +187,19 @@ export default function SignupPage() {
                     onChange={(e) => setOtp(e.target.value)}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     placeholder="Enter 6-digit OTP"
+                    maxLength={6}
                   />
                 </div>
+                <p className="mt-2 text-sm text-gray-500">
+                  OTP will expire in 4 minutes. Please check your email inbox.
+                </p>
               </div>
 
               <div>
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
+                  className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
                 >
                   {isLoading ? 'Verifying...' : 'Verify OTP'}
                 </button>
@@ -206,9 +222,9 @@ export default function SignupPage() {
             <div className="mt-6">
               <Link
                 href="/login"
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
               >
-                Sign in
+                Sign in instead
               </Link>
             </div>
           </div>
