@@ -11,25 +11,25 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: function () {
-      return !this.googleId && !this.linkedinId; // Required only if no social login
+      return !this.googleId && !this.linkedinId;
     }
   },
   googleId: {
     type: String,
     unique: true,
-    sparse: true // Allows users without Google ID
+    sparse: true 
   },
   linkedinId: {
-    type: String,  // 🔥 New field for LinkedIn authentication
+    type: String,  
     unique: true,
-    sparse: true // Allows users without LinkedIn ID
+    sparse: true
   },
   name: {
     type: String,
     required: true
   },
   avatar: {
-    type: String // Stores Google/LinkedIn profile picture
+    type: String 
   },
   otp: {
     code: String,

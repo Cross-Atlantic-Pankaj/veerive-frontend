@@ -14,7 +14,6 @@ export async function POST(req) {
       return NextResponse.json({ error: 'No token provided' }, { status: 400 });
     }
 
-    // Verify Google token
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -29,16 +28,13 @@ export async function POST(req) {
 
     await connectDB();
 
-    // Check if user exists
     let user = await User.findOne({ email });
 
     if (!user) {
-      // Create new user if not found
       user = new User({ googleId: sub, email, name, avatar: picture });
       await user.save();
     }
 
-    // Generate JWT token
     const authToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,

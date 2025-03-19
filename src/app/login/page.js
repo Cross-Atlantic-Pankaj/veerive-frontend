@@ -45,7 +45,6 @@ export default function LoginPage() {
     }
   };
 
-  // Handle Google Login Success
   const handleGoogleLoginSuccess = async (response) => {
     try {
       const res = await fetch('/api/auth/google', {
