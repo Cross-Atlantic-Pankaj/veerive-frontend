@@ -1,16 +1,30 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
+    const tokenFromUrl = searchParams.get('token');
+    const userFromUrl = searchParams.get('user');
+
+    if (tokenFromUrl && userFromUrl) {
+      console.log("🔹 Found token and user in URL params...");
+      localStorage.setItem('token', tokenFromUrl);
+      localStorage.setItem('user', decodeURIComponent(userFromUrl));
+    }
+
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
+
+    console.log("🔹 Checking token and user data in dashboard...");
+    console.log("Token:", token);
+    console.log("User:", userData);
 
     if (!token || !userData) {
       router.push('/login');
@@ -18,7 +32,7 @@ export default function DashboardPage() {
     }
 
     setUser(JSON.parse(userData));
-  }, [router]);
+  }, [router, searchParams]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -34,7 +48,6 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Toaster position="top-right" />
-      
       <nav className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
@@ -53,14 +66,13 @@ export default function DashboardPage() {
           </div>
         </div>
       </nav>
-
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
           <div className="bg-white overflow-hidden shadow-xl rounded-lg">
-            
+            {/* Dashboard content */}
           </div>
         </div>
       </main>
     </div>
   );
-} 
+}
