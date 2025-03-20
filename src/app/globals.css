@@ -37,3 +37,15 @@ input:-webkit-autofill:active {
   appearance: none !important; /* Remove default styling */
   -webkit-text-fill-color: white !important; /* Ensure text color remains white */
 }
+
+@layer utilities {
+  /* Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
