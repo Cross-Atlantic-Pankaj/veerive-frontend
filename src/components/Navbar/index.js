@@ -136,7 +136,6 @@ export default function Navbar({ user, onLogout }) {
     <nav className="bg-white shadow-lg">
       <div className="max-w-7xl mx-auto">
         <div className="relative z-50">
-          {/* Desktop Navigation */}
           <div className="flex justify-between items-center px-4 sm:px-6 lg:px-8 h-16">
             <Link href="/home" className="flex-shrink-0 flex items-center">
               <Image
@@ -150,7 +149,7 @@ export default function Navbar({ user, onLogout }) {
             </Link>
 
             <div className="hidden md:flex md:items-center md:space-x-6">
-              <NavLink href="/home" isActive={pathname === '/home'}>
+              <NavLink href="/pulse-today" isActive={pathname === '/pulse-today'}>
                 Pulse Today
               </NavLink>
               <NavDropdown
@@ -208,8 +207,8 @@ export default function Navbar({ user, onLogout }) {
             >
               <div className="px-2 py-2 space-y-1">
                 <MobileNavLink
-                  href="/home"
-                  isActive={pathname === '/home'}
+                  href="/pulse-today"
+                  isActive={pathname === '/pulse-today'}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Pulse Today
