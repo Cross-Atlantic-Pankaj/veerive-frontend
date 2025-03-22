@@ -63,7 +63,7 @@ export default function LoginPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       toast.success('Login successful');
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
@@ -89,7 +89,7 @@ export default function LoginPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       toast.success('Google login successful');
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       toast.error(error.message || 'An unexpected error occurred with Google login.');
     }

@@ -161,7 +161,7 @@ export default function SignupPage() {
       localStorage.setItem('user', JSON.stringify(data.user));
 
       toast.success('Account created successfully');
-      router.push('/dashboard');
+      router.push('/home');
     } catch (error) {
       setErrors((prev) => ({
         ...prev,
