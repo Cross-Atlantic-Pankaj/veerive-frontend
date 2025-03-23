@@ -233,56 +233,62 @@ export default function HomePage() {
       </div>
 
       {/* Trending Opinions and Market Statistics Section */}
-      <div className="w-full bg-gray-50 py-8">
-        <div className="max-w-[1200px] mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+      <div className="w-full bg-gray-50 pt-8">
+        <div className="max-w-[1400px] mx-auto px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Trending Opinions */}
-            <div className="px-0">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-semibold text-gray-900">TRENDING OPINIONS</h2>
+            <div>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">TRENDING OPINIONS</h2>
                 <Link 
                   href="/think-tank" 
-                  className="text-indigo-600 text-sm flex items-center"
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
                 >
                   VIEW ALL →
                 </Link>
               </div>
-              <div className="h-[1px] bg-gray-200 w-full mb-4"></div>
+              <div className="h-[1px] bg-gray-200 w-full mt-4 mb-6"></div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {trendingOpinions.map((post) => (
                   <a 
                     key={post._id}
                     href={post.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex gap-4 group"
+                    className="flex gap-6 group"
                   >
-                    <div className="w-[100px] h-[65px] bg-gray-100 relative flex-shrink-0">
+                    <div className="w-[120px] h-[75px] bg-gray-100 relative flex-shrink-0">
                       {post.postImage ? (
                         <Image
                           src={post.postImage}
                           alt={post.postTitle}
                           fill
                           className="object-cover"
-                          sizes="100px"
+                          sizes="120px"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                           1000 × 630
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm text-gray-900 group-hover:text-indigo-600 mb-1 line-clamp-2">
+                      <h3 className="text-base text-gray-900 group-hover:text-indigo-600 mb-2 line-clamp-2 font-medium">
                         {post.postTitle}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-500">
                         {new Date(post.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: '2-digit',
                           year: 'numeric'
-                        })} | {post.source?.sourceName}
+                        })}
+                        {post.source?.sourceName && (
+                          <>
+                            <span className="mx-2">|</span>
+                            {post.source.sourceName}
+                          </>
+                        )}
                       </p>
                     </div>
                   </a>
@@ -291,52 +297,58 @@ export default function HomePage() {
             </div>
 
             {/* Market Statistics */}
-            <div className="px-6">
-              <div className="flex justify-between items-center mb-2">
-                <h2 className="text-lg font-semibold text-gray-900">MARKET STATISTICS</h2>
+            <div>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">MARKET STATISTICS</h2>
                 <Link 
                   href="/think-tank/statistics" 
-                  className="text-indigo-600 text-sm flex items-center"
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
                 >
                   VIEW ALL →
                 </Link>
               </div>
-              <div className="h-[1px] bg-gray-200 w-full mb-4"></div>
+              <div className="h-[1px] bg-gray-200 w-full mt-4 mb-6"></div>
               
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {marketStatistics.map((post) => (
                   <a 
                     key={post._id}
                     href={post.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex gap-4 group"
+                    className="flex gap-6 group"
                   >
-                    <div className="w-[100px] h-[65px] bg-gray-100 relative flex-shrink-0">
+                    <div className="w-[120px] h-[75px] bg-gray-100 relative flex-shrink-0">
                       {post.postImage ? (
                         <Image
                           src={post.postImage}
                           alt={post.postTitle}
                           fill
                           className="object-cover"
-                          sizes="100px"
+                          sizes="120px"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
                           1000 × 630
                         </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm text-gray-900 group-hover:text-indigo-600 mb-1 line-clamp-2">
+                      <h3 className="text-base text-gray-900 group-hover:text-indigo-600 mb-2 line-clamp-2 font-medium">
                         {post.postTitle}
                       </h3>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-sm text-gray-500">
                         {new Date(post.date).toLocaleDateString('en-US', {
                           month: 'short',
                           day: '2-digit',
                           year: 'numeric'
-                        })} | {post.source?.sourceName}
+                        })}
+                        {post.source?.sourceName && (
+                          <>
+                            <span className="mx-2">|</span>
+                            {post.source.sourceName}
+                          </>
+                        )}
                       </p>
                     </div>
                   </a>
