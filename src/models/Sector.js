@@ -7,5 +7,4 @@ const SectorSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Sector = mongoose.models.Sector || mongoose.model('Sector', SectorSchema);
-export default Sector;
+export default mongoose.models.Sector || mongoose.model('Sector', SectorSchema);

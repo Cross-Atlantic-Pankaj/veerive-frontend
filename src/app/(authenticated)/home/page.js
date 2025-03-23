@@ -11,24 +11,29 @@ export default function HomePage() {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(0);
 
+  const [trendingOpinions, setTrendingOpinions] = useState([]);
+  const [marketStatistics, setMarketStatistics] = useState([]);
+
   useEffect(() => {
-    const fetchContexts = async () => {
+    const fetchData = async () => {
       try {
         const response = await fetch('/api/home/context');
         if (!response.ok) {
-          throw new Error('Failed to fetch contexts');
+          throw new Error('Failed to fetch data');
         }
         const data = await response.json();
-        setContexts(data);
+        setContexts(data.trendingEvents || []);
+        setTrendingOpinions(data.trendingOpinions || []);
+        setMarketStatistics(data.marketStatistics || []);
       } catch (err) {
-        console.error('Error fetching contexts:', err);
+        console.error('Error fetching data:', err);
         setError(err.message);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchContexts();
+    fetchData();
   }, []);
 
   const ITEMS_PER_PAGE = 3;
@@ -40,6 +45,33 @@ export default function HomePage() {
 
   const prevPage = () => {
     setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
+  };
+
+  if (loading) {
+    return (
+      <div className="w-full py-8">
+        <div className="flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full py-8">
+        <div className="text-red-600 text-center">{error}</div>
+      </div>
+    );
+  }
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   return (
@@ -110,13 +142,7 @@ export default function HomePage() {
             <div className="absolute bottom-[-8px] left-0 w-full h-[1px] bg-gray-300"></div>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            </div>
-          ) : error ? (
-            <div className="text-red-600 text-center py-12">{error}</div>
-          ) : contexts.length === 0 ? (
+          {contexts.length === 0 ? (
             <div className="text-gray-600 text-center py-12">No trending events found</div>
           ) : (
             <>
@@ -203,6 +229,121 @@ export default function HomePage() {
               )}
             </>
           )}
+        </div>
+      </div>
+
+      {/* Trending Opinions and Market Statistics Section */}
+      <div className="w-full bg-gray-50 py-8">
+        <div className="max-w-[1200px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            {/* Trending Opinions */}
+            <div className="px-0">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-lg font-semibold text-gray-900">TRENDING OPINIONS</h2>
+                <Link 
+                  href="/think-tank" 
+                  className="text-indigo-600 text-sm flex items-center"
+                >
+                  VIEW ALL →
+                </Link>
+              </div>
+              <div className="h-[1px] bg-gray-200 w-full mb-4"></div>
+              
+              <div className="space-y-4">
+                {trendingOpinions.map((post) => (
+                  <a 
+                    key={post._id}
+                    href={post.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-4 group"
+                  >
+                    <div className="w-[100px] h-[65px] bg-gray-100 relative flex-shrink-0">
+                      {post.postImage ? (
+                        <Image
+                          src={post.postImage}
+                          alt={post.postTitle}
+                          fill
+                          className="object-cover"
+                          sizes="100px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          1000 × 630
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm text-gray-900 group-hover:text-indigo-600 mb-1 line-clamp-2">
+                        {post.postTitle}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric'
+                        })} | {post.source?.sourceName}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Market Statistics */}
+            <div className="px-6">
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="text-lg font-semibold text-gray-900">MARKET STATISTICS</h2>
+                <Link 
+                  href="/think-tank/statistics" 
+                  className="text-indigo-600 text-sm flex items-center"
+                >
+                  VIEW ALL →
+                </Link>
+              </div>
+              <div className="h-[1px] bg-gray-200 w-full mb-4"></div>
+              
+              <div className="space-y-4">
+                {marketStatistics.map((post) => (
+                  <a 
+                    key={post._id}
+                    href={post.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex gap-4 group"
+                  >
+                    <div className="w-[100px] h-[65px] bg-gray-100 relative flex-shrink-0">
+                      {post.postImage ? (
+                        <Image
+                          src={post.postImage}
+                          alt={post.postTitle}
+                          fill
+                          className="object-cover"
+                          sizes="100px"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          1000 × 630
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-sm text-gray-900 group-hover:text-indigo-600 mb-1 line-clamp-2">
+                        {post.postTitle}
+                      </h3>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.date).toLocaleDateString('en-US', {
+                          month: 'short',
+                          day: '2-digit',
+                          year: 'numeric'
+                        })} | {post.source?.sourceName}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
