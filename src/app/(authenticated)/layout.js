@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/footer';
 
 export default function AuthenticatedLayout({ children }) {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function AuthenticatedLayout({ children }) {
       <main className="w-full">
         {children}
       </main>
+      <Footer />
     </div>
   );
 } 
