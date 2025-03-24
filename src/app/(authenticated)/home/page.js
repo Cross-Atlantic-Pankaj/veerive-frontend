@@ -18,7 +18,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/home/context');
+        const response = await fetch('/api/home');
         if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
