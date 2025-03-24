@@ -5,12 +5,12 @@ import Post from '@/models/Post';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
 import Source from '@/models/Source';
+import Theme from '@/models/Theme';
 
 export async function GET(request) {
   try {
     await connectDB();
 
-    // Register models explicitly
     if (!mongoose.models.Sector) {
       mongoose.model('Sector', Sector.schema);
     }
@@ -20,8 +20,10 @@ export async function GET(request) {
     if (!mongoose.models.Source) {
       mongoose.model('Source', Source.schema);
     }
+    if (!mongoose.models.Theme) {
+      mongoose.model('Theme', Theme.schema);
+    }
     
-    // Fetch Trending Events
     const trendingEvents = await Context.find({ isTrending: true })
       .populate({
         path: 'sectors',
@@ -35,7 +37,6 @@ export async function GET(request) {
       })
       .sort({ date: -1 });
 
-    // Fetch Trending Opinions
     const trendingOpinions = await Post.find({ 
       postType: "Expert Opinion",
       isTrending: true 
@@ -47,7 +48,6 @@ export async function GET(request) {
     })
     .sort({ date: -1 })
     .limit(5);
-    // Fetch Market Statistics
     const marketStatistics = await Post.find({ 
       postType: "Infographic",
       isTrending: true 
@@ -60,15 +60,30 @@ export async function GET(request) {
     .sort({ date: -1 })
     .limit(5);
 
-    // Add debug logging
+    const trendingThemes = await Theme.find({})
+      .populate({
+        path: 'sectors',
+        model: 'Sector',
+        select: 'sectorName'
+      })
+      .populate({
+        path: 'subSectors',
+        model: 'SubSector',
+        select: 'subSectorName'
+      })
+      .sort({ overallScore: -1 })
+      .limit(5);
+
     console.log('Trending Events:', trendingEvents.length);
     console.log('Trending Opinions:', trendingOpinions.length);
     console.log('Market Statistics:', marketStatistics.length);
+    console.log('Trending Themes:', trendingThemes.length);
 
     return new Response(JSON.stringify({
       trendingEvents,
       trendingOpinions,
-      marketStatistics
+      marketStatistics,
+      trendingThemes
     }), {
       status: 200,
       headers: {
