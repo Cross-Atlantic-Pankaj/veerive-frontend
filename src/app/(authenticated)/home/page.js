@@ -236,7 +236,7 @@ export default function HomePage() {
       </div>
 
       {/* Trending Opinions and Market Statistics Section */}
-      <div className="w-full bg-gray-50 pt-8">
+      <div className="w-full bg-gray-50 py-8">
         <div className="max-w-[1400px] mx-auto px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Trending Opinions */}
