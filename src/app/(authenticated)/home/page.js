@@ -472,6 +472,104 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
+      {/* Analyzer Section */}
+      <div className="w-full bg-white py-8">
+        <div className="max-w-[1400px] mx-auto px-8">
+          <div className="relative pb-4 mb-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-medium text-gray-900">
+                ANALYZER
+              </h2>
+              <Link 
+                href="/analyzer"
+                className="text-[#6366F1] text-sm"
+              >
+                VIEW ALL →
+              </Link>
+            </div>
+            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-[1200px] mx-auto">
+            <Link 
+              href="/analyzer/sector-analyzer"
+              className="block"
+            >
+              <div className="bg-gray-100 h-[280px] relative w-full">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-lg">
+                  1000 × 630
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-lg font-medium">
+                  Sector Analyzer
+                </h3>
+              </div>
+            </Link>
+
+            <Link 
+              href="/analyzer/trend-analyzer"
+              className="block"
+            >
+              <div className="bg-gray-100 h-[280px] relative w-full">
+                <div className="w-full h-full flex items-center justify-center text-gray-400 text-lg">
+                  1000 × 630
+                </div>
+              </div>
+              <div className="mt-4 text-center">
+                <h3 className="text-lg font-medium">
+                  Trend Analyzer
+                </h3>
+              </div>
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      {/* Email Subscription Section */}
+      <div className="w-full bg-[#6366F1] py-10">
+        <div className="max-w-[990px] mx-auto px-4">
+          <div className="text-center">
+            <div className="text-white/90 text-base font-medium mb-1">
+              Get Started
+            </div>
+            <h2 className="text-white text-3xl sm:text-4xl font-medium mb-6">
+              Enter your e-mail address
+              <br />
+              and get started for free
+            </h2>
+            
+            <div className="relative max-w-[600px] mx-auto">
+              <input
+                type="email"
+                placeholder="Your Email address"
+                className="w-full px-5 h-14 rounded-full text-base
+                  border-2 border-white/20
+                  bg-white/10 text-white
+                  placeholder:text-white/50
+                  focus:outline-none 
+                  focus:border-white/40
+                  focus:bg-white/20
+                  transition-all
+                  pr-[140px]"
+              />
+              <button className="absolute right-1 top-1 
+                bg-black text-white 
+                px-8 h-12 rounded-full text-base
+                hover:bg-gray-900 
+                transition-colors
+                font-medium">
+                Subscribe
+              </button>
+            </div>
+            
+            <div className="text-white/80 text-sm mt-3">
+              (We will never share your email with anyone, anywhere. Promise.)
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
