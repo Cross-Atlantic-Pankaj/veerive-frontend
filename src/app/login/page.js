@@ -127,7 +127,7 @@ export default function LoginPage() {
                   />
                 </svg>
               </div>
-              <h2 className="text-xl font-bold text-white">Welcome back!</h2>
+              <h2 className="text-xl font-bold text-white">Welcome to Veerive!</h2>
             </div>
 
             {errors.general && (

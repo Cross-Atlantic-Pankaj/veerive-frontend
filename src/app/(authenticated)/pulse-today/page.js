@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 export default function PulseToday() {
   const [contexts, setContexts] = useState([]);
   const [sidebarMessage, setSidebarMessage] = useState(null);
+  const [trendingThemes, setTrendingThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,6 +33,7 @@ export default function PulseToday() {
         
         setContexts(data.contexts || []);
         setSidebarMessage(data.messages?.[0] || null);
+        setTrendingThemes(data.trendingThemes || []);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(err.message || 'Failed to load data');
@@ -42,6 +45,7 @@ export default function PulseToday() {
     fetchData();
     
     return () => {
+      // Cleanup function
     };
   }, []);
 
@@ -49,9 +53,9 @@ export default function PulseToday() {
     if (!summary) return null;
     
     const cleaned = summary
-      .replace(/<[^>]*>/g, '') 
-      .replace(/&nbsp;/g, ' ') 
-      .replace(/&amp;/g, '&') 
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
       .trim();
     
     const points = cleaned.split('•').filter(s => s.trim().length > 0);
@@ -106,11 +110,13 @@ export default function PulseToday() {
   return (
     <main className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-10 bg-white">
       <div className="flex flex-col lg:flex-row gap-6">
+        {/* Main Content Area */}
         <div className="w-full lg:w-[72%]">
           {contexts.map((context, index) => (
             <article key={index} className="mb-12">
               <div className="flex flex-col">
                 <div className="flex flex-col md:flex-row gap-6 mb-4">
+                  {/* Banner Image */}
                   <div className="w-full md:w-1/4">
                     {context.bannerImage ? (
                       <img
@@ -124,6 +130,7 @@ export default function PulseToday() {
                     )}
                   </div>
 
+                  {/* Context Title and Posts */}
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row">
                     <div className="flex-1">
                       <div className="text-sm text-red-600 font-semibold mb-2">
@@ -146,6 +153,7 @@ export default function PulseToday() {
                   </div>
                 </div>
 
+                {/* Summary and Posts */}
                 <div className="pl-0">
                   <div className="text-gray-700 mb-4">
                     {context.summary ? (
@@ -176,9 +184,10 @@ export default function PulseToday() {
           ))}
         </div>
 
-        <aside className="w-full lg:w-[28%]">
+        {/* Sidebar */}
+        <div className="w-full lg:w-[28%]">
           {sidebarMessage && (
-            <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm sticky top-6">
+            <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm mb-6">
               <div className="flex items-center gap-2 mb-2">
                 <span className="text-green-500">✦</span>
                 <span className="font-semibold">{sidebarMessage.title}</span>
@@ -188,7 +197,45 @@ export default function PulseToday() {
               </p>
             </div>
           )}
-        </aside>
+
+          {/* Trending Themes Section */}
+          <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
+              <Link 
+                  href="/trend-analyzer" 
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                >
+                  VIEW ALL →
+                </Link>
+            </div>
+            
+            <div className="space-y-3">
+              {trendingThemes.map((theme) => (
+                <div 
+                  key={theme.id} 
+                  className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
+                >
+                  <div className="flex items-start gap-3">
+                    {/* Fixed width score circle */}
+                    <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
+                      {theme.score.toFixed(1)}
+                    </div>
+                    {/* Full title display */}
+                    <div className="break-words">
+                      <h3 className="font-medium text-gray-800 text-sm">
+                        {theme.title}
+                      </h3>
+                      <div className="mt-1 text-xs text-gray-500">
+                        {theme.sectors.length > 0 && theme.sectors[0]}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );
