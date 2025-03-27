@@ -17,24 +17,20 @@ export default function PulseToday() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
         
-        const [contextsResponse, messageResponse] = await Promise.all([
-          fetch('/api/pulse-today', { signal: controller.signal }),
-          fetch('/api/sidebar-messages', { signal: controller.signal })
-        ]);
+        const response = await fetch('/api/pulse-today', { 
+          signal: controller.signal 
+        });
         
         clearTimeout(timeoutId);
         
-        if (!contextsResponse.ok || !messageResponse.ok) {
+        if (!response.ok) {
           throw new Error('Failed to fetch data');
         }
         
-        const [contextsData, messageData] = await Promise.all([
-          contextsResponse.json(),
-          messageResponse.json()
-        ]);
+        const data = await response.json();
         
-        setContexts(contextsData.contexts || []);
-        setSidebarMessage(messageData.messages[0] || null);
+        setContexts(data.contexts || []);
+        setSidebarMessage(data.messages?.[0] || null);
       } catch (err) {
         console.error('Error fetching data:', err);
         setError(err.message || 'Failed to load data');
@@ -46,29 +42,24 @@ export default function PulseToday() {
     fetchData();
     
     return () => {
-      // Cleanup function
     };
   }, []);
 
   const formatSummary = (summary) => {
     if (!summary) return null;
     
-    // Clean the summary text
     const cleaned = summary
-      .replace(/<[^>]*>/g, '') // Remove HTML tags
-      .replace(/&nbsp;/g, ' ') // Replace &nbsp; with space
-      .replace(/&amp;/g, '&') // Replace &amp; with &
+      .replace(/<[^>]*>/g, '') 
+      .replace(/&nbsp;/g, ' ') 
+      .replace(/&amp;/g, '&') 
       .trim();
     
-    // Split into bullet points
     const points = cleaned.split('•').filter(s => s.trim().length > 0);
     
-    // If summary is already concise (3 or fewer points), return as is
     if (points.length <= 3) {
       return points.map(point => `• ${point.trim()}`);
     }
     
-    // For longer summaries, group into 2-3 main points
     const groupedPoints = [];
     const idealGroupCount = points.length > 4 ? 3 : 2;
     const groupSize = Math.ceil(points.length / idealGroupCount);
@@ -115,13 +106,11 @@ export default function PulseToday() {
   return (
     <main className="w-full mx-auto py-6 px-4 sm:px-6 lg:px-10 bg-white">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Main Content Area */}
         <div className="w-full lg:w-[72%]">
           {contexts.map((context, index) => (
             <article key={index} className="mb-12">
               <div className="flex flex-col">
                 <div className="flex flex-col md:flex-row gap-6 mb-4">
-                  {/* Banner Image */}
                   <div className="w-full md:w-1/4">
                     {context.bannerImage ? (
                       <img
@@ -135,7 +124,6 @@ export default function PulseToday() {
                     )}
                   </div>
 
-                  {/* Context Title and Posts */}
                   <div className="w-full md:w-3/4 flex flex-col md:flex-row">
                     <div className="flex-1">
                       <div className="text-sm text-red-600 font-semibold mb-2">
@@ -158,7 +146,6 @@ export default function PulseToday() {
                   </div>
                 </div>
 
-                {/* Summary and Posts */}
                 <div className="pl-0">
                   <div className="text-gray-700 mb-4">
                     {context.summary ? (
@@ -189,7 +176,6 @@ export default function PulseToday() {
           ))}
         </div>
 
-        {/* Sidebar */}
         <aside className="w-full lg:w-[28%]">
           {sidebarMessage && (
             <div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm sticky top-6">
