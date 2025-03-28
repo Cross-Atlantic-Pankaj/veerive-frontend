@@ -199,7 +199,7 @@ export default function PulseToday() {
           )}
 
           {/* Trending Themes Section */}
-          <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
+          <div className="bg-gray-200 p-4 rounded-lg border border-gray-200 shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
               <Link 
@@ -214,7 +214,7 @@ export default function PulseToday() {
               {trendingThemes.map((theme) => (
                 <div 
                   key={theme.id} 
-                  className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
+                  className="border-b border-dashed border-black pb-3 last:border-0 last:pb-0"
                 >
                   <div className="flex items-start gap-3">
                     {/* Fixed width score circle */}
@@ -223,11 +223,11 @@ export default function PulseToday() {
                     </div>
                     {/* Full title display */}
                     <div className="break-words">
-                      <h3 className="font-medium text-gray-800 text-sm">
+                      <h3 className="font-bold text-gray-800 text-sm font-bold">
                         {theme.title}
                       </h3>
                       <div className="mt-1 text-xs text-gray-500">
-                        {theme.sectors.length > 0 && theme.sectors[0]}
+                        {theme.sectors.length > 0 && theme.sectors.join(' • ')}
                       </div>
                     </div>
                   </div>
