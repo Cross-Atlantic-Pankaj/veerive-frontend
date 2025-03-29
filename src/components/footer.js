@@ -1,216 +1,137 @@
-import React from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { FaHome, FaFacebookF, FaTwitter, FaLinkedinIn } from 'react-icons/fa';
+import React from "react";
 
 const Footer = () => {
-  const pathname = usePathname();
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
-
-  const isActive = (href) => pathname === href;
-
   return (
-    <footer className="bg-gray-100 border-t-4 border-[#4A00E0] shadow-sm">
-      <div className="flex justify-start px-6 py-4 md:px-12">
-        <div
-          onClick={scrollToTop}
-          className="cursor-pointer text-[#4A00E0] text-2xl hover:text-[#8B00FF] hover:scale-110 transition-all duration-300"
-        >
-          <FaHome />
-        </div>
-      </div>
+    <footer className="bg-black text-white px-6 md:px-10 lg:px-16 py-12">
+      <div className="max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-10">
+          <div>
+            <h3 className="text-cyan-400 font-semibold mb-4">ANALYZER</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              {["Sector", "Company", "Trend","Sector", "Company", "Trend","Sector", "Company", "Trend"].flatMap(type =>
+                Array(3).fill().map((_, i) => (
+                  <li key={`${type}-${i}`}>
+                    <a href={`/${type.toLowerCase()}-analyzer`} className="hover:underline">
+                      {type} Analyzer
+                    </a>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
 
-      <div className="flex flex-wrap justify-between px-6 py-10 md:px-12 gap-8 max-w-7xl mx-auto">
-        <div className="flex-1 min-w-[250px]">
-          <img
-            src="/assets/veerive_logo.svg"
-            alt="Veerive Logo"
-            className="h-12 mb-4"
-          />
-          <p className="text-sm text-gray-600 leading-relaxed">
-            Veerive helps you get deeper understanding of fintech market dynamics, opportunities, and risks for strategic decision making
-          </p>
-        </div>
+          <div>
+            <h3 className="text-cyan-400 font-semibold mb-4">THINK TANK</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              {[
+                "Influencer Comment",
+                "Reports",
+                "Interviews",
+                "Infographics & Statistics",
+                "Influencer Comment",
+                "Reports",
+                "Interviews",
+                "Infographics & Statistics",
+                "Influencer Comment"
+              ].map((item, i) => (
+                <li key={i}>
+                  <a href={`/${item.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`} className="hover:underline">
+                    {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
 
-        <div className="flex-1 min-w-[180px]">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Analyzer</h3>
-          <ul className="text-sm text-gray-600 space-y-3">
-            <li>
-              <Link
-                href="/sector-analyzer"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/sector-analyzer')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Sector Analyzer
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/company-analyzer"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/company-analyzer')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Company Analyzer
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/trend-analyzer"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/trend-analyzer')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Trend Analyzer
-              </Link>
-            </li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="text-cyan-400 font-semibold mb-4">OUR INFORMATION</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              {["Privacy Policy", "Terms of Service", "Grievance Redressal","Privacy Policy", "Terms of Service", "Grievance Redressal","Privacy Policy", "Terms of Service", "Grievance Redressal"].flatMap(item =>
+                Array(3).fill().map((_, i) => (
+                  <li key={`${item}-${i}`}>
+                    <a href={`/${item.toLowerCase().replace(/ /g, "-")}`} className="hover:underline">
+                      {item}
+                    </a>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
 
-        <div className="flex-1 min-w-[180px]">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Think Tank</h3>
-          <ul className="text-sm text-gray-600 space-y-3">
-            <li>
-              <Link
-                href="/influencer-comment"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/influencer-comment')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Influencer Comment
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/reports"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/reports')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Reports
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/interviews"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/interviews')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Interviews
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/infographics-statistics"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/infographics-statistics')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Infographics & Statistics
-              </Link>
-            </li>
-          </ul>
-        </div>
+          <div>
+            <h3 className="text-cyan-400 font-semibold mb-4">ANALYZER</h3>
+            <ul className="space-y-2 text-sm text-gray-300">
+              {["Sector", "Company", "Trend","Sector", "Company", "Trend","Sector", "Company", "Trend"].flatMap(type =>
+                Array(3).fill().map((_, i) => (
+                  <li key={`${type}-right-${i}`}>
+                    <a href={`/${type.toLowerCase()}-analyzer`} className="hover:underline">
+                      {type} Analyzer
+                    </a>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
 
-        <div className="flex-1 min-w-[180px]">
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Our Information</h3>
-          <ul className="text-sm text-gray-600 space-y-3">
-            <li>
-              <Link
-                href="/privacy-policy"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/privacy-policy')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
+          <div className="lg:col-span-2 sm:col-span-2 col-span-1">
+            <h3 className="text-cyan-400 font-semibold mb-4">JOIN OUR MAILING LIST</h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Enter your e-mail address and get started for free
+            </p>
+            <form className="flex flex-col sm:flex-row w-full mb-4">
+              <input
+                type="email"
+                placeholder="Your email address"
+                className="w-full bg-[#111] text-white px-4 py-2 mb-2 sm:mb-0 sm:mr-2 outline-none rounded"
+              />
+              <button
+                type="submit"
+                className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded text-white font-semibold"
               >
-                Privacy Policy
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/terms-of-service"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/terms-of-service')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Terms of Service
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/grievance-redressal"
-                className={`block transition-colors duration-200 hover:text-[#4A00E0] hover:underline ${
-                  isActive('/grievance-redressal')
-                    ? 'text-[#4A00E0] font-semibold underline'
-                    : ''
-                }`}
-              >
-                Grievance Redressal
-              </Link>
-            </li>
-          </ul>
-        </div>
+                Subscribe
+              </button>
+            </form>
+            <p className="text-xs text-gray-400">
+              By pressing the Subscribe button, you confirm that you have read and are agreeing to our{" "}
+              <a href="/privacy-policy" className="underline">Privacy Policy</a> and{" "}
+              <a href="/terms-of-use" className="underline">Terms of Use</a>.
+            </p>
 
-        {/* Social Icons */}
-        <div className="flex-1 min-w-[100px] flex justify-center md:justify-start">
-          <div className="flex flex-col items-center md:items-start">
-            <a
-              href="https://facebook.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-800 text-xl mb-4 hover:text-[#4A00E0] hover:scale-110 transition-all duration-200"
-            >
-              <FaFacebookF />
-            </a>
-            <a
-              href="https://twitter.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-800 text-xl mb-4 hover:text-[#4A00E0] hover:scale-110 transition-all duration-200"
-            >
-              <FaTwitter />
-            </a>
-            <a
-              href="https://linkedin.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-gray-800 text-xl mb-4 hover:text-[#4A00E0] hover:scale-110 transition-all duration-200"
-            >
-              <FaLinkedinIn />
-            </a>
+            <div className="mt-6">
+              <h3 className="text-cyan-400 font-semibold mb-2">SOCIAL STREAM</h3>
+              <div className="flex gap-4 flex-wrap sm:justify-start justify-center">
+                <a href="https://facebook.com" target="_blank" rel="noreferrer"
+                   className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M22 12a10 10 0 10-11.6 9.9v-7h-2v-2.9h2V9.2c0-2 1.2-3.1 3-3.1.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.4h2.3l-.4 2.9h-1.9v7A10 10 0 0022 12z" />
+                  </svg>
+                </a>
+                <a href="https://x.com" target="_blank" rel="noreferrer"
+                   className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M20.5 3h-3l-4.5 6-4-6H3l6.5 9-6.5 9h3l4.5-6 4 6h3l-6.5-9L20.5 3z" />
+                  </svg>
+                </a>
+                <a href="https://linkedin.com" target="_blank" rel="noreferrer"
+                   className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.7v2.2h.1c.7-1.3 2.3-2.2 4.3-2.2 4.6 0 5.5 3 5.5 6.8V24h-5v-7.2c0-1.7 0-3.9-2.4-3.9-2.4 0-2.8 1.9-2.8 3.8V24h-5V8z"/>
+                  </svg>
+                </a>
+                <a href="https://youtube.com" target="_blank" rel="noreferrer"
+                   className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M19.6 3H4.4C3 3 2 4 2 5.4v13.2C2 20 3 21 4.4 21h15.2c1.4 0 2.4-1 2.4-2.4V5.4C22 4 21 3 19.6 3zM10 16V8l6 4-6 4z" />
+                  </svg>
+                </a>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="border-t border-gray-200 max-w-7xl mx-auto" />
-
-      <div className="bg-[#1A2526] text-white text-center py-4 text-xs">
-        <p>© 2023 Veerive, All Rights Reserved</p>
+        <div className="text-center text-sm text-gray-500 mt-12 border-t border-gray-700 pt-6">
+          © Copyright 2025 Veerive, All Rights Reserved.
+        </div>
       </div>
     </footer>
   );
