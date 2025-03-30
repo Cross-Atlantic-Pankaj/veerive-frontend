@@ -41,7 +41,7 @@ export default function AuthenticatedLayout({ children }) {
   if (!user) return null;
 
   return (
-   <Suspense fallback={<div>Loading...</div>}>
+  
        <div className="min-h-screen bg-gray-50">
       <Toaster position="top-right" />
       <Navbar user={user} onLogout={handleLogout} />
@@ -50,6 +50,5 @@ export default function AuthenticatedLayout({ children }) {
       </main>
       <Footer />
     </div>
-  </Suspense>
   );
 } 

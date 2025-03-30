@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import React from 'react';
 
 export default function HomePage() {
@@ -78,6 +78,7 @@ export default function HomePage() {
   };
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="w-full">
 
       <div className="w-full bg-[#6366F1] min-h-[500px] flex items-center">
@@ -571,5 +572,6 @@ export default function HomePage() {
         </div>
       </div>
     </div>
+    </Suspense>
   );
 }

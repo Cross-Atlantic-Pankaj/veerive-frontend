@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
 
 export default function PulseToday() {
@@ -114,6 +114,7 @@ export default function PulseToday() {
 		return <div className="text-center text-red-500 py-10">Error: {error}</div>;
 
 	return (
+		<Suspense fallback={<div className="text-center py-10">Loading...</div>}>
 		<main className="px-6 py-6">
 			<div className="flex flex-col lg:flex-row gap-6">
 				<div className="w-full lg:w-[72%]">
@@ -504,5 +505,6 @@ export default function PulseToday() {
 				</div>
 			</div>
 		</main>
+		</Suspense>
 	);
 }
