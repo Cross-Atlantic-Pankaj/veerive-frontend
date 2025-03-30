@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import toast, { Toaster } from 'react-hot-toast';
 import Navbar from '@/components/Navbar';
@@ -41,7 +41,8 @@ export default function AuthenticatedLayout({ children }) {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+   <Suspense fallback={<div>Loading...</div>}>
+       <div className="min-h-screen bg-gray-50">
       <Toaster position="top-right" />
       <Navbar user={user} onLogout={handleLogout} />
       <main className="w-full">
@@ -49,5 +50,6 @@ export default function AuthenticatedLayout({ children }) {
       </main>
       <Footer />
     </div>
+  </Suspense>
   );
 } 
