@@ -189,13 +189,18 @@ export default function PulseToday() {
 													</div>
 												))}
 											</div>
+
 											<div className="flex flex-wrap gap-4">
 												{context.posts?.map((post, i) => (
 													<div
 														key={i}
-														className="text-black-600"
+														className="mb-4"
 													>
-														{post.postTitle}
+														<div className="border-t border-gray-300 pt-2">
+															<div className="font-bold text-black-600">
+																{post.postTitle}
+															</div>
+														</div>
 													</div>
 												))}
 											</div>
@@ -266,9 +271,13 @@ export default function PulseToday() {
 														{context.posts?.map((post, i) => (
 															<div
 																key={i}
-																className="text-black-600"
+																className="mb-3"
 															>
-																{post.postTitle}
+																<div className="border-t border-gray-300 pt-2">
+																	<div className="font-bold text-black-600">
+																		{post.postTitle}
+																	</div>
+																</div>
 															</div>
 														))}
 													</div>
@@ -287,76 +296,117 @@ export default function PulseToday() {
 											<div className="text-red-600 text-xs font-bold mb-2">
 												{sectorsLabel}
 											</div>
+
 											<h2 className="text-xl font-bold mb-3">
 												{context.contextTitle}
 											</h2>
+
 											<div className="flex gap-8">
 												<div className="flex-1">
-													{summaryPoints?.map((point, i) => (
-														<div
-															key={i}
-															className="mb-2 text-gray-700"
-														>
-															• {point}
-														</div>
-													))}
+													<div className="mb-4">
+														{summaryPoints?.length > 0 ? (
+															summaryPoints?.map((point, i) => (
+																<div
+																	key={i}
+																	className="mb-2 text-gray-700"
+																>
+																	• {point}
+																</div>
+															))
+														) : (
+															<div className="text-gray-500">
+																Summary coming soon...
+															</div>
+														)}
+													</div>
+
+													<div className="text-gray-700 mb-4">
+														{context.posts
+															?.slice(0, Math.ceil(context.posts.length / 2))
+															.map((post, i) => (
+																<div
+																	key={i}
+																	className="mb-2"
+																>
+																	<div className="border-t border-gray-300 pt-2">
+																		<div className="font-bold text-black-600">
+																			{post.postTitle}
+																		</div>
+																	</div>
+																</div>
+															))}
+													</div>
 												</div>
+
 												<div className="w-1/3">
-													{context.posts?.map((post, i) => (
-														<div
-															key={i}
-															className="mb-3 text-black-600"
-														>
-															{post.postTitle}
-														</div>
-													))}
+													<div className="text-gray-700">
+														{context.posts
+															?.slice(Math.ceil(context.posts.length / 2))
+															.map((post, i) => (
+																<div
+																	key={i}
+																	className="mb-3"
+																>
+																	<div className="border-t border-gray-300 pt-2">
+																		<div className="font-bold text-black-600">
+																			{post.postTitle}
+																		</div>
+																	</div>
+																</div>
+															))}
+													</div>
 												</div>
 											</div>
 										</div>
 									);
 
-								case 'Type-Five':
-									return (
-										<div
+									case 'Type-Five':
+										return (
+										  <div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 col-span-2"
-										>
+										  >
 											<h2 className="text-xl font-bold mb-4">
-												{context.contextTitle}
+											  {context.contextTitle}
 											</h2>
+									  
 											<div className="flex gap-8">
-												<div className="w-1/3">
-													{context.bannerImage ? (
-														<img
-															src={context.bannerImage}
-															alt=""
-															className="w-full h-48 object-cover rounded"
-														/>
-													) : (
-														<div className="w-full h-48 bg-gray-200 rounded flex items-center justify-center">
-															1000 × 630
+											  <div className="w-1/3">
+												{context.bannerImage ? (
+												  <img
+													src={context.bannerImage}
+													alt="Banner"
+													className="w-full h-48 object-cover rounded"
+												  />
+												) : (
+												  <div className="w-full h-48 bg-gray-200 rounded flex items-center justify-center text-sm text-gray-500">
+													1000 × 630
+												  </div>
+												)}
+												<div className="text-gray-700 mt-4">
+												  {summaryPoints?.length > 0
+													? summaryPoints.join(' ')
+													: 'Summary will be available soon'}
+												</div>
+											  </div>
+									  
+											  <div className="flex-1">
+												<div className="mb-4">
+												  {context.posts?.map((post, i) => (
+													<div key={i} className="mb-3">
+													  <div className="border-t border-gray-300 pt-2">
+														<div className="font-bold text-black-600">
+														  {post.postTitle}
 														</div>
-													)}
-												</div>
-												<div className="flex-1">
-													<div className="mb-4">
-														{context.posts?.map((post, i) => (
-															<div
-																key={i}
-																className="mb-3 text-black-600"
-															>
-																{post.postTitle}
-															</div>
-														))}
+													  </div>
 													</div>
-													<div className="text-gray-700">
-														{summaryPoints?.join(' ') || 'Summary will be soon'}
-													</div>
+												  ))}
 												</div>
+											  </div>
 											</div>
-										</div>
-									);
+										  </div>
+										);									  
 
 								default:
 									return null;
