@@ -240,51 +240,53 @@ export default function PulseToday() {
 										</div>
 									);
 
-								case 'Type-Three':
-									return (
-										<div
+									case 'Type-Three':
+										return (
+										  <div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 col-span-2"
-										>
+										  >
 											<div className="flex justify-between gap-8">
-												<div className="flex-1">
-													<div className="text-red-600 text-xs font-bold mb-2">
-														{sectorsLabel}
-													</div>
-													<h2 className="text-xl font-bold mb-3">
-														{context.contextTitle}
-													</h2>
-													<div className="mb-4">
-														{summaryPoints?.map((point, i) => (
-															<div
-																key={i}
-																className="mb-2 text-gray-700"
-															>
-																• {point}
-															</div>
-														))}
-													</div>
+											  <div className="flex-1">
+												<div className="text-red-600 text-xs font-bold mb-2">
+												  {sectorsLabel}
 												</div>
-												<div className="w-1/3">
-													<div className="flex flex-col gap-3">
-														{context.posts?.map((post, i) => (
-															<div
-																key={i}
-																className="mb-3"
-															>
-																<div className="border-t border-gray-300 pt-2">
-																	<div className="font-bold text-black-600">
-																		{post.postTitle}
-																	</div>
-																</div>
-															</div>
-														))}
-													</div>
+												<h2 className="text-xl font-bold mb-3">
+												  {context.contextTitle}
+												</h2>
+									  
+												{/* Summary Section */}
+												<div className="mb-4">
+												  {summaryPoints?.length > 0 ? (
+													summaryPoints.map((point, i) => (
+													  <div key={i} className="mb-2 text-gray-700">
+														• {point}
+													  </div>
+													))
+												  ) : (
+													<div className="text-gray-500">Summary will be available soon</div>
+												  )}
 												</div>
+											  </div>
+									  
+											  <div className="w-1/3">
+												<div className="flex flex-col gap-3">
+												  {context.posts?.map((post, i) => (
+													<div key={i} className="mb-3">
+													  {/* Border and Bold Post Title */}
+													  <div className="border-t border-gray-300 pt-2">
+														<div className="font-bold text-black-600">
+														  {post.postTitle}
+														</div>
+													  </div>
+													</div>
+												  ))}
+												</div>
+											  </div>
 											</div>
-										</div>
-									);
+										  </div>
+										);									  
 
 								case 'Type-Four':
 									return (
