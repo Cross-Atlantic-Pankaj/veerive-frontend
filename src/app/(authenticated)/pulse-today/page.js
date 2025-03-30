@@ -12,7 +12,6 @@ export default function PulseToday() {
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
 
-	// Intersection Observer setup
 	const observerRef = useRef();
 	const lastContextRef = useCallback(node => {
 		if (loading) return;
@@ -27,7 +26,7 @@ export default function PulseToday() {
 				setPage(prev => prev + 1);
 			}
 		}, {
-			threshold: 0.5 // Trigger when 50% of the element is visible
+			threshold: 0.5
 		});
 
 		if (node) {
@@ -35,7 +34,6 @@ export default function PulseToday() {
 		}
 	}, [loading, hasMore, page]);
 
-	// Fetch data
 	const fetchData = async (pageNum) => {
 		try {
 			setLoading(true);
@@ -304,7 +302,6 @@ export default function PulseToday() {
 					)}
 				</div>
 
-				{/* Right: Sidebar */}
 				<div className="w-full lg:w-[28%]">
 					{sidebarMessage && (
 						<div className="bg-white p-4 rounded-lg border border-gray-100 shadow-sm mb-6">

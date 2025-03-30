@@ -14,7 +14,7 @@ export async function POST(request) {
     
     const body = await request.json();
     const page = body.page || 1;
-    const limit = 8; // 8 items per page
+    const limit = 8;
     const skip = (page - 1) * limit;
 
     const [contextsResult, sidebarMessagesResult, trendingThemes] = await Promise.all([
