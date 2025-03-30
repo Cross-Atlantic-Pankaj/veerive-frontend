@@ -71,7 +71,7 @@ async function handleLinkedInAuth(code) {
     const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
 
     // Redirect to /home with token and user data in query params
-    const redirectUrl = new URL("http://localhost:3000/home"); // Adjust base URL for production
+    const redirectUrl = new URL(process.env.NEXT_PUBLIC_APP_URL); // Adjust base URL for production
     redirectUrl.searchParams.set("token", token);
     redirectUrl.searchParams.set("user", encodeURIComponent(JSON.stringify(user)));
 
