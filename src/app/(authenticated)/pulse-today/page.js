@@ -11,28 +11,35 @@ export default function PulseToday() {
 	const [error, setError] = useState(null);
 	const [page, setPage] = useState(1);
 	const [hasMore, setHasMore] = useState(true);
+	const [expertPosts, setExpertPosts] = useState([]);
 
 	const observerRef = useRef();
-	const lastContextRef = useCallback(node => {
-		if (loading) return;
-		
-		if (observerRef.current) {
-			observerRef.current.disconnect();
-		}
+	const lastContextRef = useCallback(
+		(node) => {
+			if (loading) return;
 
-		observerRef.current = new IntersectionObserver(entries => {
-			if (entries[0].isIntersecting && hasMore) {
-				console.log('Loading more...', page + 1);
-				setPage(prev => prev + 1);
+			if (observerRef.current) {
+				observerRef.current.disconnect();
 			}
-		}, {
-			threshold: 0.5
-		});
 
-		if (node) {
-			observerRef.current.observe(node);
-		}
-	}, [loading, hasMore, page]);
+			observerRef.current = new IntersectionObserver(
+				(entries) => {
+					if (entries[0].isIntersecting && hasMore) {
+						console.log('Loading more...', page + 1);
+						setPage((prev) => prev + 1);
+					}
+				},
+				{
+					threshold: 0.5,
+				}
+			);
+
+			if (node) {
+				observerRef.current.observe(node);
+			}
+		},
+		[loading, hasMore, page]
+	);
 
 	const fetchData = async (pageNum) => {
 		try {
@@ -42,16 +49,18 @@ export default function PulseToday() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ page: pageNum })
+				body: JSON.stringify({ page: pageNum }),
 			});
 			const data = await res.json();
 
 			if (pageNum === 1) {
 				setContexts(data.contexts);
 			} else {
-				setContexts(prev => [...prev, ...data.contexts]);
+				setContexts((prev) => [...prev, ...data.contexts]);
 			}
-			
+			setExpertPosts((prev) =>
+				pageNum === 1 ? data.expertPosts : [...prev, ...data.expertPosts]
+			);
 			setHasMore(data.hasMore);
 			setSidebarMessage(data.messages?.[0] || null);
 			setTrendingThemes(data.trendingThemes || []);
@@ -67,14 +76,14 @@ export default function PulseToday() {
 	}, [page]);
 
 	// Maintain scroll position
-	useEffect(() => {
-		if (!loading) {
-			const scrollPosition = window.scrollY;
-			return () => {
-				window.scrollTo(0, scrollPosition);
-			};
-		}
-	}, [contexts, loading]);
+	// useEffect(() => {
+	// 	if (!loading) {
+	// 		const scrollPosition = window.scrollY;
+	// 		return () => {
+	// 			window.scrollTo(0, scrollPosition);
+	// 		};
+	// 	}
+	// }, [contexts, loading]);
 
 	const formatSummary = (summary) => {
 		if (!summary) return null;
@@ -101,7 +110,8 @@ export default function PulseToday() {
 		return groupedPoints;
 	};
 
-	if (error) return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+	if (error)
+		return <div className="text-center text-red-500 py-10">Error: {error}</div>;
 
 	return (
 		<main className="px-6 py-6">
@@ -110,13 +120,16 @@ export default function PulseToday() {
 					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-auto gap-4">
 						{contexts.map((context, index, array) => {
 							const isLastItem = index === array.length - 1;
-							const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
+							const sectorsLabel = [
+								...context.sectors,
+								...context.subSectors,
+							].join(' • ');
 							const summaryPoints = formatSummary(context.summary);
 
 							switch (context.containerType) {
 								case 'Type-One':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg overflow-hidden col-span-1"
@@ -135,17 +148,17 @@ export default function PulseToday() {
 											<div className="px-4 py-2">
 												<div className="flex flex-wrap gap-2 mb-1">
 													{[...context.sectors, ...context.subSectors].map(
-														(name, idx) => (
+														(name, idx, arr) => (
 															<span
 																key={idx}
-																className="text-xs text-green-600 relative inline-block font-medium"
+																className="text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
 															>
 																{name}
-																<span className="block h-[2px] bg-green-500 mt-0.5" />
 															</span>
 														)
 													)}
 												</div>
+
 												<h3 className="text-sm font-semibold text-gray-900 leading-snug">
 													{context.contextTitle}
 												</h3>
@@ -155,21 +168,35 @@ export default function PulseToday() {
 
 								case 'Type-Two':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 col-span-1"
 										>
-											<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
-											<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+											<div className="text-red-600 text-xs font-bold mb-2">
+												{sectorsLabel}
+											</div>
+											<h2 className="text-xl font-bold mb-3">
+												{context.contextTitle}
+											</h2>
 											<div className="mb-4">
 												{summaryPoints?.map((point, i) => (
-													<div key={i} className="mb-2 text-gray-700">• {point}</div>
+													<div
+														key={i}
+														className="mb-2 text-gray-700"
+													>
+														• {point}
+													</div>
 												))}
 											</div>
 											<div className="flex flex-wrap gap-4">
 												{context.posts?.map((post, i) => (
-													<div key={i} className="text-black-600">{post.postTitle}</div>
+													<div
+														key={i}
+														className="text-black-600"
+													>
+														{post.postTitle}
+													</div>
 												))}
 											</div>
 										</div>
@@ -177,7 +204,7 @@ export default function PulseToday() {
 
 								case 'Type-Num':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white p-6 rounded-lg shadow col-span-1"
@@ -190,11 +217,18 @@ export default function PulseToday() {
 													{summaryPoints?.length > 0 ? (
 														<ul className="list-disc list-inside">
 															{summaryPoints.map((point, i) => (
-																<li key={i} className="text-gray-700">{point}</li>
+																<li
+																	key={i}
+																	className="text-gray-700"
+																>
+																	{point}
+																</li>
 															))}
 														</ul>
 													) : (
-														<p className="text-gray-500">Summary will be soon</p>
+														<p className="text-gray-500">
+															Summary will be soon
+														</p>
 													)}
 												</div>
 											</div>
@@ -203,25 +237,39 @@ export default function PulseToday() {
 
 								case 'Type-Three':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 col-span-2"
 										>
 											<div className="flex justify-between gap-8">
 												<div className="flex-1">
-													<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
-													<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+													<div className="text-red-600 text-xs font-bold mb-2">
+														{sectorsLabel}
+													</div>
+													<h2 className="text-xl font-bold mb-3">
+														{context.contextTitle}
+													</h2>
 													<div className="mb-4">
 														{summaryPoints?.map((point, i) => (
-															<div key={i} className="mb-2 text-gray-700">• {point}</div>
+															<div
+																key={i}
+																className="mb-2 text-gray-700"
+															>
+																• {point}
+															</div>
 														))}
 													</div>
 												</div>
 												<div className="w-1/3">
 													<div className="flex flex-col gap-3">
 														{context.posts?.map((post, i) => (
-															<div key={i} className="text-black-600">{post.postTitle}</div>
+															<div
+																key={i}
+																className="text-black-600"
+															>
+																{post.postTitle}
+															</div>
 														))}
 													</div>
 												</div>
@@ -231,22 +279,36 @@ export default function PulseToday() {
 
 								case 'Type-Four':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 shadow col-span-2"
 										>
-											<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
-											<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+											<div className="text-red-600 text-xs font-bold mb-2">
+												{sectorsLabel}
+											</div>
+											<h2 className="text-xl font-bold mb-3">
+												{context.contextTitle}
+											</h2>
 											<div className="flex gap-8">
 												<div className="flex-1">
 													{summaryPoints?.map((point, i) => (
-														<div key={i} className="mb-2 text-gray-700">• {point}</div>
+														<div
+															key={i}
+															className="mb-2 text-gray-700"
+														>
+															• {point}
+														</div>
 													))}
 												</div>
 												<div className="w-1/3">
 													{context.posts?.map((post, i) => (
-														<div key={i} className="mb-3 text-black-600">{post.postTitle}</div>
+														<div
+															key={i}
+															className="mb-3 text-black-600"
+														>
+															{post.postTitle}
+														</div>
 													))}
 												</div>
 											</div>
@@ -255,18 +317,20 @@ export default function PulseToday() {
 
 								case 'Type-Five':
 									return (
-										<div 
+										<div
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
 											className="bg-white rounded-lg p-6 col-span-2"
 										>
-											<h2 className="text-xl font-bold mb-4">{context.contextTitle}</h2>
+											<h2 className="text-xl font-bold mb-4">
+												{context.contextTitle}
+											</h2>
 											<div className="flex gap-8">
 												<div className="w-1/3">
 													{context.bannerImage ? (
-														<img 
-															src={context.bannerImage} 
-															alt="" 
+														<img
+															src={context.bannerImage}
+															alt=""
 															className="w-full h-48 object-cover rounded"
 														/>
 													) : (
@@ -278,7 +342,12 @@ export default function PulseToday() {
 												<div className="flex-1">
 													<div className="mb-4">
 														{context.posts?.map((post, i) => (
-															<div key={i} className="mb-3 text-black-600">{post.postTitle}</div>
+															<div
+																key={i}
+																className="mb-3 text-black-600"
+															>
+																{post.postTitle}
+															</div>
 														))}
 													</div>
 													<div className="text-gray-700">
@@ -332,7 +401,7 @@ export default function PulseToday() {
 									className="border-b border-dashed border-black pb-3 last:border-0"
 								>
 									<div className="flex items-start gap-3">
-										<div className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-black-500 text-black-500 font-medium text-sm flex items-center justify-center">
+										<div className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm flex items-center justify-center">
 											{theme.score.toFixed(1)}
 										</div>
 										<div>
@@ -347,6 +416,38 @@ export default function PulseToday() {
 								</div>
 							))}
 						</div>
+					</div>
+
+					<div className="bg-white mt-6 p-4 rounded-lg border border-gray-200 shadow-sm">
+						<div className="flex justify-between items-center mb-4">
+							<h2 className="font-semibold text-lg text-gray-800">
+								Trending Expert Opinion
+							</h2>
+						</div>
+
+						<div className="space-y-4">
+							{expertPosts.map((post, index) => (
+								<div
+									key={index}
+									className="border-b border-dashed border-gray-700 pb-2 last:border-none"
+								>
+									<h3 className="text-sm font-semibold text-gray-900 leading-snug">
+										{post.postTitle}
+									</h3>
+								</div>
+							))}
+						</div>
+
+						{hasMore && (
+							<div className="mt-4 text-right">
+								<Link
+									href="/trend-analyzer"
+									className="text-indigo-600 text-sm hover:underline"
+								>
+									VIEW ALL →
+								</Link>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
