@@ -38,14 +38,14 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: white !important; /* Ensure text color remains white */
 }
 
-@layer utilities {
-  /* Chrome, Safari and Opera */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
-  }
+html {
+  overflow: scroll;
+  overflow-x: hidden;
+}
+::-webkit-scrollbar {
+  width: 0;  
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #FF0000;
 }
