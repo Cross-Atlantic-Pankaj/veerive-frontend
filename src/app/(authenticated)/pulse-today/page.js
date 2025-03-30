@@ -109,128 +109,199 @@ export default function PulseToday() {
 		<main className="px-6 py-6">
 			<div className="flex flex-col lg:flex-row gap-6">
 				<div className="w-full lg:w-[72%]">
-					{/* First show Type-One items in grid */}
-					<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
-						{contexts
-							.filter(ctx => ctx.containerType === 'Type-One')
-							.map((ctx, idx) => (
-								<div 
-									key={idx}
-									className="bg-white rounded-lg overflow-hidden"
-								>
-									{ctx.bannerImage ? (
-										<img
-											src={ctx.bannerImage}
-											alt="banner"
-											className="w-full h-[160px] object-cover"
-										/>
-									) : (
-										<div className="w-full h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-sm">
-											1000 × 630
-										</div>
-									)}
-									<div className="px-4 py-2">
-										<div className="flex flex-wrap gap-2 mb-1">
-											{[...ctx.sectors, ...ctx.subSectors].map(
-												(name, idx) => (
-													<span
-														key={idx}
-														className="text-xs text-green-600 relative inline-block font-medium"
-													>
-														{name}
-														<span className="block h-[2px] bg-green-500 mt-0.5" />
-													</span>
-												)
-											)}
-										</div>
-										<h3 className="text-sm font-semibold text-gray-900 leading-snug">
-											{ctx.contextTitle}
-										</h3>
-									</div>
-								</div>
-							))}
-					</div>
-
-					{/* Then show other types */}
-					{contexts
-						.filter(ctx => ctx.containerType !== 'Type-One')
-						.map((context, index, array) => {
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-auto gap-4">
+						{contexts.map((context, index, array) => {
 							const isLastItem = index === array.length - 1;
-							const sectorsLabel = [
-								...context.sectors,
-								...context.subSectors,
-							].join(' • ');
+							const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
 							const summaryPoints = formatSummary(context.summary);
 
 							switch (context.containerType) {
-								case 'Type-Two':
+								case 'Type-One':
 									return (
-										<div
+										<div 
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
-											className="mb-10"
+											className="bg-white rounded-lg overflow-hidden col-span-1"
 										>
-											<div className="text-red-600 text-xs font-bold mb-1">
-												EXCLUSIVE
+											{context.bannerImage ? (
+												<img
+													src={context.bannerImage}
+													alt="banner"
+													className="w-full h-[160px] object-cover"
+												/>
+											) : (
+												<div className="w-full h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-sm">
+													1000 × 630
+												</div>
+											)}
+											<div className="px-4 py-2">
+												<div className="flex flex-wrap gap-2 mb-1">
+													{[...context.sectors, ...context.subSectors].map(
+														(name, idx) => (
+															<span
+																key={idx}
+																className="text-xs text-green-600 relative inline-block font-medium"
+															>
+																{name}
+																<span className="block h-[2px] bg-green-500 mt-0.5" />
+															</span>
+														)
+													)}
+												</div>
+												<h3 className="text-sm font-semibold text-gray-900 leading-snug">
+													{context.contextTitle}
+												</h3>
 											</div>
-											<h2 className="text-xl font-bold mb-2">
-												{context.contextTitle}
-											</h2>
-											<ul className="list-disc list-inside text-sm text-gray-800 mb-3">
+										</div>
+									);
+
+								case 'Type-Two':
+									return (
+										<div 
+											key={index}
+											ref={isLastItem ? lastContextRef : null}
+											className="bg-white rounded-lg p-6 col-span-1"
+										>
+											<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
+											<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+											<div className="mb-4">
 												{summaryPoints?.map((point, i) => (
-													<li key={i}>{point}</li>
+													<div key={i} className="mb-2 text-gray-700">• {point}</div>
 												))}
-											</ul>
-											<div className="grid grid-cols-2 gap-4 text-sm font-semibold text-blue-800">
-												{context.posts?.slice(0, 2).map((post, i) => (
-													<div key={i}>{post.postTitle}</div>
+											</div>
+											<div className="flex flex-wrap gap-4">
+												{context.posts?.map((post, i) => (
+													<div key={i} className="text-black-600">{post.postTitle}</div>
 												))}
+											</div>
+										</div>
+									);
+
+								case 'Type-Num':
+									return (
+										<div 
+											key={index}
+											ref={isLastItem ? lastContextRef : null}
+											className="bg-white p-6 rounded-lg shadow col-span-1"
+										>
+											<div className="flex items-center gap-4">
+												<div className="text-4xl font-bold text-black-600 whitespace-nowrap">
+													{context.dataForTypeNum || 'US$ XX Billion'}
+												</div>
+												<div className="flex-1">
+													{summaryPoints?.length > 0 ? (
+														<ul className="list-disc list-inside">
+															{summaryPoints.map((point, i) => (
+																<li key={i} className="text-gray-700">{point}</li>
+															))}
+														</ul>
+													) : (
+														<p className="text-gray-500">Summary will be soon</p>
+													)}
+												</div>
 											</div>
 										</div>
 									);
 
 								case 'Type-Three':
 									return (
-										<div
+										<div 
 											key={index}
 											ref={isLastItem ? lastContextRef : null}
-											className="mb-10"
+											className="bg-white rounded-lg p-6 col-span-2"
 										>
-											<div className="text-red-600 text-xs font-bold mb-1">
-												EXCLUSIVE
-											</div>
-											<h2 className="text-xl font-bold mb-1">
-												{context.contextTitle}
-											</h2>
-											<div className="text-xs text-gray-500 mb-2">
-												{sectorsLabel}
-											</div>
-											<ul className="list-disc list-inside text-sm text-gray-800 mb-3">
-												{summaryPoints?.map((point, i) => (
-													<li key={i}>{point}</li>
-												))}
-											</ul>
-											<div className="grid grid-cols-2 gap-4 text-sm font-semibold text-blue-800">
-												{context.posts?.slice(0, 2).map((post, i) => (
-													<div key={i}>{post.postTitle}</div>
-												))}
+											<div className="flex justify-between gap-8">
+												<div className="flex-1">
+													<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
+													<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+													<div className="mb-4">
+														{summaryPoints?.map((point, i) => (
+															<div key={i} className="mb-2 text-gray-700">• {point}</div>
+														))}
+													</div>
+												</div>
+												<div className="w-1/3">
+													<div className="flex flex-col gap-3">
+														{context.posts?.map((post, i) => (
+															<div key={i} className="text-black-600">{post.postTitle}</div>
+														))}
+													</div>
+												</div>
 											</div>
 										</div>
 									);
 
-								// ... other cases remain same ...
+								case 'Type-Four':
+									return (
+										<div 
+											key={index}
+											ref={isLastItem ? lastContextRef : null}
+											className="bg-white rounded-lg p-6 shadow col-span-2"
+										>
+											<div className="text-red-600 text-xs font-bold mb-2">{sectorsLabel}</div>
+											<h2 className="text-xl font-bold mb-3">{context.contextTitle}</h2>
+											<div className="flex gap-8">
+												<div className="flex-1">
+													{summaryPoints?.map((point, i) => (
+														<div key={i} className="mb-2 text-gray-700">• {point}</div>
+													))}
+												</div>
+												<div className="w-1/3">
+													{context.posts?.map((post, i) => (
+														<div key={i} className="mb-3 text-black-600">{post.postTitle}</div>
+													))}
+												</div>
+											</div>
+										</div>
+									);
+
+								case 'Type-Five':
+									return (
+										<div 
+											key={index}
+											ref={isLastItem ? lastContextRef : null}
+											className="bg-white rounded-lg p-6 col-span-2"
+										>
+											<h2 className="text-xl font-bold mb-4">{context.contextTitle}</h2>
+											<div className="flex gap-8">
+												<div className="w-1/3">
+													{context.bannerImage ? (
+														<img 
+															src={context.bannerImage} 
+															alt="" 
+															className="w-full h-48 object-cover rounded"
+														/>
+													) : (
+														<div className="w-full h-48 bg-gray-200 rounded flex items-center justify-center">
+															1000 × 630
+														</div>
+													)}
+												</div>
+												<div className="flex-1">
+													<div className="mb-4">
+														{context.posts?.map((post, i) => (
+															<div key={i} className="mb-3 text-black-600">{post.postTitle}</div>
+														))}
+													</div>
+													<div className="text-gray-700">
+														{summaryPoints?.join(' ') || 'Summary will be soon'}
+													</div>
+												</div>
+											</div>
+										</div>
+									);
+
+								default:
+									return null;
 							}
 						})}
+					</div>
 
-					{/* Loading indicator */}
 					{loading && (
 						<div className="text-center py-4">
 							<div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent" />
 						</div>
 					)}
-
-					{/* Sentinel element for intersection observer */}
-					<div ref={lastContextRef} style={{ height: '10px' }} />
 				</div>
 
 				{/* Right: Sidebar */}
@@ -264,7 +335,7 @@ export default function PulseToday() {
 									className="border-b border-dashed border-black pb-3 last:border-0"
 								>
 									<div className="flex items-start gap-3">
-										<div className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm flex items-center justify-center">
+										<div className="flex-shrink-0 w-7 h-7 rounded-full border-2 border-black-500 text-black-500 font-medium text-sm flex items-center justify-center">
 											{theme.score.toFixed(1)}
 										</div>
 										<div>
