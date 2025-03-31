@@ -82,7 +82,6 @@ export default function PulseToday() {
     return groupedPoints;
   };
 
-  // Group contexts by container type rules
   const groupContexts = (contexts) => {
     const grouped = [];
     let currentGroup = [];
