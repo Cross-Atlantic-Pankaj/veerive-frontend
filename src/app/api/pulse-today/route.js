@@ -11,7 +11,7 @@ import connectDB from '@/lib/db';
 export async function POST(request) {
   try {
     await connectDB();
-	if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
+    if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
     if (!mongoose.models.SidebarMessage) mongoose.model('SidebarMessage', SidebarMessage.schema);
@@ -22,7 +22,7 @@ export async function POST(request) {
     const limit = 8;
     const skip = (page - 1) * limit;
 
-    const [contextsResult, sidebarMessagesResult, trendingThemes] = await Promise.all([
+    const [contextsResult, sidebarMessagesResult, trendingThemes, expertPostsResult] = await Promise.all([
       Context.find()
         .sort({ date: -1 })
         .skip(skip)
@@ -46,6 +46,12 @@ export async function POST(request) {
         .limit(5)
         .populate('sectors', 'sectorName')
         .populate('subSectors', 'subSectorName')
+        .exec(),
+
+      Post.find({ postType: 'Expert Opinion' })
+        .sort({ date: -1 })
+        .limit(7)
+        .select('postTitle date')
         .exec(),
     ]);
 
@@ -86,13 +92,6 @@ export async function POST(request) {
       subSectors: theme.subSectors.map((s) => s.subSectorName),
     }));
 
-    const expertPostsResult = await Post.find({ postType: 'Expert Opinion' })
-      .sort({ date: -1 })
-      .skip(skip)
-      .limit(limit)
-      .select('postTitle date')
-      .exec();
-
     const expertPosts = [];
     const seenTitles = new Set();
     expertPostsResult.forEach((post) => {
@@ -111,7 +110,6 @@ export async function POST(request) {
       trendingThemes: processedThemes,
       expertPosts,
       hasMore: skip + limit < totalCount,
-      currentPage: page,
     });
   } catch (error) {
     console.error('Error fetching Pulse Today data:', error);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function PulseToday() {
   const [contexts, setContexts] = useState([]);
@@ -12,6 +13,7 @@ export default function PulseToday() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [expertPosts, setExpertPosts] = useState([]);
+  const [marketStatistics, setMarketStatistics] = useState([]);
 
   const observerRef = useRef();
   const lastContextRef = useCallback(
@@ -53,6 +55,7 @@ export default function PulseToday() {
       setHasMore(data.hasMore);
       setSidebarMessage(data.messages?.[0] || null);
       setTrendingThemes(data.trendingThemes || []);
+      setMarketStatistics(data.marketStatistics || []);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -411,6 +414,78 @@ export default function PulseToday() {
                   </Link>
                 </div>
               )}
+            </div>
+
+            {/* Market Statistics */}
+            <div>
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold text-gray-900">MARKET STATISTICS</h2>
+                <Link 
+                  href="/think-tank/statistics" 
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                >
+                  VIEW ALL →
+                </Link>
+              </div>
+              <div className="h-[1px] bg-gray-200 w-full mt-4 mb-6"></div>
+              
+              <div className="space-y-6">
+                {marketStatistics.map((post) => {
+                  // Check which type of URL exists
+                  const hasSourceUrl = !!post.sourceUrl;
+                  const hasSourceUrls = Array.isArray(post.sourceUrls) && post.sourceUrls.length > 0;
+                  const redirectUrl = hasSourceUrls ? post.sourceUrls[0] : (hasSourceUrl ? post.sourceUrl : null);
+
+                  const ContentWrapper = redirectUrl ? 'a' : 'div';
+                  const linkProps = redirectUrl ? {
+                    href: redirectUrl,
+                    target: "_blank",
+                    rel: "noopener noreferrer"
+                  } : {};
+
+                  return (
+                    <ContentWrapper 
+                      key={post._id}
+                      {...linkProps}
+                      className={`flex gap-6 ${redirectUrl ? 'group cursor-pointer' : ''}`}
+                    >
+                      <div className="w-[120px] h-[75px] bg-gray-100 relative flex-shrink-0">
+                        {post.postImage ? (
+                          <Image
+                            src={post.postImage}
+                            alt={post.postTitle}
+                            fill
+                            className="object-cover"
+                            sizes="120px"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                            1000 × 630
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className={`text-base text-gray-900 ${redirectUrl ? 'group-hover:text-indigo-600' : ''} mb-2 line-clamp-2 font-medium`}>
+                          {post.postTitle}
+                        </h3>
+                        <p className="text-sm text-gray-500">
+                          {new Date(post.date).toLocaleDateString('en-US', {
+                            month: 'short',
+                            day: '2-digit',
+                            year: 'numeric'
+                          })}
+                          {post.source?.sourceName && (
+                            <>
+                              <span className="mx-2">|</span>
+                              {post.source.sourceName}
+                            </>
+                          )}
+                        </p>
+                      </div>
+                    </ContentWrapper>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>

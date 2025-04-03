@@ -257,7 +257,7 @@ export default function HomePage() {
                 {trendingOpinions.map((post) => (
                   <a 
                     key={post._id}
-                    href={post.sourceUrl}
+                    href={post.sourceUrl || post.sourceUrls[0]}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex gap-6 group"
@@ -317,7 +317,7 @@ export default function HomePage() {
                 {marketStatistics.map((post) => (
                   <a 
                     key={post._id}
-                    href={post.sourceUrl}
+                    href={post.sourceUrl || post.sourceUrls[0]}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex gap-6 group"
@@ -473,8 +473,6 @@ export default function HomePage() {
           </div>
         </div>
       </div>
-
-      {/* Analyzer Section */}
 
       {/* Email Subscription Section */}
       <div className="w-full bg-[#6366F1] py-10">
