@@ -186,16 +186,16 @@ export default function PulseToday() {
 						<div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">
 							{sectorsLabel}
 						</div>
-						<h2 className="text-base sm:text-lg font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">
+						<h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">
 							{context.contextTitle}
 						</h2>
 						<div className="mb-4">
 							{summaryPoints?.map((point, i) => (
 								<div
 									key={i}
-									className="mb-2 text-gray-600 text-xs sm:text-sm line-clamp-2"
+									className="mb-2 text-gray-600 text-xs sm:text-sm"
 								>
-									<span className="text-indigo-500">•</span> {point}
+									{point}
 								</div>
 							))}
 						</div>
@@ -203,9 +203,9 @@ export default function PulseToday() {
 							{context.posts?.map((post, i) => (
 								<div
 									key={i}
-									className="border-t border-gray-100 pt-1 mt-1"
+									className="border-t border-gray-100 pt-0.5 mt-0.5"
 								>
-									<div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-1 hover:text-indigo-600 transition-colors">
+									<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
 										{post.postTitle}
 									</div>
 								</div>
@@ -261,49 +261,68 @@ export default function PulseToday() {
 					</div>
 				);
 
-        case 'Type-Four':
-          return (
-            <div
-              ref={isLastItem ? lastContextRef : null}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
-            >
-              <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">{context.contextTitle}</h2>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <div className="flex-1">
-                  <div className="mb-4">
-                    {summaryPoints?.length > 0 ? (
-                      summaryPoints.map((point, i) => (
-                        <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">
-                          {point}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-gray-400 text-xs sm:text-sm italic">Summary coming soon...</div>
-                    )}
-                  </div>
-                  <div>
-                    {context.posts?.slice(0, Math.ceil(context.posts.length / 2)).map((post, i) => (
-                      <div key={i} className="border-t border-gray-100 pt-1 mt-1">
-                        <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
-                          {post.postTitle}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+1.5rem+0.75rem)]">
-                  {context.posts?.slice(Math.ceil(context.posts.length / 2)).map((post, i) => (
-                    <div key={i} className="border-t border-gray-100 pt-1 mt-1">
-                      <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
-                        {post.postTitle}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          );
+			case 'Type-Four':
+				return (
+					<div
+						ref={isLastItem ? lastContextRef : null}
+						className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
+					>
+						<div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">
+							{sectorsLabel}
+						</div>
+						<h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">
+							{context.contextTitle}
+						</h2>
+						<div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+							<div className="flex-1">
+								<div className="mb-4">
+									{summaryPoints?.length > 0 ? (
+										summaryPoints.map((point, i) => (
+											<div
+												key={i}
+												className="mb-2 text-gray-600 text-xs sm:text-sm"
+											>
+												{point}
+											</div>
+										))
+									) : (
+										<div className="text-gray-400 text-xs sm:text-sm italic">
+											Summary coming soon...
+										</div>
+									)}
+								</div>
+								<div>
+									{context.posts
+										?.slice(0, Math.ceil(context.posts.length / 2))
+										.map((post, i) => (
+											<div
+												key={i}
+												className="border-t border-gray-100 pt-1 mt-1"
+											>
+												<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
+													{post.postTitle}
+												</div>
+											</div>
+										))}
+								</div>
+							</div>
+							<div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+1.5rem+0.75rem)]">
+								{context.posts
+									?.slice(Math.ceil(context.posts.length / 2))
+									.map((post, i) => (
+										<div
+											key={i}
+											className="border-t border-gray-100 pt-1 mt-1"
+										>
+											<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
+												{post.postTitle}
+											</div>
+										</div>
+									))}
+							</div>
+						</div>
+					</div>
+				);
 
 			case 'Type-Five':
 				return (
@@ -311,10 +330,11 @@ export default function PulseToday() {
 						ref={isLastItem ? lastContextRef : null}
 						className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
 					>
-						<h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 line-clamp-2 leading-tight">
+						<div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">
 							{context.contextTitle}
-						</h2>
-						<div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+						</div>
+
+						<div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
 							<div className="w-full sm:w-1/3">
 								{context.bannerImage ? (
 									<img
@@ -327,23 +347,59 @@ export default function PulseToday() {
 										1000 × 630
 									</div>
 								)}
-								<div className="text-gray-600 mt-4 text-xs sm:text-sm line-clamp-3">
-									{summaryPoints?.length > 0
-										? summaryPoints.join(' ')
-										: 'Summary will be available soon'}
-								</div>
 							</div>
+
 							<div className="flex-1">
-								{context.posts?.map((post, i) => (
-									<div
-										key={i}
-										className="border-t border-gray-100 pt-1 mt-1"
-									>
-										<div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-1 hover:text-indigo-600 transition-colors">
-											{post.postTitle}
+								{context.posts?.length > 0 && (
+									<div className="flex flex-col gap-0">
+										<div className="flex items-start">
+											<div className="flex-1">
+												<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+													{context.posts[0].postTitle}
+												</div>
+											</div>
+											{context.posts
+												.slice(1, Math.ceil(context.posts.length / 2))
+												.map((post, i) => (
+													<div
+														key={i}
+														className="flex-1 border-l border-gray-100 pl-4"
+													>
+														<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+															{post.postTitle}
+														</div>
+													</div>
+												))}
+										</div>
+										<div className="flex items-start mt-3">
+											{' '}
+											<div className="flex-1">
+												{summaryPoints?.length > 0 ? (
+													<div className="text-gray-600 text-xs sm:text-sm leading-tight mt-0">
+														{summaryPoints.join(' ')}
+													</div>
+												) : (
+													<div className="text-gray-400 text-xs sm:text-sm italic leading-tight mt-0">
+														{' '}
+														Summary will be available soon
+													</div>
+												)}
+											</div>
+											{context.posts
+												.slice(Math.ceil(context.posts.length / 2))
+												.map((post, i) => (
+													<div
+														key={i}
+														className="flex-1 border-l border-gray-100 pl-4"
+													>
+														<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+															{post.postTitle}
+														</div>
+													</div>
+												))}
 										</div>
 									</div>
-								))}
+								)}
 							</div>
 						</div>
 					</div>
@@ -357,15 +413,15 @@ export default function PulseToday() {
 					>
 						<div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
 							<div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
-								{context.dataForTypeNum || 'US$ XX Billion'}
+								{context.dataForTypeNum}
 							</div>
 							<div className="flex-1">
 								{summaryPoints?.length > 0 ? (
-									<ul className="list-disc list-inside text-gray-600 text-xs sm:text-sm">
+									<ul className="text-gray-600 text-xs sm:text-sm">
 										{summaryPoints.map((point, i) => (
 											<li
 												key={i}
-												className="line-clamp-2"
+												className=""
 											>
 												{point}
 											</li>
@@ -471,7 +527,7 @@ export default function PulseToday() {
 												{theme.score.toFixed(1)}
 											</div>
 											<div>
-												<h3 className="font-semibold text-xs sm:text-sm text-gray-900 line-clamp-2">
+												<h3 className="font-semibold text-xs sm:text-sm text-gray-900 ">
 													{theme.title}
 												</h3>
 												<p className="text-[10px] sm:text-xs text-gray-500 mt-1">
@@ -496,7 +552,7 @@ export default function PulseToday() {
 										key={index}
 										className="border-b border-dashed border-gray-200 pb-3 last:border-none"
 									>
-										<h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors">
+										<h3 className="text-xs sm:text-sm font-semibold text-gray-900  hover:text-indigo-600 transition-colors">
 											{post.postTitle}
 										</h3>
 									</div>
