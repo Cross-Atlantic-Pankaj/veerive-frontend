@@ -330,7 +330,7 @@ export default function PulseToday() {
 						ref={isLastItem ? lastContextRef : null}
 						className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
 					>
-						<div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">
+						<div className="text-black-600 text-[10px] sm:text-xs font-semibold mb-2">
 							{context.contextTitle}
 						</div>
 
