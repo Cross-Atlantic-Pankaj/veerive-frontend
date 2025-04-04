@@ -32,7 +32,6 @@ export async function POST(request) {
         .populate({
           path: 'posts.postId',
           select: 'postTitle date summary',
-          match: { includeInContainer: true },
         })
         .exec(),
 
