@@ -223,50 +223,45 @@ export default function PulseToday() {
           </div>
         );
 
-        case 'Type-Four':
-          console.log(`Type-Four Context (Title: ${context.contextTitle}):`, {
-            posts: context.posts,
-            hasPosts: !!context.posts,
-            postCount: context.posts?.length || 0,
-          });
-          return (
-            <div
-              ref={isLastItem ? lastContextRef : null}
-              className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
-            >
-              <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">{context.contextTitle}</h2>
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
-                <div className="flex-1">
-                  <div className="mb-4">
-                    {summaryPoints?.length > 0 ? (
-                      summaryPoints.map((point, i) => (
-                        <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm line-clamp-2">
-                          <span className="text-indigo-500">•</span> {point}
-                        </div>
-                      ))
-                    ) : (
-                      <div className="text-gray-400 text-xs sm:text-sm italic">Summary coming soon...</div>
-                    )}
-                  </div>
-                  <div>
-                    {context.posts?.slice(0, Math.ceil(context.posts.length / 2)).map((post, i) => (
-                      <div key={i} className="border-t border-gray-100 pt-1 mt-1">
-                        <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-1 hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+      case 'Type-Four':
+        return (
+          <div
+            ref={isLastItem ? lastContextRef : null}
+            className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
+          >
+            <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 line-clamp-2 leading-tight">{context.contextTitle}</h2>
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+              <div className="flex-1">
+                <div className="mb-4">
+                  {summaryPoints?.length > 0 ? (
+                    summaryPoints.map((point, i) => (
+                      <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm line-clamp-2">
+                        <span className="text-indigo-500">•</span> {point}
                       </div>
-                    ))}
-                  </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 text-xs sm:text-sm italic">Summary coming soon...</div>
+                  )}
                 </div>
-                <div className="w-full sm:w-1/3">
-                  {context.posts?.slice(Math.ceil(context.posts.length / 2)).map((post, i) => (
+                <div>
+                  {context.posts?.slice(0, Math.ceil(context.posts.length / 2)).map((post, i) => (
                     <div key={i} className="border-t border-gray-100 pt-1 mt-1">
                       <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-1 hover:text-indigo-600 transition-colors">{post.postTitle}</div>
                     </div>
                   ))}
                 </div>
               </div>
+              <div className="w-full sm:w-1/3">
+                {context.posts?.slice(Math.ceil(context.posts.length / 2)).map((post, i) => (
+                  <div key={i} className="border-t border-gray-100 pt-1 mt-1">
+                    <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-1 hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+                  </div>
+                ))}
+              </div>
             </div>
-          );
+          </div>
+        );
 
       case 'Type-Five':
         return (
