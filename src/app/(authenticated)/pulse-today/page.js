@@ -331,86 +331,85 @@ export default function PulseToday() {
 					</div>
 				);
 
-			case 'Type-Five':
-				return (
-					<div
+				case 'Type-Five':
+					return (
+					  <div
 						ref={isLastItem ? lastContextRef : null}
 						className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6"
-					>
+					  >
 						<div className="text-black-600 text-[10px] sm:text-xs font-semibold mb-2">
-							{context.contextTitle}
+						  {context.contextTitle}
 						</div>
-
+				  
 						<div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-							<div className="w-full sm:w-1/3">
-								{context.bannerImage ? (
-									<img
-										src={context.bannerImage}
-										alt="Banner"
-										className="w-full h-40 sm:h-48 object-cover rounded-lg"
-									/>
-								) : (
-									<div className="w-full h-40 sm:h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-										1000 × 630
+						  <div className="w-full sm:w-1/3">
+							{context.bannerImage ? (
+							  <img
+								src={context.bannerImage}
+								alt="Banner"
+								className="w-full h-40 sm:h-48 object-cover rounded-lg"
+							  />
+							) : (
+							  <div className="w-full h-40 sm:h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+								1000 × 630
+							  </div>
+							)}
+						  </div>
+				  
+						  <div className="flex-1">
+							{context.posts?.length > 0 && (
+							  <div className="flex flex-col gap-0">
+								<div className="flex flex-col sm:flex-row items-start">
+								  <div className="flex-1 w-full sm:w-auto">
+									<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+									  {context.posts[0].postTitle}
 									</div>
-								)}
-							</div>
-
-							<div className="flex-1">
-								{context.posts?.length > 0 && (
-									<div className="flex flex-col gap-0">
-										<div className="flex items-start">
-											<div className="flex-1">
-												<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
-													{context.posts[0].postTitle}
-												</div>
-											</div>
-											{context.posts
-												.slice(1, Math.ceil(context.posts.length / 2))
-												.map((post, i) => (
-													<div
-														key={i}
-														className="flex-1 border-l border-gray-100 pl-4"
-													>
-														<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
-															{post.postTitle}
-														</div>
-													</div>
-												))}
+								  </div>
+								  {context.posts
+									.slice(1, Math.ceil(context.posts.length / 2))
+									.map((post, i) => (
+									  <div
+										key={i}
+										className="flex-1 w-full sm:w-auto border-l-0 sm:border-l border-gray-100 pl-0 sm:pl-4 mt-2 sm:mt-0"
+									  >
+										<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+										  {post.postTitle}
 										</div>
-										<div className="flex items-start mt-3">
-											{' '}
-											<div className="flex-1">
-												{summaryPoints?.length > 0 ? (
-													<div className="text-gray-600 text-xs sm:text-sm leading-tight mt-0">
-														{summaryPoints.join(' ')}
-													</div>
-												) : (
-													<div className="text-gray-400 text-xs sm:text-sm italic leading-tight mt-0">
-														{' '}
-														Summary will be available soon
-													</div>
-												)}
-											</div>
-											{context.posts
-												.slice(Math.ceil(context.posts.length / 2))
-												.map((post, i) => (
-													<div
-														key={i}
-														className="flex-1 border-l border-gray-100 pl-4"
-													>
-														<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
-															{post.postTitle}
-														</div>
-													</div>
-												))}
+									  </div>
+									))}
+								</div>
+				  
+								<div className="flex flex-col sm:flex-row items-start mt-3">
+								  <div className="flex-1 w-full sm:w-auto">
+									{summaryPoints?.length > 0 ? (
+									  <div className="text-gray-600 text-xs sm:text-sm leading-tight mt-0">
+										{summaryPoints.join(' ')}
+									  </div>
+									) : (
+									  <div className="text-gray-400 text-xs sm:text-sm italic leading-tight mt-0">
+										Summary will be available soon
+									  </div>
+									)}
+								  </div>
+								  {context.posts
+									.slice(Math.ceil(context.posts.length / 2))
+									.map((post, i) => (
+									  <div
+										key={i}
+										className="flex-1 w-full sm:w-auto border-l-0 sm:border-l border-gray-100 pl-0 sm:pl-4 mt-2 sm:mt-0"
+									  >
+										<div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors leading-none">
+										  {post.postTitle}
 										</div>
-									</div>
-								)}
-							</div>
+									  </div>
+									))}
+								</div>
+							  </div>
+							)}
+						  </div>
 						</div>
-					</div>
-				);
+					  </div>
+					);
 
 			case 'Type-Num':
 				return (
