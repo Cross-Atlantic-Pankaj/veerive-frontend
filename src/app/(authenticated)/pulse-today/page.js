@@ -249,6 +249,7 @@ export default function PulseToday() {
         );
 
       case 'Type-Three':
+        
       case 'Type-Four':
         return (
           <div ref={isLastItem ? lastContextCallback : null} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6">
