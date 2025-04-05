@@ -70,7 +70,8 @@ export default function PulseToday() {
           (newContext) => !contexts.some((prevContext) => prevContext.id === newContext.id)
         );
         setContexts((prev) => [...prev, ...newContexts]);
-        setGroupedContexts(groupContexts([...contexts, ...newContexts]));
+        const updatedGrouped = appendNewGroups(groupedContexts, newContexts);
+        setGroupedContexts(updatedGrouped);
       }
       setHasMore(data.hasMore);
       setSidebarMessage(data.messages?.[0] || null);
@@ -137,21 +138,24 @@ export default function PulseToday() {
     const grouped = {
       'Type-One': [],
       'Type-Two': [],
-      'Type-Three': [],
-      'Type-Four': [],
+      'Type-Three-Four': [],
       'Type-Five': [],
       'Type-Num': []
     };
 
     allContexts.forEach(context => {
-      grouped[context.containerType].push(context);
+      if (context.containerType === 'Type-Three' || context.containerType === 'Type-Four') {
+        grouped['Type-Three-Four'].push(context);
+      } else {
+        grouped[context.containerType].push(context);
+      }
     });
 
-    const typeOrder = ['Type-One', 'Type-Two', 'Type-Three', 'Type-Four', 'Type-Five', 'Type-Num'];
+    const typeOrder = ['Type-One', 'Type-Two', 'Type-Three-Four', 'Type-Five', 'Type-Num'];
     const finalGroups = [];
 
     typeOrder.forEach(type => {
-      const maxPerRow = type === 'Type-One' || type === 'Type-Two' ? 3 : type === 'Type-Three' || type === 'Type-Four' ? 2 : 1;
+      const maxPerRow = type === 'Type-One' || type === 'Type-Two' ? 3 : type === 'Type-Three-Four' ? 2 : 1;
       let currentRow = [];
 
       grouped[type].forEach((context, index) => {
@@ -164,6 +168,28 @@ export default function PulseToday() {
     });
 
     return finalGroups;
+  };
+
+  const appendNewGroups = (existingGroups, newContexts) => {
+    const lastGroup = existingGroups[existingGroups.length - 1] || [];
+    const lastType = lastGroup.length > 0 ? lastGroup[0].containerType : null;
+    const maxPerRow = lastType === 'Type-One' || lastType === 'Type-Two' ? 3 : lastType === 'Type-Three' || lastType === 'Type-Four' ? 2 : 1;
+    let remainingGroups = [...existingGroups];
+    let remainingNewContexts = [...newContexts];
+
+    if (lastGroup.length > 0 && remainingNewContexts.length > 0) {
+      const firstNewType = remainingNewContexts[0].containerType;
+      const isLastThreeOrFour = lastType === 'Type-Three' || lastType === 'Type-Four';
+      const isNewThreeOrFour = firstNewType === 'Type-Three' || firstNewType === 'Type-Four';
+      if ((lastType === firstNewType || (isLastThreeOrFour && isNewThreeOrFour)) && lastGroup.length < maxPerRow) {
+        const spaceLeft = maxPerRow - lastGroup.length;
+        const toMerge = remainingNewContexts.splice(0, spaceLeft);
+        remainingGroups[remainingGroups.length - 1] = [...lastGroup, ...toMerge];
+      }
+    }
+
+    const newGroups = groupContexts(remainingNewContexts);
+    return [...remainingGroups, ...newGroups];
   };
 
   const renderContextBox = (context, isLastItem) => {
@@ -179,7 +205,7 @@ export default function PulseToday() {
             className="bg-white rounded-lg overflow-hidden col-span-1"
           >
             {context.bannerImage ? (
-              <img src={context.bannerImage} alt="banner" className="w-full h-[120px] sm:h-[140px] md:h-[160px] object-cover" />
+              <img src={context.bannerImage} alt="banner" className="w-full h-[120px] sm:h[140px] md:h-[160px] object-cover" />
             ) : (
               <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                 1000 × 630
@@ -223,64 +249,26 @@ export default function PulseToday() {
         );
 
       case 'Type-Three':
-        return (
-          <div ref={isLastItem ? lastContextCallback : null} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <div className="flex-1">
-                <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">{context.contextTitle}</h2>
-                <div className="mb-4">
-                  {summaryPoints.length > 0 ? (
-                    summaryPoints.map((point, i) => (
-                      <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
-                    ))
-                  ) : (
-                    <div className="text-gray-400 text-xs sm:text-sm italic">Summary will be available soon</div>
-                  )}
-                </div>
-              </div>
-              <div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+0.75rem)]">
-                {context.posts?.map((post, i) => (
-                  <div key={i} className="border-t border-gray-100 pt-0.5 mt-0.5">
-                    <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-
       case 'Type-Four':
         return (
           <div ref={isLastItem ? lastContextCallback : null} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6">
             <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">{context.contextTitle}</h2>
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-              <div className="flex-1">
-                <div className="mb-4">
-                  {summaryPoints.length > 0 ? (
-                    summaryPoints.map((point, i) => (
-                      <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
-                    ))
-                  ) : (
-                    <div className="text-gray-400 text-xs sm:text-sm italic">Summary coming soon...</div>
-                  )}
+            <div className="mb-4">
+              {summaryPoints.length > 0 ? (
+                summaryPoints.map((point, i) => (
+                  <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
+                ))
+              ) : (
+                <div className="text-gray-400 text-xs sm:text-sm italic">Summary will be available soon</div>
+              )}
+            </div>
+            <div>
+              {context.posts?.map((post, i) => (
+                <div key={i} className="border-t border-gray-100 pt-0.5 mt-0.5">
+                  <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
                 </div>
-                <div>
-                  {context.posts?.slice(0, Math.ceil(context.posts.length / 2)).map((post, i) => (
-                    <div key={i} className="border-t border-gray-100 pt-1 mt-1">
-                      <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+1.5rem+0.75rem)]">
-                {context.posts?.slice(Math.ceil(context.posts.length / 2)).map((post, i) => (
-                  <div key={i} className="border-t border-gray-100 pt-1 mt-1">
-                    <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
-                  </div>
-                ))}
-              </div>
+              ))}
             </div>
           </div>
         );
@@ -401,6 +389,9 @@ export default function PulseToday() {
                   <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent" />
                 )}
               </div>
+            )}
+            {!hasMore && contexts.length > 0 && (
+              <div className="text-center py-6 text-gray-500">No more items to load</div>
             )}
           </div>
 
