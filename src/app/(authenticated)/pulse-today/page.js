@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 
 export default function PulseToday() {
 	const [contexts, setContexts] = useState([]);
@@ -42,14 +41,21 @@ export default function PulseToday() {
 				body: JSON.stringify({ page: pageNum }),
 			});
 			const data = await res.json();
+			console.log('Fetched Contexts:', data.contexts);
+
 			setExpertPosts(data.expertPosts);
 
 			if (pageNum === 1) {
 				setContexts(data.contexts);
 			} else {
-				setContexts((prev) => [...prev, ...data.contexts]);
+				setContexts((prev) => {
+					const newContexts = data.contexts.filter(
+						(newContext) =>
+							!prev.some((prevContext) => prevContext.id === newContext.id)
+					);
+					return [...prev, ...newContexts];
+				});
 			}
-			setExpertPosts(data.expertPosts);
 			setHasMore(data.hasMore);
 			setSidebarMessage(data.messages?.[0] || null);
 			setTrendingThemes(data.trendingThemes || []);
@@ -112,7 +118,8 @@ export default function PulseToday() {
 				currentGroup = [];
 				if (
 					i + 1 < contexts.length &&
-					['Type-Three', 'Type-Four'].includes(contexts[i + 1].containerType)
+					['Type-Three', 'Type-Four'].includes(contexts[i + 1].containerType) &&
+					contexts[i + 1].id !== context.id
 				) {
 					grouped.push([context, contexts[i + 1]]);
 					i++;
@@ -473,7 +480,8 @@ export default function PulseToday() {
 										const isLastItem =
 											isLastGroup && index === group.length - 1;
 										return (
-											<div key={index}>
+											<div key={context.id}>
+												{' '}
 												{renderContextBox(context, isLastItem)}
 											</div>
 										);

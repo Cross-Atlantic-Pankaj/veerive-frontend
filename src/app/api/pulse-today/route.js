@@ -56,7 +56,15 @@ export async function POST(request) {
 
     const totalCount = await Context.countDocuments();
 
-    const processedContexts = contextsResult.map((context) => {
+    const seenIds = new Set();
+    const uniqueContexts = contextsResult.filter((context) => {
+      const idString = context._id.toString();
+      if (seenIds.has(idString)) return false;
+      seenIds.add(idString);
+      return true;
+    });
+
+    const processedContexts = uniqueContexts.map((context) => {
       const uniquePosts = [];
       const seenPostIds = new Set();
       context.posts.forEach((p) => {
@@ -71,6 +79,7 @@ export async function POST(request) {
       });
 
       return {
+        id: context._id,
         containerType: context.containerType,
         contextTitle: context.contextTitle,
         sectors: context.sectors.map((s) => s.sectorName),
