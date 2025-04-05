@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export default function PulseToday() {
   const [contexts, setContexts] = useState([]);
-  const [groupedContexts, setGroupedContexts] = useState([]);
+  const [groupedContexts, setGroupedContexts] = useState([]); // Store grouped data
   const [sidebarMessage, setSidebarMessage] = useState(null);
   const [trendingThemes, setTrendingThemes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -138,7 +138,7 @@ export default function PulseToday() {
     const grouped = {
       'Type-One': [],
       'Type-Two': [],
-      'Type-Three-Four': [],
+      'Type-Three-Four': [], // Combined array for Type-Three and Type-Four
       'Type-Five': [],
       'Type-Num': []
     };
@@ -177,6 +177,7 @@ export default function PulseToday() {
     let remainingGroups = [...existingGroups];
     let remainingNewContexts = [...newContexts];
 
+    // Merge into last row if same type and space available
     if (lastGroup.length > 0 && remainingNewContexts.length > 0) {
       const firstNewType = remainingNewContexts[0].containerType;
       const isLastThreeOrFour = lastType === 'Type-Three' || lastType === 'Type-Four';
@@ -188,6 +189,7 @@ export default function PulseToday() {
       }
     }
 
+    // Group remaining new contexts
     const newGroups = groupContexts(remainingNewContexts);
     return [...remainingGroups, ...newGroups];
   };
@@ -249,27 +251,64 @@ export default function PulseToday() {
         );
 
       case 'Type-Three':
-        
+        return (
+          <div ref={isLastItem ? lastContextCallback : null} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1">
+                <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">{context.contextTitle}</h2>
+                <div className="mb-4">
+                  {summaryPoints.length > 0 ? (
+                    summaryPoints.map((point, i) => (
+                      <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 text-xs sm:text-sm italic">Summary will be available soon</div>
+                  )}
+                </div>
+              </div>
+              <div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+0.75rem)]">
+                {context.posts?.map((post, i) => (
+                  <div key={i} className="border-t border-gray-100 pt-0.5 mt-0.5">
+                    <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
       case 'Type-Four':
         return (
           <div ref={isLastItem ? lastContextCallback : null} className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6">
             <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-2">{sectorsLabel}</div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 leading-tight">{context.contextTitle}</h2>
-            <div className="mb-4">
-              {summaryPoints.length > 0 ? (
-                summaryPoints.map((point, i) => (
-                  <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
-                ))
-              ) : (
-                <div className="text-gray-400 text-xs sm:text-sm italic">Summary will be available soon</div>
-              )}
-            </div>
-            <div>
-              {context.posts?.map((post, i) => (
-                <div key={i} className="border-t border-gray-100 pt-0.5 mt-0.5">
-                  <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1">
+                <div className="mb-4">
+                  {summaryPoints.length > 0 ? (
+                    summaryPoints.map((point, i) => (
+                      <div key={i} className="mb-2 text-gray-600 text-xs sm:text-sm">{point}</div>
+                    ))
+                  ) : (
+                    <div className="text-gray-400 text-xs sm:text-sm italic">Summary coming soon...</div>
+                  )}
                 </div>
-              ))}
+                <div>
+                  {context.posts?.slice(0, Math.ceil(context.posts.length / 2)).map((post, i) => (
+                    <div key={i} className="border-t border-gray-100 pt-1 mt-1">
+                      <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="w-full sm:w-1/3 pt-0 sm:pt-[calc(1rem+1.5rem+0.75rem)]">
+                {context.posts?.slice(Math.ceil(context.posts.length / 2)).map((post, i) => (
+                  <div key={i} className="border-t border-gray-100 pt-1 mt-1">
+                    <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">{post.postTitle}</div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -391,9 +430,6 @@ export default function PulseToday() {
                 )}
               </div>
             )}
-            {!hasMore && contexts.length > 0 && (
-              <div className="text-center py-6 text-gray-500">No more items to load</div>
-            )}
           </div>
 
           {(sidebarMessage || trendingThemes.length > 0 || expertPosts.length > 0) && (
@@ -438,6 +474,9 @@ export default function PulseToday() {
                 <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md">
                   <div className="flex justify-between items-center mb-4">
                     <h2 className="font-semibold text-base sm:text-lg text-gray-900">Trending Expert Opinion</h2>
+                    <Link href="/expert-opinions" className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline">
+                      VIEW ALL →
+                    </Link>
                   </div>
                   <div className="space-y-4">
                     {expertPosts.map((post, index) => (
