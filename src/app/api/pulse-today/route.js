@@ -88,6 +88,7 @@ export async function POST(request) {
         summary: context.summary,
         dataForTypeNum: context.dataForTypeNum,
         posts: uniquePosts,
+        displayOrder: context.displayOrder,
       };
     });
 
