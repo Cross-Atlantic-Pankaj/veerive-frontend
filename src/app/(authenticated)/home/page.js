@@ -68,15 +68,6 @@ export default function HomePage() {
     );
   }
 
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    });
-  };
-
   return (
     <Suspense fallback={<div>Loading...</div>}>
     <div className="w-full">

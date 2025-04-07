@@ -5,410 +5,431 @@ import Link from 'next/link';
 import { TypeOne, TypeTwo, TypeThree, TypeFour, TypeFive, TypeNum } from './_components';
 
 export default function PulseToday() {
-	const [contexts, setContexts] = useState([]);
-	const [displayItems, setDisplayItems] = useState([]);
-	const [sidebarMessage, setSidebarMessage] = useState(null);
-	const [trendingThemes, setTrendingThemes] = useState([]);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(null);
-	const [page, setPage] = useState(1);
-	const [hasMore, setHasMore] = useState(true);
-	const [expertPosts, setExpertPosts] = useState([]);
-	const mainContentRef = useRef(null);
-	const containerRef = useRef(null);
-	const loaderRef = useRef(null);
-	const observerRef = useRef();
+  const [contexts, setContexts] = useState([]);
+  const [displayItems, setDisplayItems] = useState([]);
+  const [sidebarMessage, setSidebarMessage] = useState(null);
+  const [trendingThemes, setTrendingThemes] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [expertPosts, setExpertPosts] = useState([]);
+  const mainContentRef = useRef(null);
+  const containerRef = useRef(null);
+  const loaderRef = useRef(null);
+  const observerRef = useRef();
 
-	const lastContextCallback = useCallback(
-		(node) => {
-			if (loading || !hasMore) return;
-			if (observerRef.current) observerRef.current.disconnect();
+  const lastContextCallback = useCallback(
+    (node) => {
+      if (loading || !hasMore) return;
+      if (observerRef.current) observerRef.current.disconnect();
 
-			observerRef.current = new IntersectionObserver(
-				(entries) => {
-					if (entries[0].isIntersecting && !loading) {
-						console.log('Observer Triggered for Page:', page + 1);
-						setPage((prev) => prev + 1);
-					}
-				},
-				{ threshold: 0.1 }
-			);
+      observerRef.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && !loading) {
+            console.log('Observer Triggered for Page:', page + 1);
+            setPage((prev) => prev + 1);
+          }
+        },
+        { threshold: 0.1 }
+      );
 
-			if (node) observerRef.current.observe(node);
-		},
-		[loading, hasMore, page]
-	);
+      if (node) observerRef.current.observe(node);
+    },
+    [loading, hasMore, page]
+  );
 
-	const fetchData = async (pageNum) => {
-		try {
-			setLoading(true);
-			const res = await fetch('/api/pulse-today', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ page: pageNum }),
-			});
-			const data = await res.json();
-			console.log('Raw API Response:', data);
-			console.log('Fetched Contexts:', data.contexts);
+  const fetchData = async (pageNum) => {
+    try {
+      setLoading(true);
+      const res = await fetch('/api/pulse-today', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ page: pageNum }),
+      });
+      const data = await res.json();
+      console.log('Raw API Response:', data);
+      console.log('Fetched Contexts:', data.contexts);
 
-			setExpertPosts(data.expertPosts);
+      setExpertPosts(data.expertPosts);
 
-			const newContexts = data.contexts.filter(
-				(newContext) => !contexts.some((prev) => prev.id === newContext.id)
-			);
+      const newContexts = data.contexts.filter(
+        (newContext) => !contexts.some((prev) => prev.id === newContext.id)
+      );
 
-			if (pageNum === 1) {
-				setContexts(data.contexts);
-				setDisplayItems(processInitialContexts(data.contexts));
-			} else {
-				setContexts((prev) => {
-					const updatedContexts = [...prev, ...newContexts];
-					console.log('Updated Contexts:', updatedContexts);
-					return updatedContexts;
-				});
-				setDisplayItems((prevDisplayItems) => {
-					const newDisplayItems = processNewContexts(
-						newContexts,
-						prevDisplayItems
-					);
-					const updatedDisplayItems = [...prevDisplayItems, ...newDisplayItems];
-					console.log('Updated Display Items:', updatedDisplayItems);
-					return updatedDisplayItems;
-				});
-			}
-			setHasMore(data.hasMore);
-			setSidebarMessage(data.messages?.[0] || null);
-			setTrendingThemes(data.trendingThemes || []);
-		} catch (err) {
-			setError(err.message);
-		} finally {
-			setLoading(false);
-		}
-	};
+      if (pageNum === 1) {
+        setContexts(data.contexts);
+        setDisplayItems(processInitialContexts(data.contexts));
+      } else {
+        setContexts((prev) => {
+          const updatedContexts = [...prev, ...newContexts];
+          console.log('Updated Contexts:', updatedContexts);
+          return updatedContexts;
+        });
+        setDisplayItems((prevDisplayItems) => {
+          const newDisplayItems = processNewContexts(
+            newContexts,
+            prevDisplayItems
+          ).sort((a, b) => {
+            const aOrder = a.type === 'group' ? a.displayOrder : a.item.displayOrder || 0;
+            const bOrder = b.type === 'group' ? b.displayOrder : b.item.displayOrder || 0;
+            return bOrder - aOrder;
+          });
+          const updatedDisplayItems = [...prevDisplayItems, ...newDisplayItems];
+          console.log('Updated Display Items:', updatedDisplayItems);
+          return updatedDisplayItems;
+        });
+      }
+      setHasMore(data.hasMore);
+      setSidebarMessage(data.messages?.[0] || null);
+      setTrendingThemes(data.trendingThemes || []);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	useEffect(() => {
-		fetchData(page);
-	}, [page]);
+  useEffect(() => {
+    fetchData(page);
+  }, [page]);
 
-	const formatSummary = (summary) => {
-		if (!summary) return ['Summary will be available soon'];
-		const cleaned = summary
-			.replace(/<[^>]*>/g, '')
-			.replace(/ /g, ' ')
-			.replace(/&/g, '&')
-			.trim();
-		const points = cleaned.split('•').filter((s) => s.trim().length > 0);
-		const MAX_SUMMARY_CHARS = 50;
+  const formatSummary = (summary) => {
+    if (!summary) return ['Summary will be available soon'];
+    const cleaned = summary
+      .replace(/<[^>]*>/g, '')
+      .replace(/ /g, ' ')
+      .replace(/&/g, '&')
+      .trim();
+    const points = cleaned.split('•').filter((s) => s.trim().length > 0);
+    const MAX_SUMMARY_CHARS = 50;
 
-		if (points.length > 0) {
-			if (points.length <= 2) {
-				const formattedPoints = points.map((point) => `• ${point.trim()}`);
-				const joinedSummary = formattedPoints.join(' ');
-				return joinedSummary.length > MAX_SUMMARY_CHARS
-					? [`${joinedSummary.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
-					: formattedPoints;
-			}
-			const groupedPoints = [];
-			const groupSize = Math.ceil(points.length / 2);
-			for (let i = 0; i < points.length; i += groupSize) {
-				const group = points
-					.slice(i, i + groupSize)
-					.map((p) => p.trim())
-					.join(' ');
-				groupedPoints.push(`• ${group}`);
-			}
-			return groupedPoints.slice(0, 1);
-		}
-		return cleaned.length > MAX_SUMMARY_CHARS
-			? [`${cleaned.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
-			: [cleaned];
-	};
+    if (points.length > 0) {
+      if (points.length <= 2) {
+        const formattedPoints = points.map((point) => `• ${point.trim()}`);
+        const joinedSummary = formattedPoints.join(' ');
+        return joinedSummary.length > MAX_SUMMARY_CHARS
+          ? [`${joinedSummary.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
+          : formattedPoints;
+      }
+      const groupedPoints = [];
+      const groupSize = Math.ceil(points.length / 2);
+      for (let i = 0; i < points.length; i += groupSize) {
+        const group = points
+          .slice(i, i + groupSize)
+          .map((p) => p.trim())
+          .join(' ');
+        groupedPoints.push(`• ${group}`);
+      }
+      return groupedPoints.slice(0, 1);
+    }
+    return cleaned.length > MAX_SUMMARY_CHARS
+      ? [`${cleaned.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
+      : [cleaned];
+  };
 
-	const processInitialContexts = (allContexts) => {
-		const uniqueContexts = Array.from(
-			new Map(allContexts.map((c) => [c.id, c])).values()
-		);
-		const allTypeOneContexts = uniqueContexts.filter(
-			(c) => c.containerType === 'Type-One'
-		);
-		const allOtherContexts = uniqueContexts.filter(
-			(c) => c.containerType !== 'Type-One'
-		);
+  const processInitialContexts = (allContexts) => {
+    const uniqueContexts = Array.from(
+      new Map(allContexts.map((c) => [c.id, c])).values()
+    );
+    const allTypeOneContexts = uniqueContexts.filter(
+      (c) => c.containerType === 'Type-One'
+    );
+    const allOtherContexts = uniqueContexts.filter(
+      (c) => c.containerType !== 'Type-One'
+    );
 
-		let currentGroup = [];
-		const typeOneGroups = [];
+    let currentGroup = [];
+    const typeOneGroups = [];
 
-		allTypeOneContexts.forEach((context) => {
-			if (currentGroup.length < 3) {
-				currentGroup.push(context);
-			}
-			if (
-				currentGroup.length === 3 ||
-				allTypeOneContexts.indexOf(context) === allTypeOneContexts.length - 1
-			) {
-				if (currentGroup.length > 0) {
-					const maxDisplayOrder = Math.max(
-						...currentGroup.map((c) => c.displayOrder || 0)
-					);
-					typeOneGroups.push({
-						type: 'group',
-						items: [...currentGroup],
-						displayOrder: maxDisplayOrder,
-					});
-					currentGroup = [];
-				}
-			}
-		});
+    allTypeOneContexts.forEach((context) => {
+      if (currentGroup.length < 3) {
+        currentGroup.push(context);
+      }
+      if (
+        currentGroup.length === 3 ||
+        allTypeOneContexts.indexOf(context) === allTypeOneContexts.length - 1
+      ) {
+        if (currentGroup.length > 0) {
+          const maxDisplayOrder = Math.max(
+            ...currentGroup.map((c) => c.displayOrder || 0)
+          );
+          typeOneGroups.push({
+            type: 'group',
+            items: [...currentGroup],
+            displayOrder: maxDisplayOrder,
+          });
+          currentGroup = [];
+        }
+      }
+    });
 
-		const otherItems = allOtherContexts.map((context) => ({
-			type: 'single',
-			item: context,
-			displayOrder: context.displayOrder || 0,
-		}));
+    const otherItems = allOtherContexts.map((context) => ({
+      type: 'single',
+      item: context,
+      displayOrder: context.displayOrder || 0,
+    }));
 
-		return [...typeOneGroups, ...otherItems].sort(
-			(a, b) => b.displayOrder - a.displayOrder
-		);
-	};
+    return [...typeOneGroups, ...otherItems].sort((a, b) => {
+      const aOrder = a.type === 'group' ? a.displayOrder : a.item.displayOrder || 0;
+      const bOrder = b.type === 'group' ? b.displayOrder : b.item.displayOrder || 0;
+      return bOrder - aOrder;
+    });
+  };
 
-	const processNewContexts = (newContexts, prevDisplayItems) => {
-		const uniqueNewContexts = Array.from(
-			new Map(newContexts.map((c) => [c.id, c])).values()
-		);
-		const newTypeOneContexts = uniqueNewContexts.filter(
-			(c) => c.containerType === 'Type-One'
-		);
-		const newOtherContexts = uniqueNewContexts.filter(
-			(c) => c.containerType !== 'Type-One'
-		);
+  const processNewContexts = (newContexts, prevDisplayItems) => {
+    const uniqueNewContexts = Array.from(
+      new Map(newContexts.map((c) => [c.id, c])).values()
+    );
+    const newTypeOneContexts = uniqueNewContexts.filter(
+      (c) => c.containerType === 'Type-One'
+    );
+    const newOtherContexts = uniqueNewContexts.filter(
+      (c) => c.containerType !== 'Type-One'
+    );
 
-		const allExistingTypeOneIds = new Set();
-		prevDisplayItems.forEach((item) => {
-			if (item.type === 'group') {
-				item.items.forEach((context) => allExistingTypeOneIds.add(context.id));
-			}
-		});
+    const allExistingTypeOneIds = new Set();
+    prevDisplayItems.forEach((item) => {
+      if (item.type === 'group') {
+        item.items.forEach((context) => allExistingTypeOneIds.add(context.id));
+      }
+    });
 
-		const filteredNewTypeOneContexts = newTypeOneContexts.filter(
-			(context) => !allExistingTypeOneIds.has(context.id)
-		);
+    const filteredNewTypeOneContexts = newTypeOneContexts.filter(
+      (context) => !allExistingTypeOneIds.has(context.id)
+    );
 
-		let currentGroup = [];
-		const newTypeOneGroups = [];
+    let lastGroupIndex = -1;
+    let lastGroup = null;
+    if (prevDisplayItems.length > 0) {
+      for (let i = prevDisplayItems.length - 1; i >= 0; i--) {
+        if (prevDisplayItems[i].type === 'group' && prevDisplayItems[i].items.length < 3) {
+          lastGroupIndex = i;
+          lastGroup = { ...prevDisplayItems[i] };
+          break;
+        }
+      }
+    }
 
-		filteredNewTypeOneContexts.forEach((context) => {
-			if (currentGroup.length < 3) {
-				currentGroup.push(context);
-			}
-			if (
-				currentGroup.length === 3 ||
-				filteredNewTypeOneContexts.indexOf(context) ===
-					filteredNewTypeOneContexts.length - 1
-			) {
-				if (currentGroup.length > 0) {
-					const maxDisplayOrder = Math.max(
-						...currentGroup.map((c) => c.displayOrder || 0)
-					);
-					newTypeOneGroups.push({
-						type: 'group',
-						items: [...currentGroup],
-						displayOrder: maxDisplayOrder,
-					});
-					currentGroup = [];
-				}
-			}
-		});
+    let currentGroup = lastGroup ? [...lastGroup.items] : [];
+    const newTypeOneGroups = [];
 
-		const newOtherItems = newOtherContexts.map((context) => ({
-			type: 'single',
-			item: context,
-			displayOrder: context.displayOrder || 0,
-		}));
+    filteredNewTypeOneContexts.forEach((context) => {
+      if (currentGroup.length < 3) {
+        currentGroup.push(context);
+      }
+      if (currentGroup.length === 3 || filteredNewTypeOneContexts.indexOf(context) === filteredNewTypeOneContexts.length - 1) {
+        if (currentGroup.length > 0) {
+          const maxDisplayOrder = Math.max(
+            ...currentGroup.map((c) => c.displayOrder || 0)
+          );
+          if (lastGroupIndex !== -1 && currentGroup.length <= 3) {
+            const updatedLastGroup = {
+              type: 'group',
+              items: [...currentGroup],
+              displayOrder: maxDisplayOrder,
+            };
+            prevDisplayItems[lastGroupIndex] = updatedLastGroup;
+          } else {
+            newTypeOneGroups.push({
+              type: 'group',
+              items: [...currentGroup],
+              displayOrder: maxDisplayOrder,
+            });
+          }
+          currentGroup = [];
+        }
+      }
+    });
 
-		return [...newTypeOneGroups, ...newOtherItems].sort(
-			(a, b) => b.displayOrder - a.displayOrder
-		);
-	};
+    const newOtherItems = newOtherContexts.map((context) => ({
+      type: 'single',
+      item: context,
+      displayOrder: context.displayOrder || 0,
+    }));
 
-	const renderContextBox = (context, isLastItem) => {
-		const props = {
-			context,
-			isLastItem,
-			lastContextCallback,
-			formatSummary,
-		};
+    return [...newTypeOneGroups, ...newOtherItems];
+  };
 
-		switch (context.containerType) {
-			case 'Type-One':
-				return <TypeOne {...props} />;
-			case 'Type-Two':
-				return <TypeTwo {...props} />;
-			case 'Type-Three':
-				return <TypeThree {...props} />;
-			case 'Type-Four':
-				return <TypeFour {...props} />;
-			case 'Type-Five':
-				return <TypeFive {...props} />;
-			case 'Type-Num':
-				return <TypeNum {...props} />;
-			default:
-				return null;
-		}
-	};
+  const renderContextBox = (context, isLastItem, key) => {
+    const props = {
+      context,
+      isLastItem,
+      lastContextCallback,
+      formatSummary,
+    };
 
-	if (error) {
-		return <div className="text-center text-red-500 py-10">Error: {error}</div>;
-	}
+    switch (context.containerType) {
+      case 'Type-One':
+        return <TypeOne key={key} {...props} />;
+      case 'Type-Two':
+        return <TypeTwo key={key} {...props} />;
+      case 'Type-Three':
+        return <TypeThree key={key} {...props} />;
+      case 'Type-Four':
+        return <TypeFour key={key} {...props} />;
+      case 'Type-Five':
+        return <TypeFive key={key} {...props} />;
+      case 'Type-Num':
+        return <TypeNum key={key} {...props} />;
+      default:
+        return null;
+    }
+  };
 
-	return (
-		<Suspense
-			fallback={
-				<div className="w-full py-8">
-					<div className="flex justify-center">
-						<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-					</div>
-				</div>
-			}
-		>
-			<main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-				<div
-					ref={containerRef}
-					className="flex flex-col lg:flex-row gap-6 lg:gap-8 relative"
-				>
-					<div
-						ref={mainContentRef}
-						className="w-full transition-all duration-300 ease-in-out lg:w-[72%]"
-					>
-						{displayItems.map((displayItem, index) => {
-							const isLastItem = index === displayItems.length - 1 && hasMore;
-							if (displayItem.type === 'group') {
-								return (
-									<div
-										key={`group-${index}`}
-										className={`grid grid-cols-${Math.min(
-											displayItem.items.length,
-											3
-										)} sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 sm:mb-8`}
-									>
-										{displayItem.items.map((context) =>
-											renderContextBox(
-												context,
-												isLastItem &&
-													displayItem.items.indexOf(context) ===
-														displayItem.items.length - 1
-											)
-										)}
-									</div>
-								);
-							} else {
-								return (
-									<div
-										key={displayItem.item.id}
-										className="mb-6 sm:mb-8"
-									>
-										{renderContextBox(displayItem.item, isLastItem)}
-									</div>
-								);
-							}
-						})}
+  if (error) {
+    return <div className="text-center text-red-500 py-10">Error: {error}</div>;
+  }
 
-						{hasMore && (
-							<div
-								ref={loaderRef}
-								className="text-center py-6"
-							>
-								{loading && (
-									<div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent" />
-								)}
-							</div>
-						)}
-					</div>
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full py-8">
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+          </div>
+        </div>
+      }
+    >
+      <main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
+        <div
+          ref={containerRef}
+          className="flex flex-col lg:flex-row gap-6 lg:gap-8 relative"
+        >
+          <div
+            ref={mainContentRef}
+            className="w-full transition-all duration-300 ease-in-out lg:w-[72%]"
+          >
+            {displayItems.map((displayItem, index) => {
+              const isLastItem = index === displayItems.length - 1 && hasMore;
+              if (displayItem.type === 'group') {
+                const groupKey = `group-${displayItem.items.map(item => item.id).join('-')}-${index}`;
+                return (
+                  <div
+                    key={groupKey}
+                    className={`grid grid-cols-${Math.min(
+                      displayItem.items.length,
+                      3
+                    )} sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 sm:mb-8`}
+                  >
+                    {displayItem.items.map((context, itemIndex) =>
+                      renderContextBox(
+                        context,
+                        isLastItem && itemIndex === displayItem.items.length - 1,
+                        `${groupKey}-item-${context.id}-${itemIndex}`
+                      )
+                    )}
+                  </div>
+                );
+              } else {
+                return (
+                  <div
+                    key={displayItem.item.id}
+                    className="mb-6 sm:mb-8"
+                  >
+                    {renderContextBox(displayItem.item, isLastItem, displayItem.item.id)}
+                  </div>
+                );
+              }
+            })}
 
-					<div className="w-full lg:w-[28%]">
-						{sidebarMessage && (
-							<div className="bg-white p-4 sm:p-5 rounded-xl shadow-md mb-6">
-								<div className="flex items-center gap-2 mb-3">
-									<span className="text-teal-500 text-base sm:text-lg">✦</span>
-									<span className="font-semibold text-gray-900 text-base sm:text-lg">
-										{sidebarMessage.title}
-									</span>
-								</div>
-								<p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
-									{sidebarMessage.content}
-								</p>
-							</div>
-						)}
+            {hasMore && (
+              <div
+                ref={loaderRef}
+                className="text-center py-6"
+              >
+                {loading && (
+                  <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent" />
+                )}
+              </div>
+            )}
+          </div>
 
-						<div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
-							<div className="flex justify-between items-center mb-4">
-								<h2 className="font-semibold text-lg text-gray-800">
-									Trending Themes
-								</h2>
-								<Link
-									href="/trend-analyzer"
-									className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
-								>
-									VIEW More →
-								</Link>
-							</div>
+          <div className="w-full lg:w-[28%]">
+            {sidebarMessage && (
+              <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md mb-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-teal-500 text-base sm:text-lg">✦</span>
+                  <span className="font-semibold text-gray-900 text-base sm:text-lg">
+                    {sidebarMessage.title}
+                  </span>
+                </div>
+                <p className="text-gray-600 text-xs sm:text-sm leading-relaxed">
+                  {sidebarMessage.content}
+                </p>
+              </div>
+            )}
 
-							<div className="space-y-3">
-								{trendingThemes.map((theme) => (
-									<div
-										key={theme.id}
-										className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
-									>
-										<div className="flex items-start gap-3">
-											<div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
-												{theme.score.toFixed(1)}
-											</div>
+            <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-semibold text-lg text-gray-800">
+                  Trending Themes
+                </h2>
+                <Link
+                  href="/trend-analyzer"
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                >
+                  VIEW More →
+                </Link>
+              </div>
 
-											<div className="break-words">
-												<h3 className="font-medium text-gray-800 text-sm">
-													{theme.title}
-												</h3>
-												<div className="mt-1 text-xs text-gray-500">
-													{theme.sectors.length > 0 && theme.sectors[0]}
-												</div>
-											</div>
-										</div>
-									</div>
-								))}
-							</div>
-						</div>
+              <div className="space-y-3">
+                {trendingThemes.map((theme) => (
+                  <div
+                    key={theme.id}
+                    className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
+                        {theme.score.toFixed(1)}
+                      </div>
 
-						<div className="bg-white mt-6 p-4 sm:p-5 rounded-xl shadow-md">
-							<div className="flex justify-between items-center mb-4">
-								<h2 className="font-semibold text-base sm:text-lg text-gray-900">
-									Trending Expert Opinion
-								</h2>
-							</div>
-							<div className="space-y-4">
-								{expertPosts.map((post, index) => (
-									<div
-										key={index}
-										className="border-b border-dashed border-gray-200 pb-3 last:border-none"
-									>
-										<h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors">
-											{post.postTitle}
-										</h3>
-									</div>
-								))}
-							</div>
-							{hasMore && (
-								<div className="mt-4 text-right">
-									<Link
-										href="/trend-analyzer"
-										className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
-									>
-										VIEW More →
-									</Link>
-								</div>
-							)}
-						</div>
-					</div>
-				</div>
-			</main>
-		</Suspense>
-	);
+                      <div className="break-words">
+                        <h3 className="font-medium text-gray-800 text-sm">
+                          {theme.title}
+                        </h3>
+                        <div className="mt-1 text-xs text-gray-500">
+                          {theme.sectors.length > 0 && theme.sectors[0]}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="bg-white mt-6 p-4 sm:p-5 rounded-xl shadow-md">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-semibold text-base sm:text-lg text-gray-900">
+                  Trending Expert Opinion
+                </h2>
+              </div>
+              <div className="space-y-4">
+                {expertPosts.map((post, index) => (
+                  <div
+                    key={index}
+                    className="border-b border-dashed border-gray-200 pb-3 last:border-none"
+                  >
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors">
+                      {post.postTitle}
+                    </h3>
+                  </div>
+                ))}
+              </div>
+              {hasMore && (
+                <div className="mt-4 text-right">
+                  <Link
+                    href="/trend-analyzer"
+                    className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
+                  >
+                    VIEW More →
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
+    </Suspense>
+  );
 }

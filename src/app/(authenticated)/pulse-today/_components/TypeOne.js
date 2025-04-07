@@ -1,9 +1,8 @@
 import React from 'react';
 
-const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
+const TypeOne = ({ context, isLastItem, lastContextCallback}) => {
   return (
     <div
-      key={context.id}
       ref={isLastItem ? lastContextCallback : null}
       className="bg-white rounded-lg overflow-hidden w-full"
     >
@@ -37,4 +36,4 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
   );
 };
 
-export default TypeOne; 
+export default TypeOne;
