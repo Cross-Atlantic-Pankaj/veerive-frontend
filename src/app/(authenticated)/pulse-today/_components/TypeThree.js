@@ -58,7 +58,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
               key={i}
               className="border-t border-gray-100 pt-0.5 mt-0.5 first:border-t-0 first:mt-0"
             >
-              <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors line-clamp-2">
+              <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-2">
                 {post.postTitle}
               </div>
             </div>

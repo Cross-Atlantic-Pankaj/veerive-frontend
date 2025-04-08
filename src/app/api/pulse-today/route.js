@@ -6,6 +6,7 @@ import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
 import SidebarMessage from '@/models/SidebarMessage';
 import Theme from '@/models/Theme';
+import Source from '@/models/Source';
 import connectDB from '@/lib/db';
 
 export async function POST(request) {
@@ -16,6 +17,7 @@ export async function POST(request) {
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
     if (!mongoose.models.SidebarMessage) mongoose.model('SidebarMessage', SidebarMessage.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
+    if (!mongoose.models.Source) mongoose.model('Source', Source.schema);
 
     const body = await request.json();
     const page = body.page || 1;
@@ -50,7 +52,8 @@ export async function POST(request) {
       Post.find({ postType: 'Expert Opinion' })
         .sort({ date: -1 })
         .limit(7)
-        .select('postTitle date')
+        .populate('source', 'sourceName')
+        .select('postTitle date sourceUrl sourceUrls _id')
         .exec(),
     ]);
 
@@ -101,16 +104,19 @@ export async function POST(request) {
       subSectors: theme.subSectors.map((s) => s.subSectorName),
     }));
 
-    const expertPosts = [];
-    const seenTitles = new Set();
-    expertPostsResult.forEach((post) => {
-      if (!seenTitles.has(post.postTitle)) {
-        seenTitles.add(post.postTitle);
-        expertPosts.push({
-          postTitle: post.postTitle,
-          date: post.date,
-        });
+    const expertPosts = expertPostsResult.map((post) => {
+      let effectiveSourceUrl = post.sourceUrl;
+      if (!effectiveSourceUrl && post.sourceUrls) {
+        effectiveSourceUrl = Array.isArray(post.sourceUrls)
+          ? post.sourceUrls[0]
+          : post.sourceUrls;  
       }
+      return {
+        _id: post._id,
+        postTitle: post.postTitle,
+        date: post.date,
+        SourceUrl: effectiveSourceUrl || '',
+      };
     });
 
     return NextResponse.json({

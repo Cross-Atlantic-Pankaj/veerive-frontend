@@ -56,7 +56,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
             key={i}
             className="flex-1 border-t border-gray-100 pt-1"
           >
-            <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors line-clamp-2">
+            <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-2">
               {post.postTitle}
             </div>
           </div>

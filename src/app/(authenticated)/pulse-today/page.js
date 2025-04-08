@@ -82,7 +82,7 @@ export default function PulseToday() {
 							a.type === 'group' ? a.displayOrder : a.item.displayOrder || 0;
 						const bOrder =
 							b.type === 'group' ? b.displayOrder : b.item.displayOrder || 0;
-						return bOrder - aOrder;
+						return aOrder - bOrder;
 					});
 					const updatedDisplayItems = [...prevDisplayItems, ...newDisplayItems];
 					console.log('Updated Display Items:', updatedDisplayItems);
@@ -184,7 +184,7 @@ export default function PulseToday() {
 				a.type === 'group' ? a.displayOrder : a.item.displayOrder || 0;
 			const bOrder =
 				b.type === 'group' ? b.displayOrder : b.item.displayOrder || 0;
-			return bOrder - aOrder;
+			return aOrder - bOrder;
 		});
 	};
 
@@ -461,16 +461,20 @@ export default function PulseToday() {
 							</div>
 							<div className="space-y-4">
 								{expertPosts.map((post, index) => (
-									<div
-										key={index}
-										className="border-b border-dashed border-gray-200 pb-3 last:border-none"
+									<a
+										key={post._id}
+										href={post.SourceUrl}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="block border-b border-dashed border-gray-300 pb-3 last:border-none hover:text-indigo-600 transition-colors"
 									>
 										<h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors">
 											{post.postTitle}
 										</h3>
-									</div>
+									</a>
 								))}
 							</div>
+
 							{hasMore && (
 								<div className="mt-4 text-right">
 									<Link

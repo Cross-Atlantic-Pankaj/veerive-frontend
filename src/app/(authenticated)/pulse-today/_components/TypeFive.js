@@ -31,21 +31,21 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1">
               {context.posts?.[0] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
+                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
                   {context.posts[0].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[1] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
+                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
                   {context.posts[1].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[2] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors border border-black p-1 rounded">
+                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs border border-black p-1 rounded">
                   {context.posts[2].postTitle}
                 </div>
               )}
@@ -71,14 +71,14 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
             </div>
             <div className="flex-1">
               {context.posts?.[3] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors">
+                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
                   {context.posts[3].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[4] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors border border-black p-1 rounded">
+                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs border border-black p-1 rounded">
                   kia {context.posts[4].postTitle}
                 </div>
               )}

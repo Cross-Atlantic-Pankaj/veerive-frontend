@@ -55,7 +55,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
         <div className="w-full sm:w-1/3">
           {context.posts?.[0] && (
             <div className="border-t border-gray-100 pt-0.5">
-              <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors line-clamp-2">
+              <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-2">
                 {context.posts[0].postTitle}
               </div>
             </div>
@@ -69,7 +69,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
             key={i}
             className="flex-1 border-t border-gray-100 pt-0.5"
           >
-            <div className="font-semibold text-gray-800 text-[10px] sm:text-xs hover:text-indigo-600 transition-colors line-clamp-2">
+            <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-2">
               {post.postTitle}
             </div>
           </div>
