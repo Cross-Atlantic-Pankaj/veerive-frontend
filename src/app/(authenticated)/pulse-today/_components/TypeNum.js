@@ -1,6 +1,7 @@
 import React from 'react';
 
-const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
+const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary  }) => {
+  const summaryPoints = formatSummary(context.summary);
   return (
     <div
       ref={isLastItem ? lastContextCallback : null}
@@ -13,19 +14,20 @@ const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
           </div>
         </div>
         <div className="flex-1">
-          {context.summary ? (
-            <div className="text-gray-600 text-xs sm:text-sm">
-              {context.summary
-                .replace(/<[^>]*>/g, '')
-                .replace(/ /g, ' ')
-                .replace(/&/g, '&')
-                .trim()}
-            </div>
-          ) : (
-            <p className="text-gray-400 text-xs sm:text-sm italic">
-              Summary will be available soon
-            </p>
-          )}
+        {summaryPoints.length > 0 ? (
+              summaryPoints.map((point, i) => (
+                <div
+                  key={i}
+                  className="text-gray-800 font-semibold text-xs sm:text-sm mb-1"
+                >
+                  {point}
+                </div>
+              ))
+            ) : (
+              <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
+                Summary will be available soon
+              </div>
+            )}
         </div>
       </div>
     </div>

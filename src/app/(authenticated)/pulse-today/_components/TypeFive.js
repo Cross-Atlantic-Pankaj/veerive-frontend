@@ -1,14 +1,16 @@
 import React from 'react';
 
 const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+  console.log('TypeFive Summary:', context.summary);
   const summaryPoints = formatSummary(context.summary);
+  const SummayPoint = summaryPoints.slice(0, 1); 
 
   return (
     <div
       ref={isLastItem ? lastContextCallback : null}
       className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full"
     >
-      <div className="text-black-600 text-[10px] sm:text-xs font-semibold mb-2">
+      <div className="text-black-600 text-lg font-semibold mb-2">
         {context.contextTitle}
       </div>
 
@@ -31,21 +33,21 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1">
               {context.posts?.[0] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
+                <div className="font-semibold text-gray-800 text-[13px]">
                   {context.posts[0].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[1] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
+                <div className="font-semibold text-gray-800 text-[13px]">
                   {context.posts[1].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[2] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs border border-black p-1 rounded">
+                <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
                   {context.posts[2].postTitle}
                 </div>
               )}
@@ -54,11 +56,11 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="flex-1">
-              {summaryPoints.length > 0 ? (
-                summaryPoints.map((point, i) => (
+              {SummayPoint.length > 0 ? (
+                SummayPoint.map((point, i) => (
                   <div
                     key={i}
-                    className="text-gray-600 text-xs sm:text-sm mb-1"
+                    className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
                   >
                     {point}
                   </div>
@@ -71,15 +73,15 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
             </div>
             <div className="flex-1">
               {context.posts?.[3] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs">
+                <div className="font-semibold text-gray-800 text-[13px] ">
                   {context.posts[3].postTitle}
                 </div>
               )}
             </div>
             <div className="flex-1">
               {context.posts?.[4] && (
-                <div className="font-semibold text-gray-800 text-[10px] sm:text-xs border border-black p-1 rounded">
-                  kia {context.posts[4].postTitle}
+                <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
+                  {context.posts[4].postTitle}
                 </div>
               )}
             </div>

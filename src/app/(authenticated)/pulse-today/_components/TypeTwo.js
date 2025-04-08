@@ -2,7 +2,8 @@ import React from 'react';
 
 const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
-  const summaryPoints = formatSummary(context.summary);
+  const formatedsummaryPoints = formatSummary(context.summary);
+  const summaryPoints = formatedsummaryPoints.slice(0,3);
 
   return (
     <div
@@ -38,7 +39,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
           summaryPoints.map((point, i) => (
             <div
               key={i}
-              className="text-gray-600 text-xs sm:text-sm line-clamp-1 mb-1"
+              className="text-gray-600 text-xs sm:text-sm line-clamp-1 mb-1 lg:pr-16"
             >
               {point}
             </div>
@@ -52,14 +53,9 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
 
       <div className="flex flex-col sm:flex-row gap-2">
         {context.posts?.slice(0, 2).map((post, i) => (
-          <div
-            key={i}
-            className="flex-1 border-t border-gray-100 pt-1"
-          >
-            <div className="font-semibold text-gray-800 text-[10px] sm:text-xs line-clamp-2">
-              {post.postTitle}
-            </div>
-          </div>
+          <div key={i} className="font-semibold text-gray-800 text-sm lg:pr-6">
+          {post.postTitle}
+        </div>
         ))}
       </div>
     </div>

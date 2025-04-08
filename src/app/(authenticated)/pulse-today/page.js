@@ -105,37 +105,27 @@ export default function PulseToday() {
 
 	const formatSummary = (summary) => {
 		if (!summary) return ['Summary will be available soon'];
-		const cleaned = summary
-			.replace(/<[^>]*>/g, '')
-			.replace(/ /g, ' ')
-			.replace(/&/g, '&')
-			.trim();
-		const points = cleaned.split('•').filter((s) => s.trim().length > 0);
-		const MAX_SUMMARY_CHARS = 50;
 
-		if (points.length > 0) {
-			if (points.length <= 2) {
-				const formattedPoints = points.map((point) => `• ${point.trim()}`);
-				const joinedSummary = formattedPoints.join(' ');
-				return joinedSummary.length > MAX_SUMMARY_CHARS
-					? [`${joinedSummary.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
-					: formattedPoints;
-			}
-			const groupedPoints = [];
-			const groupSize = Math.ceil(points.length / 2);
-			for (let i = 0; i < points.length; i += groupSize) {
-				const group = points
-					.slice(i, i + groupSize)
-					.map((p) => p.trim())
-					.join(' ');
-				groupedPoints.push(`• ${group}`);
-			}
-			return groupedPoints.slice(0, 1);
-		}
-		return cleaned.length > MAX_SUMMARY_CHARS
-			? [`${cleaned.slice(0, MAX_SUMMARY_CHARS - 3)}...`]
-			: [cleaned];
-	};
+		const paragraphs = summary.split('</p>').filter((p) => p.trim().length > 0);
+		const formattedPoints = [];
+	  
+		paragraphs.forEach((paragraph) => {
+		  const cleaned = paragraph
+			.replace(/<[^>]*>/g, '') 
+			.replace(/ /g, ' ')      
+			.replace(/&/g, '&')     
+			.trim();
+	  
+		  if (cleaned.length > 0) {
+			const pointText = cleaned.startsWith('•') ? cleaned.slice(1).trim() : cleaned;
+			formattedPoints.push(`• ${pointText}`);
+		  }
+		});
+	  
+		return formattedPoints.length > 0
+		  ? formattedPoints
+		  : ['Summary will be available soon'];
+	  };
 
 	const processInitialContexts = (allContexts) => {
 		const uniqueContexts = Array.from(
@@ -360,7 +350,7 @@ export default function PulseToday() {
 										className={`grid grid-cols-${Math.min(
 											displayItem.items.length,
 											3
-										)} sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-6 sm:mb-8`}
+										)} sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-0.5 sm:mb-6`}
 									>
 										{displayItem.items.map((context, itemIndex) =>
 											renderContextBox(
@@ -376,7 +366,7 @@ export default function PulseToday() {
 								return (
 									<div
 										key={displayItem.item.id}
-										className="mb-6 sm:mb-8"
+										className="mb-0.5 sm:mb-6"
 									>
 										{renderContextBox(
 											displayItem.item,
