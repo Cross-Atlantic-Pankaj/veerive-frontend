@@ -21,14 +21,40 @@ export async function POST(request) {
 
     const body = await request.json();
     const page = body.page || 1;
-    const limit = 8;
-    const skip = (page - 1) * limit;
+
+    const distinctDates = await Context.aggregate([
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$date" } },
+          originalDate: { $first: "$date" }
+        }
+      },
+      { $sort: { originalDate: -1 } }
+    ]);
+
+    if (page > distinctDates.length) {
+      return NextResponse.json({
+        contexts: [],
+        messages: [],
+        trendingThemes: [],
+        expertPosts: [],
+        hasMore: false,
+        currentDate: null
+      });
+    }
+
+    const targetDate = distinctDates[page - 1];
+    const startOfDay = new Date(targetDate.originalDate.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(targetDate.originalDate.setHours(23, 59, 59, 999));
 
     const [contextsResult, sidebarMessagesResult, trendingThemes, expertPostsResult] = await Promise.all([
-      Context.find()
+      Context.find({
+        date: {
+          $gte: startOfDay,
+          $lte: endOfDay
+        }
+      })
         .sort({ date: -1 })
-        .skip(skip)
-        .limit(limit)
         .populate('sectors', 'sectorName')
         .populate('subSectors', 'subSectorName')
         .populate({
@@ -57,8 +83,6 @@ export async function POST(request) {
         .exec(),
     ]);
 
-    const totalCount = await Context.countDocuments();
-
     const seenIds = new Set();
     const uniqueContexts = contextsResult.filter((context) => {
       const idString = context._id.toString();
@@ -80,6 +104,8 @@ export async function POST(request) {
           });
         }
       });
+
+      console.log('Unique Posts:', uniqueContexts);
 
       return {
         id: context._id,
@@ -124,7 +150,8 @@ export async function POST(request) {
       messages: sidebarMessagesResult,
       trendingThemes: processedThemes,
       expertPosts,
-      hasMore: skip + limit < totalCount,
+      hasMore: page < distinctDates.length,
+      currentDate: targetDate._id
     });
   } catch (error) {
     console.error('Error fetching Pulse Today data:', error);

@@ -69,7 +69,7 @@ const TypeFour = ({
 					</div>
 				</div>
 
-				<div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2">
+				<div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2 mt-5">
 					{context.posts?.slice(1, 4).map((post, i) => (
 						<div
 							key={i}
