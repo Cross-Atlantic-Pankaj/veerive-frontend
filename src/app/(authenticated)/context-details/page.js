@@ -120,8 +120,8 @@ export default function ContextDetails() {
 
         <ContextInfo context={context} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} sliderRef={sliderRef} />
 
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:w-2/3">
+        <div className="flex flex-col lg:flex-row px-8">
+          <div className="lg:w-[68%]">
             {context.posts?.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Explore Event</h2>
@@ -148,8 +148,10 @@ export default function ContextDetails() {
             )}
           </div>
 
-          <div className="lg:w-1/3">
+          <div className="lg:w-[32%]">
+            <div className='px-10'>
             <TrendingThemes trendingThemes={context.trendingThemes} />
+            </div>
             {/* <TrendingExpertOpinion/> */}
           </div>
         </div>

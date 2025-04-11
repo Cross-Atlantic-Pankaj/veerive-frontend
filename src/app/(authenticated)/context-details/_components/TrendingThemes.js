@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 const TrendingThemes = ({ trendingThemes }) => {
 	return (
-		<div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
+		<div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm lg:mt-12 ">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
 				<Link
