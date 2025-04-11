@@ -17,7 +17,7 @@ export async function POST(request) {
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSector.schema);
+    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
 
     const body = await request.json();
     const { contextId } = body;
@@ -67,21 +67,55 @@ export async function POST(request) {
       };
     }
 
-    const matchingThemes = await Theme.find({
-      $or: [
-        { sectors: { $in: context.sectors.map(s => s._id) } },
-        { subSectors: { $in: context.subSectors.map(ss => ss._id) } }
-      ],
+    let matchingThemes = await Theme.find({
+      subSectors: { $in: context.subSectors.map(ss => ss._id) },
       isTrending: true
     })
-    .select('themeTitle overallScore') 
+    .populate({
+      path: 'subSectors',
+      select: 'subSectorName _id',
+    })
+    .select('themeTitle overallScore sectors subSectors')
     .limit(5)
     .lean();
 
-    const processedMatchingThemes = matchingThemes.map(theme => ({
-      themeTitle: theme.themeTitle,
-      overallScore: theme.overallScore || 0,
-    }));
+    if (matchingThemes.length === 0) {
+      matchingThemes = await Theme.find({
+        sectors: { $in: context.sectors.map(s => s._id) },
+        isTrending: true
+      })
+      .populate({
+        path: 'sectors',
+        select: 'sectorName _id',
+      })
+      .select('themeTitle overallScore sectors subSectors')
+      .limit(5)
+      .lean();
+    }
+
+    const processedMatchingThemes = matchingThemes.map(theme => {
+      const contextSectorIds = context.sectors.map(s => s._id.toString());
+      const contextSubSectorIds = context.subSectors.map(ss => ss._id.toString());
+
+      const matchingSubSector = theme.subSectors.find(subSector =>
+        contextSubSectorIds.includes(subSector._id.toString())
+      );
+      const matchingSector = theme.sectors.find(sector =>
+        contextSectorIds.includes(sector._id.toString())
+      );
+
+      const matchedCategory = matchingSubSector 
+        ? matchingSubSector.subSectorName 
+        : matchingSector 
+          ? matchingSector.sectorName 
+          : null;
+
+      return {
+        themeTitle: theme.themeTitle,
+        overallScore: theme.overallScore || 0,
+        matchedCategory: matchedCategory,
+      };
+    }).filter(theme => theme.matchedCategory);
 
     let slides = [];
     if (context.hasSlider) {
@@ -118,15 +152,17 @@ export async function POST(request) {
 
     let processedPosts = [];
     if (context.posts && context.posts.length > 0) {
-      processedPosts = context.posts
-        .filter(post => post.postId && post.postId.isTrending)
+      const uniquePosts = Array.from(
+        new Map(context.posts.map(post => [post.postId?._id.toString(), post])).values()
+      ).filter(post => post.postId);
+
+      processedPosts = uniquePosts
         .map(post => ({
           postId: post.postId._id,
           postTitle: post.postId.postTitle,
           postType: post.postId.postType,
           date: post.postId.date,
           isTrending: post.postId.isTrending,
-          includeInContainer: post.postId.includeInContainer,
         }))
         .sort((a, b) => new Date(b.date) - new Date(a.date));
     } else {

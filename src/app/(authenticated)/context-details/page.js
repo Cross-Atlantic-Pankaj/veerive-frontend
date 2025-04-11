@@ -6,7 +6,6 @@ import PostCard from './_components/PostCard';
 import SectorSubSectorCard from './_components/SectorSubSectorCard';
 import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
-// import TrendingExpertOpinion from './_components/TrendingExpertOpinion';
 
 export default function ContextDetails() {
   const searchParams = useSearchParams();
@@ -39,6 +38,7 @@ export default function ContextDetails() {
         if (!response.ok) throw new Error('Failed to fetch context details');
 
         const data = await response.json();
+        console.log('Fetched context.posts:', data.context.posts); // Debug log
         setContext(data.context);
       } catch (err) {
         console.error('Error fetching context details:', err);
@@ -150,9 +150,8 @@ export default function ContextDetails() {
 
           <div className="lg:w-[32%]">
             <div className='px-10'>
-            <TrendingThemes trendingThemes={context.trendingThemes} />
+              <TrendingThemes trendingThemes={context.trendingThemes} />
             </div>
-            {/* <TrendingExpertOpinion/> */}
           </div>
         </div>
       </div>
