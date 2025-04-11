@@ -32,9 +32,22 @@ export async function POST(request) {
     const context = await Context.findById(contextId)
       .populate({
         path: 'themes',
-        select: 'themeTitle themeDescription overallScore trendingScore impactScore predictiveMomentumScore'
+        select: 'themeTitle themeDescription overallScore trendingScore impactScore predictiveMomentumScore',
+      })
+      .populate({
+        path: 'sectors',
+        select: 'sectorName',
+      })
+      .populate({
+        path: 'subSectors',
+        select: 'subSectorName',
+      })
+      .populate({
+        path: 'posts.postId',
+        select: 'postTitle postType date isTrending includeInContainer',
       })
       .lean();
+
 
     if (!context) {
       return NextResponse.json(
@@ -50,7 +63,7 @@ export async function POST(request) {
         overallScore: context.themes[0].overallScore || 0,
         trendingScore: context.themes[0].trendingScore || 0,
         impactScore: context.themes[0].impactScore || 0,
-        predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0
+        predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0,
       };
     }
 
@@ -61,20 +74,61 @@ export async function POST(request) {
         if (context[slideKey] && (context[slideKey].title || context[slideKey].description)) {
           slides.push({
             title: context[slideKey].title || '',
-            description: context[slideKey].description || ''
+            description: context[slideKey].description || '',
           });
         }
       }
     }
 
+    let processedSectors = [];
+    if (context.sectors && context.sectors.length > 0) {
+      processedSectors = context.sectors.map(sector => ({
+        sectorId: sector._id,
+        sectorName: sector.sectorName,
+      }));
+    } else {
+      console.log('No sectors found in context');
+    }
+
+    let processedSubSectors = [];
+    if (context.subSectors && context.subSectors.length > 0) {
+      processedSubSectors = context.subSectors.map(subSector => ({
+        subSectorId: subSector._id,
+        subSectorName: subSector.subSectorName,
+      }));
+    } else {
+      console.log('No subSectors found in context');
+    }
+
+    let processedPosts = [];
+    if (context.posts && context.posts.length > 0) {
+      processedPosts = context.posts
+        .filter(post => post.postId && post.postId.isTrending)
+        .map(post => ({
+          postId: post.postId._id,
+          postTitle: post.postId.postTitle,
+          postType: post.postId.postType,
+          date: post.postId.date,
+          isTrending: post.postId.isTrending,
+          includeInContainer: post.postId.includeInContainer,
+        }))
+        .sort((a, b) => new Date(b.date) - new Date(a.date));
+    } else {
+      console.log('No posts found in context');
+    }
+
     const processedContext = {
       ...context,
       theme,
-      slides
+      slides,
+      sectors: processedSectors,
+      subSectors: processedSubSectors,
+      posts: processedPosts,
     };
 
+
     return NextResponse.json({
-      context: processedContext
+      context: processedContext,
     });
 
   } catch (error) {

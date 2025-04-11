@@ -105,8 +105,6 @@ export async function POST(request) {
         }
       });
 
-      console.log('Unique Posts:', uniqueContexts);
-
       return {
         id: context._id,
         containerType: context.containerType,
