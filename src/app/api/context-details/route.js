@@ -17,7 +17,7 @@ export async function POST(request) {
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
+    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSector.schema);
 
     const body = await request.json();
     const { contextId } = body;
@@ -48,7 +48,6 @@ export async function POST(request) {
       })
       .lean();
 
-
     if (!context) {
       return NextResponse.json(
         { error: 'Context not found' },
@@ -56,16 +55,33 @@ export async function POST(request) {
       );
     }
 
-    let theme = null;
+    let originalTheme = null;
     if (context.themes && context.themes.length > 0) {
-      theme = {
+      originalTheme = {
         themeTitle: context.themes[0].themeTitle,
+        themeDescription: context.themes[0].themeDescription,
         overallScore: context.themes[0].overallScore || 0,
         trendingScore: context.themes[0].trendingScore || 0,
         impactScore: context.themes[0].impactScore || 0,
         predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0,
       };
     }
+
+    const matchingThemes = await Theme.find({
+      $or: [
+        { sectors: { $in: context.sectors.map(s => s._id) } },
+        { subSectors: { $in: context.subSectors.map(ss => ss._id) } }
+      ],
+      isTrending: true
+    })
+    .select('themeTitle overallScore') 
+    .limit(5)
+    .lean();
+
+    const processedMatchingThemes = matchingThemes.map(theme => ({
+      themeTitle: theme.themeTitle,
+      overallScore: theme.overallScore || 0,
+    }));
 
     let slides = [];
     if (context.hasSlider) {
@@ -119,13 +135,13 @@ export async function POST(request) {
 
     const processedContext = {
       ...context,
-      theme,
+      originalTheme,
+      trendingThemes: processedMatchingThemes,
       slides,
       sectors: processedSectors,
       subSectors: processedSubSectors,
       posts: processedPosts,
     };
-
 
     return NextResponse.json({
       context: processedContext,

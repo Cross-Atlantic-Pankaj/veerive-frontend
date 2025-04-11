@@ -5,6 +5,8 @@ import { useSearchParams } from 'next/navigation';
 import PostCard from './_components/PostCard';
 import SectorSubSectorCard from './_components/SectorSubSectorCard';
 import ContextInfo from './_components/ContextInfo';
+import TrendingThemes from './_components/TrendingThemes';
+// import TrendingExpertOpinion from './_components/TrendingExpertOpinion';
 
 export default function ContextDetails() {
   const searchParams = useSearchParams();
@@ -118,30 +120,39 @@ export default function ContextDetails() {
 
         <ContextInfo context={context} currentSlide={currentSlide} setCurrentSlide={setCurrentSlide} sliderRef={sliderRef} />
 
-        {context.posts?.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Explore Event</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {context.posts.map((post) => (
-                <PostCard key={post.postId} post={post} />
-              ))}
-            </div>
-          </div>
-        )}
+        <div className="flex flex-col lg:flex-row gap-6">
+          <div className="lg:w-2/3">
+            {context.posts?.length > 0 && (
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Explore Event</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {context.posts.map((post) => (
+                    <PostCard key={post.postId} post={post} />
+                  ))}
+                </div>
+              </div>
+            )}
 
-        {(sortedSectors.length > 0 || sortedSubSectors.length > 0) && (
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Related Events</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {sortedSectors.map((sector) => (
-                <SectorSubSectorCard key={sector.sectorId} item={sector} type="sector" />
-              ))}
-              {sortedSubSectors.map((subSector) => (
-                <SectorSubSectorCard key={subSector.subSectorId} item={subSector} type="subSector" />
-              ))}
-            </div>
+            {(sortedSectors.length > 0 || sortedSubSectors.length > 0) && (
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Related Events</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {sortedSectors.map((sector) => (
+                    <SectorSubSectorCard key={sector.sectorId} item={sector} type="sector" />
+                  ))}
+                  {sortedSubSectors.map((subSector) => (
+                    <SectorSubSectorCard key={subSector.subSectorId} item={subSector} type="subSector" />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
+
+          <div className="lg:w-1/3">
+            <TrendingThemes trendingThemes={context.trendingThemes} />
+            {/* <TrendingExpertOpinion/> */}
+          </div>
+        </div>
       </div>
     </div>
   );
