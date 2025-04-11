@@ -38,7 +38,7 @@ export default function ContextDetails() {
         if (!response.ok) throw new Error('Failed to fetch context details');
 
         const data = await response.json();
-        console.log('Fetched context.posts:', data.context.posts); // Debug log
+        console.log('Fetched context.posts:', data.context.posts);
         setContext(data.context);
       } catch (err) {
         console.error('Error fetching context details:', err);

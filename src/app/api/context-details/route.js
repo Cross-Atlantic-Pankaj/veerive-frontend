@@ -40,7 +40,11 @@ export async function POST(request) {
       })
       .populate({
         path: 'subSectors',
-        select: 'subSectorName',
+        select: 'subSectorName _id',
+      })
+      .populate({
+        path: 'signalCategories',
+        select: 'signalName _id',
       })
       .populate({
         path: 'posts.postId',
@@ -71,26 +75,26 @@ export async function POST(request) {
       subSectors: { $in: context.subSectors.map(ss => ss._id) },
       isTrending: true
     })
-    .populate({
-      path: 'subSectors',
-      select: 'subSectorName _id',
-    })
-    .select('themeTitle overallScore sectors subSectors')
-    .limit(5)
-    .lean();
+      .populate({
+        path: 'subSectors',
+        select: 'subSectorName _id',
+      })
+      .select('themeTitle overallScore sectors subSectors')
+      .limit(5)
+      .lean();
 
     if (matchingThemes.length === 0) {
       matchingThemes = await Theme.find({
         sectors: { $in: context.sectors.map(s => s._id) },
         isTrending: true
       })
-      .populate({
-        path: 'sectors',
-        select: 'sectorName _id',
-      })
-      .select('themeTitle overallScore sectors subSectors')
-      .limit(5)
-      .lean();
+        .populate({
+          path: 'sectors',
+          select: 'sectorName _id',
+        })
+        .select('themeTitle overallScore sectors subSectors')
+        .limit(5)
+        .lean();
     }
 
     const processedMatchingThemes = matchingThemes.map(theme => {
@@ -130,24 +134,73 @@ export async function POST(request) {
       }
     }
 
-    let processedSectors = [];
-    if (context.sectors && context.sectors.length > 0) {
-      processedSectors = context.sectors.map(sector => ({
-        sectorId: sector._id,
-        sectorName: sector.sectorName,
-      }));
-    } else {
-      console.log('No sectors found in context');
+    const contextSubSectorIds = context.subSectors.map(ss => ss._id);
+    const contextSignalCategoryIds = context.signalCategories ? context.signalCategories.map(s => s._id) : [];
+
+    if (contextSubSectorIds.length === 0 || contextSignalCategoryIds.length === 0) {
+      console.log('Input context has empty subSectors or signalCategories, no matches possible:', {
+        subSectors: contextSubSectorIds,
+        signalCategories: contextSignalCategoryIds
+      });
+      const processedContext = {
+        ...context,
+        originalTheme,
+        trendingThemes: processedMatchingThemes,
+        slides,
+        matchingSubSectors: [],
+        matchingSignalCategories: [],
+        posts: [],
+      };
+      return NextResponse.json({ context: processedContext });
     }
 
-    let processedSubSectors = [];
-    if (context.subSectors && context.subSectors.length > 0) {
-      processedSubSectors = context.subSectors.map(subSector => ({
+    const pairConditions = [];
+    for (const subSectorId of contextSubSectorIds) {
+      for (const signalCategoryId of contextSignalCategoryIds) {
+        pairConditions.push({
+          subSectors: { $in: [subSectorId] },
+          signalCategories: { $in: [signalCategoryId] }
+        });
+      }
+    }
+
+    const matchingContexts = await Context.find({
+      _id: { $ne: contextId },
+      $or: pairConditions
+    })
+      .populate({
+        path: 'subSectors',
+        select: 'subSectorName _id',
+      })
+      .populate({
+        path: 'signalCategories',
+        select: 'signalName _id',
+      })
+      .lean();
+
+    const uniqueMatchingContexts = Array.from(
+      new Map(matchingContexts.map(ctx => [ctx._id.toString(), ctx])).values()
+    );
+
+    console.log('Contexts with at least one matching subSector and signalCategory pair:', uniqueMatchingContexts);
+    console.log('Contexts with at least one matching subSector and signalCategory pair Length:', uniqueMatchingContexts.length);
+    let processedMatchingSubSectors = [];
+    let processedMatchingSignalCategories = [];
+
+    if (uniqueMatchingContexts.length > 0) {
+      const firstMatch = uniqueMatchingContexts[0];
+      
+      processedMatchingSubSectors = firstMatch.subSectors.map(subSector => ({
         subSectorId: subSector._id,
         subSectorName: subSector.subSectorName,
       }));
-    } else {
-      console.log('No subSectors found in context');
+
+      processedMatchingSignalCategories = firstMatch.signalCategories
+        ? firstMatch.signalCategories.map(signal => ({
+            signalCategoryId: signal._id,
+            signalName: signal.signalName,
+          }))
+        : [];
     }
 
     let processedPosts = [];
@@ -165,8 +218,6 @@ export async function POST(request) {
           isTrending: post.postId.isTrending,
         }))
         .sort((a, b) => new Date(b.date) - new Date(a.date));
-    } else {
-      console.log('No posts found in context');
     }
 
     const processedContext = {
@@ -174,8 +225,8 @@ export async function POST(request) {
       originalTheme,
       trendingThemes: processedMatchingThemes,
       slides,
-      sectors: processedSectors,
-      subSectors: processedSubSectors,
+      matchingSubSectors: processedMatchingSubSectors,
+      matchingSignalCategories: processedMatchingSignalCategories,
       posts: processedPosts,
     };
 
