@@ -15,7 +15,7 @@ const TrendingExpertOpinion = ({ trendingExpertOpinions }) => {
 			</div>
 			<div className="space-y-4">
 				{trendingExpertOpinions.map((post, index) => (
-					<p
+					<div
 						key={`opinion-${post.postId}-${index}`}
 						className="block border-b border-dashed border-gray-300 pb-3 last:border-none hover:text-indigo-600 transition-colors"
 					>
@@ -28,7 +28,7 @@ const TrendingExpertOpinion = ({ trendingExpertOpinions }) => {
 								{post.postTitle}
 							</h3>
 						</Link>
-					</p>
+					</div>
 				))}
 			</div>
 

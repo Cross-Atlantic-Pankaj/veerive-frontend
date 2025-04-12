@@ -6,7 +6,7 @@ import PostCard from './_components/PostCard';
 import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
 import RelatedEvents from './_components/RelatedEvents';
-import TrendingExpertOpinion from './_components/TrendingExpertOpinion'; // New import
+import TrendingExpertOpinion from './_components/TrendingExpertOpinion';
 
 export default function ContextDetails() {
   const searchParams = useSearchParams();
@@ -39,7 +39,7 @@ export default function ContextDetails() {
         if (!response.ok) throw new Error('Failed to fetch context details');
 
         const data = await response.json();
-        console.log('Fetched context:', data.context); // Log the full response
+        console.log('Fetched context:', data.context);
         setContext(data.context);
       } catch (err) {
         console.error('Error fetching context details:', err);
@@ -116,11 +116,11 @@ export default function ContextDetails() {
 
         <div className="flex flex-col lg:flex-row px-8">
           <div className="lg:w-[68%]">
-            {context.posts?.length > 0 && (
+            {context.contextPosts?.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Explore Event</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {context.posts.map((post) => (
+                  {context.contextPosts.map((post) => (
                     <PostCard key={post.postId} post={post} />
                   ))}
                 </div>
@@ -133,7 +133,7 @@ export default function ContextDetails() {
           <div className="lg:w-[32%]">
             <div className="px-10">
               <TrendingThemes trendingThemes={context.trendingThemes} />
-              <TrendingExpertOpinion trendingExpertOpinions={context.trendingExpertOpinions} /> {/* Add component */}
+              <TrendingExpertOpinion trendingExpertOpinions={context.trendingExpertOpinions} />
             </div>
           </div>
         </div>

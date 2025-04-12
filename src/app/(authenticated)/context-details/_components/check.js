@@ -250,10 +250,10 @@ export async function POST(request) {
         .sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
+    // Fetch all posts from context.posts
     let contextPosts = [];
     if (context.posts && context.posts.length > 0) {
       contextPosts = context.posts
-        .filter(post => post.postId)
         .map(post => ({
           postId: post.postId._id,
           postTitle: post.postId.postTitle,
@@ -311,7 +311,7 @@ export async function POST(request) {
       posts: processedPosts,
       matchingContexts: uniqueMatchingContexts,
       trendingExpertOpinions,
-      contextPosts,
+      contextPosts, // Add all posts
     };
 
     return NextResponse.json({
