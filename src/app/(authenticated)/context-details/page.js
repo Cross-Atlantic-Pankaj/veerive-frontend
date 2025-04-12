@@ -6,6 +6,7 @@ import PostCard from './_components/PostCard';
 import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
 import RelatedEvents from './_components/RelatedEvents';
+import TrendingExpertOpinion from './_components/TrendingExpertOpinion'; // New import
 
 export default function ContextDetails() {
   const searchParams = useSearchParams();
@@ -132,6 +133,7 @@ export default function ContextDetails() {
           <div className="lg:w-[32%]">
             <div className="px-10">
               <TrendingThemes trendingThemes={context.trendingThemes} />
+              <TrendingExpertOpinion trendingExpertOpinions={context.trendingExpertOpinions} /> {/* Add component */}
             </div>
           </div>
         </div>

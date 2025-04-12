@@ -48,7 +48,7 @@ export async function POST(request) {
       })
       .populate({
         path: 'posts.postId',
-        select: 'postTitle postType date isTrending includeInContainer _id',
+        select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
       })
       .lean();
 
@@ -185,7 +185,7 @@ export async function POST(request) {
       })
       .populate({
         path: 'posts.postId',
-        select: 'postTitle postType date isTrending includeInContainer _id',
+        select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
       })
       .lean();
 
@@ -265,6 +265,7 @@ export async function POST(request) {
               postType: post.postId.postType,
               date: post.postId.date,
               contextTitle: ctx.contextTitle,
+              sourceUrl: post.postId.sourceUrl || (post.postId.sourceUrls && post.postId.sourceUrls[0]) || '',
             });
           }
         });
