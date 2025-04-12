@@ -152,6 +152,7 @@ export async function POST(request) {
         matchingSignalCategories: [],
         posts: [],
         matchingContexts: [],
+        trendingExpertOpinions: [],
       };
       return NextResponse.json({ context: processedContext });
     }
@@ -249,6 +250,36 @@ export async function POST(request) {
         .sort((a, b) => new Date(b.date) - new Date(a.date));
     }
 
+    let trendingExpertOpinions = [];
+    uniqueMatchingContexts.forEach(ctx => {
+      if (ctx.posts && ctx.posts.length > 0) {
+        ctx.posts.forEach(post => {
+          if (
+            post.postId &&
+            post.postId.postType === 'Expert Opinion' &&
+            post.postId.isTrending === true
+          ) {
+            trendingExpertOpinions.push({
+              postId: post.postId._id,
+              postTitle: post.postId.postTitle,
+              postType: post.postId.postType,
+              date: post.postId.date,
+              contextTitle: ctx.contextTitle,
+            });
+          }
+        });
+      }
+    });
+
+    trendingExpertOpinions = trendingExpertOpinions
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5);
+
+    console.log(
+      'Trending Expert Opinions:',
+      JSON.stringify(trendingExpertOpinions, null, 2)
+    );
+
     const processedContext = {
       ...context,
       id: context._id.toString(),
@@ -259,6 +290,7 @@ export async function POST(request) {
       matchingSignalCategories: processedMatchingSignalCategories,
       posts: processedPosts,
       matchingContexts: uniqueMatchingContexts,
+      trendingExpertOpinions,
     };
 
     return NextResponse.json({
