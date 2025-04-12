@@ -150,6 +150,7 @@ export async function POST(request) {
         matchingSubSectors: [],
         matchingSignalCategories: [],
         posts: [],
+        matchingContexts: [],
       };
       return NextResponse.json({ context: processedContext });
     }
@@ -169,6 +170,10 @@ export async function POST(request) {
       $or: pairConditions
     })
       .populate({
+        path: 'sectors',
+        select: 'sectorName _id',
+      })
+      .populate({
         path: 'subSectors',
         select: 'subSectorName _id',
       })
@@ -176,14 +181,33 @@ export async function POST(request) {
         path: 'signalCategories',
         select: 'signalName _id',
       })
+      .populate({
+        path: 'posts.postId',
+        select: 'postTitle postType date isTrending includeInContainer _id',
+      })
       .lean();
 
     const uniqueMatchingContexts = Array.from(
       new Map(matchingContexts.map(ctx => [ctx._id.toString(), ctx])).values()
     );
 
-    console.log('Contexts with at least one matching subSector and signalCategory pair:', uniqueMatchingContexts);
     console.log('Contexts with at least one matching subSector and signalCategory pair Length:', uniqueMatchingContexts.length);
+    console.log(
+      'Contexts with populated fields:',
+      JSON.stringify(
+        uniqueMatchingContexts.map(ctx => ({
+          _id: ctx._id,
+          contextTitle: ctx.contextTitle,
+          containerType: ctx.containerType,
+          sectors: ctx.sectors,
+          subSectors: ctx.subSectors,
+          posts: ctx.posts,
+        })),
+        null,
+        2
+      )
+    );
+
     let processedMatchingSubSectors = [];
     let processedMatchingSignalCategories = [];
 
@@ -228,6 +252,7 @@ export async function POST(request) {
       matchingSubSectors: processedMatchingSubSectors,
       matchingSignalCategories: processedMatchingSignalCategories,
       posts: processedPosts,
+      matchingContexts: uniqueMatchingContexts,
     };
 
     return NextResponse.json({

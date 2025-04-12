@@ -3,9 +3,9 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import PostCard from './_components/PostCard';
-import SectorSubSectorCard from './_components/SectorSubSectorCard';
 import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
+import RelatedEvents from './_components/RelatedEvents';
 
 export default function ContextDetails() {
   const searchParams = useSearchParams();
@@ -38,7 +38,7 @@ export default function ContextDetails() {
         if (!response.ok) throw new Error('Failed to fetch context details');
 
         const data = await response.json();
-        console.log('Fetched context.posts:', data.context.posts);
+        console.log('Fetched context:', data.context); // Log the full response
         setContext(data.context);
       } catch (err) {
         console.error('Error fetching context details:', err);
@@ -81,13 +81,6 @@ export default function ContextDetails() {
       </div>
     );
   }
-
-  const sortedSectors = context.sectors
-    ? [...context.sectors].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-    : [];
-  const sortedSubSectors = context.subSectors
-    ? [...context.subSectors].sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-    : [];
 
   return (
     <div className="min-h-screen bg-white py-4">
@@ -133,23 +126,11 @@ export default function ContextDetails() {
               </div>
             )}
 
-            {(sortedSectors.length > 0 || sortedSubSectors.length > 0) && (
-              <div className="mb-6">
-                <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Related Events</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {sortedSectors.map((sector) => (
-                    <SectorSubSectorCard key={sector.sectorId} item={sector} type="sector" />
-                  ))}
-                  {sortedSubSectors.map((subSector) => (
-                    <SectorSubSectorCard key={subSector.subSectorId} item={subSector} type="subSector" />
-                  ))}
-                </div>
-              </div>
-            )}
+            <RelatedEvents matchingContexts={context.matchingContexts} />
           </div>
 
           <div className="lg:w-[32%]">
-            <div className='px-10'>
+            <div className="px-10">
               <TrendingThemes trendingThemes={context.trendingThemes} />
             </div>
           </div>

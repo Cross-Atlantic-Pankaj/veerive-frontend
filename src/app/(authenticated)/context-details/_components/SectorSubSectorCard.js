@@ -1,4 +1,12 @@
 import React from 'react';
+import {
+  TypeOne,
+  TypeTwo,
+  TypeThree,
+  TypeFour,
+  TypeFive,
+  TypeNum,
+} from './_RecentEventsComponents';
 
 const SectorSubSectorCard = ({ item, type }) => {
   return (
