@@ -9,7 +9,7 @@ const TrendingThemes = ({ trendingThemes }) => {
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
         <Link
-          href="/trend-analyzer"
+          href="/sector-analyzer"
           className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
         >
           VIEW More →
