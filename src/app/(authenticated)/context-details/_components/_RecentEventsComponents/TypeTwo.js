@@ -1,17 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 
-const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
-  const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
-  const formatedsummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formatedsummaryPoints.slice(0,3);
+const TypeTwo = ({ context, formatSummary }) => {
+  const sectorsLabel = [...(context.sectors || []), ...(context.subSectors || [])]
+    .map(item => item.sectorName || item.subSectorName || 'Unknown')
+    .join(' • ');
+  const formattedSummaryPoints = formatSummary(context.summary);
+  const summaryPoints = formattedSummaryPoints.slice(0, 3);
 
   return (
     <Link href={`/context-details?id=${context.id}`}>
-      <div
-        ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer"
-      >
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer">
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">
             {context.bannerImage ? (
@@ -56,8 +55,8 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
         <div className="flex flex-col sm:flex-row gap-2">
           {context.posts?.slice(0, 2).map((post, i) => (
             <div key={i} className="font-semibold text-gray-800 text-sm lg:pr-6">
-            {post.postTitle}
-          </div>
+              {post.postId?.postTitle || 'Untitled Post'}
+            </div>
           ))}
         </div>
       </div>
@@ -65,4 +64,4 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
   );
 };
 
-export default TypeTwo; 
+export default TypeTwo;

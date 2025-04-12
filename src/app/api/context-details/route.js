@@ -36,7 +36,7 @@ export async function POST(request) {
       })
       .populate({
         path: 'sectors',
-        select: 'sectorName',
+        select: 'sectorName _id',
       })
       .populate({
         path: 'subSectors',
@@ -48,7 +48,7 @@ export async function POST(request) {
       })
       .populate({
         path: 'posts.postId',
-        select: 'postTitle postType date isTrending includeInContainer',
+        select: 'postTitle postType date isTrending includeInContainer _id',
       })
       .lean();
 
@@ -144,6 +144,7 @@ export async function POST(request) {
       });
       const processedContext = {
         ...context,
+        id: context._id.toString(),
         originalTheme,
         trendingThemes: processedMatchingThemes,
         slides,
@@ -189,19 +190,23 @@ export async function POST(request) {
 
     const uniqueMatchingContexts = Array.from(
       new Map(matchingContexts.map(ctx => [ctx._id.toString(), ctx])).values()
-    );
+    ).map(ctx => ({
+      ...ctx,
+      id: ctx._id.toString(),
+    }));
 
-    console.log('Contexts with at least one matching subSector and signalCategory pair Length:', uniqueMatchingContexts.length);
     console.log(
       'Contexts with populated fields:',
       JSON.stringify(
         uniqueMatchingContexts.map(ctx => ({
-          _id: ctx._id,
+          id: ctx.id,
           contextTitle: ctx.contextTitle,
           containerType: ctx.containerType,
           sectors: ctx.sectors,
           subSectors: ctx.subSectors,
           posts: ctx.posts,
+          bannerImage: ctx.bannerImage,
+          dataForTypeNum: ctx.dataForTypeNum,
         })),
         null,
         2
@@ -246,6 +251,7 @@ export async function POST(request) {
 
     const processedContext = {
       ...context,
+      id: context._id.toString(),
       originalTheme,
       trendingThemes: processedMatchingThemes,
       slides,

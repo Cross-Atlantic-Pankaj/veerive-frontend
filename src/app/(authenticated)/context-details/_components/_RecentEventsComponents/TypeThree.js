@@ -1,17 +1,16 @@
 import React from 'react';
 import Link from 'next/link';
 
-const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
-  const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
-  const formatedsummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formatedsummaryPoints.slice(0,3);
+const TypeThree = ({ context, formatSummary }) => {
+  const sectorsLabel = [...(context.sectors || []), ...(context.subSectors || [])]
+    .map(item => item.sectorName || item.subSectorName || 'Unknown')
+    .join(' • ');
+  const formattedSummaryPoints = formatSummary(context.summary);
+  const summaryPoints = formattedSummaryPoints.slice(0, 3);
 
   return (
     <Link href={`/context-details?id=${context.id}`}>
-      <div
-        ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
-      >
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 flex flex-col">
             <div className="flex flex-row items-start gap-3 sm:gap-4">
@@ -62,7 +61,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
                 className="border-t border-gray-300 pt-0.5 mt-0.5 first:border-t-0 first:mt-0"
               >
                 <div className="font-semibold text-gray-800 text-sm my-2">
-                  {post.postTitle}
+                  {post.postId?.postTitle || 'Untitled Post'}
                 </div>
               </div>
             ))}
@@ -73,4 +72,4 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
   );
 };
 
-export default TypeThree; 
+export default TypeThree;

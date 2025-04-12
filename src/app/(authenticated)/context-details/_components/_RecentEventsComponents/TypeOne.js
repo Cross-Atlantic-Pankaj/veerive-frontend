@@ -1,13 +1,10 @@
 import React from 'react';
 import Link from 'next/link';
 
-const TypeOne = ({ context, isLastItem, lastContextCallback}) => {
+const TypeOne = ({ context, formatSummary }) => {
   return (
     <Link href={`/context-details?id=${context.id}`}>
-      <div
-        ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200"
-      >
+      <div className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200">
         {context.bannerImage ? (
           <img
             src={context.bannerImage}
@@ -21,12 +18,12 @@ const TypeOne = ({ context, isLastItem, lastContextCallback}) => {
         )}
         <div className="px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
-            {[...context.sectors, ...context.subSectors].map((name, idx) => (
+            {[...(context.sectors || []), ...(context.subSectors || [])].map((item, idx) => (
               <span
                 key={idx}
                 className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
               >
-                {name}
+                {item.sectorName || item.subSectorName || 'Unknown'}
               </span>
             ))}
           </div>
