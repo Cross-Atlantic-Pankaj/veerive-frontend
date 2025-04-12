@@ -4,7 +4,7 @@ import Image from 'next/image';
 const PostCard = ({ post }) => {
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
-      <div className="relative w-full h-[200px]">
+      <div className="relative w-full h-[150px]">
         {post.postImage ? (
           <Image
             src={post.postImage}
@@ -26,12 +26,12 @@ const PostCard = ({ post }) => {
 
       <div className="p-4 flex flex-col flex-grow">
         <div className="mb-2">
-          <span className="text-sm text-black border-b-2 border-green-500 inline-block">
+          <span className="text-xs text-black border-b-2 border-green-500 inline-block">
             {post.postType}
           </span>
         </div>
 
-        <h3 className="text-base font-semibold text-gray-900">
+        <h3 className="text-sm font-semibold text-gray-900">
           {post.postTitle}
         </h3>
       </div>
