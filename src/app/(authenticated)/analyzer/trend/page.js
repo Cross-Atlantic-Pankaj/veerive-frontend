@@ -4,6 +4,11 @@ import Image from 'next/image';
 
 export default function TrendAnalyzer() {
   const [themes, setThemes] = useState([]);
+  const [allThemes, setAllThemes] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [subsectors, setSubsectors] = useState([]);
+  const [selectedSector, setSelectedSector] = useState('');
+  const [selectedSubsector, setSelectedSubsector] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -16,7 +21,10 @@ export default function TrendAnalyzer() {
         const result = await response.json();
         
         if (result.success) {
+          setAllThemes(result.data);
           setThemes(result.data);
+          setSectors(result.Sectordata || []);
+          setSubsectors(result.Subsectordata || []);
         } else {
           setError(result.error || 'Failed to fetch themes');
         }
@@ -31,10 +39,42 @@ export default function TrendAnalyzer() {
     fetchThemes();
   }, []);
 
+  // Filter themes based on selected sector and subsector
+  useEffect(() => {
+    if (!allThemes.length) return;
+
+    let filteredThemes = [...allThemes];
+
+    // Filter by sector if selected
+    if (selectedSector) {
+      filteredThemes = filteredThemes.filter(theme => 
+        theme.sectors.some(sector => sector._id === selectedSector)
+      );
+    }
+
+    // Filter by subsector if selected
+    if (selectedSubsector) {
+      filteredThemes = filteredThemes.filter(theme => 
+        theme.subSectors.some(subsector => subsector._id === selectedSubsector)
+      );
+    }
+
+    setThemes(filteredThemes);
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [selectedSector, selectedSubsector, allThemes]);
+
   const indexOfLastTheme = currentPage * themesPerPage;
   const indexOfFirstTheme = indexOfLastTheme - themesPerPage;
   const currentThemes = themes.slice(indexOfFirstTheme, indexOfLastTheme);
   const totalPages = Math.ceil(themes.length / themesPerPage);
+
+  const handleSectorChange = (e) => {
+    setSelectedSector(e.target.value);
+  };
+
+  const handleSubsectorChange = (e) => {
+    setSelectedSubsector(e.target.value);
+  };
 
   if (loading) {
     return (
@@ -54,6 +94,49 @@ export default function TrendAnalyzer() {
 
   return (
     <div className="py-8 bg-gray-50 min-h-screen px-12">
+      {/* Filter Section */}
+      <div className="mb-8 bg-white p-6 rounded-xl shadow-sm">
+        <h2 className="text-xl font-bold mb-4">Filter Themes</h2>
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[200px]">
+            <label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-1">
+              Sector
+            </label>
+            <select
+              id="sector"
+              value={selectedSector}
+              onChange={handleSectorChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">All Sectors</option>
+              {sectors.map((sector) => (
+                <option key={sector._id} value={sector._id}>
+                  {sector.sectorName}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="flex-1 min-w-[200px]">
+            <label htmlFor="subsector" className="block text-sm font-medium text-gray-700 mb-1">
+              SubSector
+            </label>
+            <select
+              id="subsector"
+              value={selectedSubsector}
+              onChange={handleSubsectorChange}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">All SubSectors</option>
+              {subsectors.map((subsector) => (
+                <option key={subsector._id} value={subsector._id}>
+                  {subsector.subSectorName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         {currentThemes.map((theme, index) => (
