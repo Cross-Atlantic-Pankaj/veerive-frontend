@@ -7,6 +7,8 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
   const formattedSummaryPoints = formatSummary(context.summary);
   const summaryPoints = formattedSummaryPoints.slice(0, 3);
 
+  console.log("summaryPoints", summaryPoints);
+
   const slug = context.contextTitle
     ? slugify(context.contextTitle, {
         lower: true,

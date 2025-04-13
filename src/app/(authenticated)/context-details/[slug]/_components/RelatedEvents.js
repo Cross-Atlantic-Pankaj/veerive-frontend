@@ -14,15 +14,15 @@ const formatSummary = (summary) => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(summary, 'text/html');
 
-  const pointTags = ['li', 'p', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
+  const pointTags = ['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
   const collectPoints = (node, points = []) => {
     if (node.nodeType === Node.ELEMENT_NODE) {
       const tagName = node.tagName.toLowerCase();
       if (pointTags.includes(tagName)) {
-        const text = node.textContent.trim();
-        if (text.length > 0) {
-          points.push(text);
+        const innerHTML = node.innerHTML.trim();
+        if (innerHTML.length > 0) {
+          points.push(innerHTML);
         }
       } else {
         Array.from(node.childNodes).forEach((child) => collectPoints(child, points));
@@ -34,8 +34,13 @@ const formatSummary = (summary) => {
   let formattedPoints = collectPoints(doc.body);
 
   formattedPoints = formattedPoints
-    .map((point) => point.replace(/&/g, '&').replace(/\s+/g, ' ').trim())
-    .filter((point, index, self) => point.length > 0 && self.indexOf(point) === index);
+    .map((point) =>
+      point
+        .replace(/&/g, '&') 
+        .replace(/\s+/g, ' ') 
+        .trim()
+    )
+    .filter((point) => point.length > 0);
 
   formattedPoints = formattedPoints.map((point) => `• ${point}`);
 
