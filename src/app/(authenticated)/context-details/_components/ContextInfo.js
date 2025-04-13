@@ -36,28 +36,28 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden p-6 mb-6">
       <h1 className="text-2xl font-bold text-gray-900 mb-4 ml-2">{context.contextTitle}</h1>
 
-      {context.theme && (
+      {context.originalTheme && (
         <div className="bg-[#f1f8ff] p-3 mb-2 flex items-center justify-between flex-wrap gap-4">
           <span className="text-base text-[#174c77] font-medium">
-            Theme: {context.theme.themeTitle}
+            Theme: {context.originalTheme.themeTitle}
           </span>
           <div className="flex gap-4 flex-wrap">
             <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
               <div className="text-sm text-[#174c77] leading-tight text-center">Disruption Potential</div>
               <div className="bg-[#f76c3c] text-white font-bold w-8 h-8 flex items-center justify-center rounded">
-                {context.theme.overallScore}
+                {context.originalTheme.impactScore}
               </div>
             </div>
             <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
               <div className="text-sm text-[#174c77] leading-tight text-center">Predictive Momentum</div>
               <div className="bg-[#f76c3c] text-white font-bold w-8 h-8 flex items-center justify-center rounded">
-                {context.theme.predictiveMomentumScore}
+                {context.originalTheme.predictiveMomentumScore}
               </div>
             </div>
             <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
               <div className="text-sm text-[#174c77] leading-tight text-center">Trending Pulse</div>
               <div className="bg-[#f76c3c] text-white font-semibold w-8 h-8 flex items-center justify-center rounded">
-                {context.theme.trendingScore}
+                {context.originalTheme.trendingScore}
               </div>
             </div>
           </div>

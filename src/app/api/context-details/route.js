@@ -32,7 +32,7 @@ export async function POST(request) {
     const context = await Context.findById(contextId)
       .populate({
         path: 'themes',
-        select: 'themeTitle themeDescription overallScore trendingScore impactScore predictiveMomentumScore',
+        select: 'themeTitle themeDescription trendingScore impactScore predictiveMomentumScore',
       })
       .populate({
         path: 'sectors',
@@ -64,7 +64,6 @@ export async function POST(request) {
       originalTheme = {
         themeTitle: context.themes[0].themeTitle,
         themeDescription: context.themes[0].themeDescription,
-        overallScore: context.themes[0].overallScore || 0,
         trendingScore: context.themes[0].trendingScore || 0,
         impactScore: context.themes[0].impactScore || 0,
         predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0,
