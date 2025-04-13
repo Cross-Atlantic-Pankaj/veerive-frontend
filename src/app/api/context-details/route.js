@@ -195,24 +195,6 @@ export async function POST(request) {
       id: ctx._id.toString(),
     }));
 
-    console.log(
-      'Contexts with populated fields:',
-      JSON.stringify(
-        uniqueMatchingContexts.map(ctx => ({
-          id: ctx.id,
-          contextTitle: ctx.contextTitle,
-          containerType: ctx.containerType,
-          sectors: ctx.sectors,
-          subSectors: ctx.subSectors,
-          posts: ctx.posts,
-          bannerImage: ctx.bannerImage,
-          dataForTypeNum: ctx.dataForTypeNum,
-        })),
-        null,
-        2
-      )
-    );
-
     let processedMatchingSubSectors = [];
     let processedMatchingSignalCategories = [];
 
@@ -263,11 +245,6 @@ export async function POST(request) {
         }));
     }
 
-    console.log(
-      'Context Posts (All):',
-      JSON.stringify(contextPosts, null, 2)
-    );
-
     let trendingExpertOpinions = [];
     uniqueMatchingContexts.forEach(ctx => {
       if (ctx.posts && ctx.posts.length > 0) {
@@ -293,11 +270,6 @@ export async function POST(request) {
     trendingExpertOpinions = trendingExpertOpinions
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 5);
-
-    console.log(
-      'Trending Expert Opinions:',
-      JSON.stringify(trendingExpertOpinions, null, 2)
-    );
 
     const processedContext = {
       ...context,
