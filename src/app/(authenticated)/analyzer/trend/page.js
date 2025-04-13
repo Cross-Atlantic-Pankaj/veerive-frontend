@@ -1,10 +1,13 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 
 export default function TrendAnalyzer() {
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const themesPerPage = 21;
 
   useEffect(() => {
     const fetchThemes = async () => {
@@ -28,10 +31,15 @@ export default function TrendAnalyzer() {
     fetchThemes();
   }, []);
 
+  const indexOfLastTheme = currentPage * themesPerPage;
+  const indexOfFirstTheme = indexOfLastTheme - themesPerPage;
+  const currentThemes = themes.slice(indexOfFirstTheme, indexOfLastTheme);
+  const totalPages = Math.ceil(themes.length / themesPerPage);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-400 border-t-transparent"></div>
       </div>
     );
   }
@@ -45,93 +53,129 @@ export default function TrendAnalyzer() {
   }
 
   return (
-    <div className="p-8 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-      <h1 className="text-4xl font-bold mb-10 text-center text-gray-800">
-        <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
-          Trend Analyzer
-        </span>
-      </h1>
+    <div className="py-8 bg-gray-50 min-h-screen px-12">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {themes.map((theme, index) => (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
+        {currentThemes.map((theme, index) => (
           <div 
             key={theme._id || index}
-            className="bg-white rounded-2xl p-6 shadow-[0_0_20px_rgba(0,0,0,0.1)] 
-                     hover:shadow-[0_0_25px_rgba(0,0,0,0.15)] 
-                     transition-all duration-300 transform hover:-translate-y-1
-                     border border-gray-100"
+            className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md 
+                     transition-shadow duration-300 border border-gray-100"
           >
-            {/* Title with gradient background */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 -mx-6 -mt-6 p-6 rounded-t-2xl mb-6">
-              <h2 className="text-xl font-bold text-gray-800 line-clamp-2">
+            <div className="relative w-full h-[160px]">
+              {theme.bannerImage ? (
+                <Image
+                  src={theme.bannerImage}
+                  alt={theme.themeTitle}
+                  fill
+                  className="object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 
+                             flex items-center justify-center text-gray-400">
+                  1000 x 180
+                </div>
+              )}
+            </div>
+
+            <div className="p-5">
+              <h2 className="text-lg font-bold text-gray-800 mb-4">
                 {theme.themeTitle}
               </h2>
-            </div>
 
-            {/* Scores with improved visual hierarchy */}
-            <div className="space-y-4 mb-6">
-              <div className="score-item">
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                  <span className="text-blue-700 font-medium">Trending Score</span>
-                  <span className="text-2xl font-bold text-blue-800">
+              <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
+                <div className="p-3 text-center border-r border-white">
+                  <div className="text-sm font-medium text-gray-500 mb-1">Trending Pulse</div>
+                  <div className="text-base font-bold text-blue-600">
                     {theme.trendingScore?.toFixed(2) || 'N/A'}
-                  </span>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="score-item">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <span className="text-green-700 font-medium">Impact Score</span>
-                  <span className="text-2xl font-bold text-green-800">
-                    {theme.impactScore?.toFixed(2) || 'N/A'}
-                  </span>
-                </div>
-              </div>
-              
-              <div className="score-item">
-                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                  <span className="text-purple-700 font-medium">Predictive Momentum</span>
-                  <span className="text-2xl font-bold text-purple-800">
-                    {theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}
-                  </span>
-                </div>
-              </div>
-            </div>
 
-            {/* Sectors and SubSectors with improved styling */}
-            <div className="space-y-3">
-              {theme.sectors?.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {theme.sectors.map(sector => (
-                    <span 
-                      key={sector._id} 
-                      className="px-3 py-1 bg-gradient-to-r from-blue-100 to-blue-50 
-                               text-blue-800 text-sm rounded-full border border-blue-200
-                               hover:from-blue-200 hover:to-blue-100 transition-colors"
-                    >
-                      {sector.sectorName}
-                    </span>
-                  ))}
+                <div className="p-3 text-center border-r border-white">
+                  <div className="text-sm font-medium text-gray-500 mb-1">Disruption</div>
+                  <div className="text-base font-bold text-purple-600">
+                    {theme.impactScore?.toFixed(2) || 'N/A'}
+                  </div>
                 </div>
-              )}
-              
-              {theme.subSectors?.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {theme.subSectors.map(subSector => (
-                    <span 
-                      key={subSector._id} 
-                      className="px-3 py-1 bg-gradient-to-r from-purple-100 to-purple-50 
-                               text-purple-800 text-sm rounded-full border border-purple-200
-                               hover:from-purple-200 hover:to-purple-100 transition-colors"
-                    >
-                      {subSector.subSectorName}
-                    </span>
-                  ))}
+
+                <div className="p-3 text-center">
+                  <div className="text-sm font-medium text-gray-500 mb-1">Momentum</div>
+                  <div className="text-base font-bold text-indigo-600">
+                    {theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}
+                  </div>
                 </div>
-              )}
+              </div>
+
+              <div className="space-y-3">
+                {theme.sectors?.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {theme.sectors.map(sector => (
+                      <span 
+                        key={sector._id} 
+                        className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm
+                                 font-medium inline-flex items-center"
+                      >
+                        {sector.sectorName}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {theme.subSectors?.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {theme.subSectors.map(subSector => (
+                      <span 
+                        key={subSector._id} 
+                        className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm
+                                 font-medium inline-flex items-center"
+                      >
+                        {subSector.subSectorName}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="flex justify-center items-center gap-6 pb-8">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className={`
+            flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold
+            transition-all duration-200 text-sm
+            ${currentPage === 1
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 shadow-sm'
+            }
+          `}
+        >
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Previous
+        </button>
+        
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+          className={`
+            flex items-center gap-2 px-6 py-2.5 rounded-lg font-semibold
+            transition-all duration-200 text-sm
+            ${currentPage === totalPages
+              ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+              : 'bg-white text-gray-700 hover:bg-blue-50 hover:text-blue-600 border border-gray-200 shadow-sm'
+            }
+          `}
+        >
+          Next
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
       </div>
     </div>
   );
