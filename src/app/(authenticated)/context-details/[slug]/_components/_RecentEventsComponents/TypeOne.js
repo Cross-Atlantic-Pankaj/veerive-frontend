@@ -1,9 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
-const TypeOne = ({ context, formatSummary }) => {
+const TypeOne = ({ context }) => {
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
+
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200">
         {context.bannerImage ? (
           <img

@@ -1,13 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
 const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   console.log('TypeFive Summary:', context.summary);
   const summaryPoints = formatSummary(context.summary);
-  const SummayPoint = summaryPoints.slice(0, 1); 
+  const summaryPoint = summaryPoints.slice(0, 1);
+
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
 
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
@@ -58,8 +68,8 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
-                {SummayPoint.length > 0 ? (
-                  SummayPoint.map((point, i) => (
+                {summaryPoint.length > 0 ? (
+                  summaryPoint.map((point, i) => (
                     <div
                       key={i}
                       className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
@@ -75,7 +85,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
               </div>
               <div className="flex-1">
                 {context.posts?.[3] && (
-                  <div className="font-semibold text-gray-800 text-[13px] ">
+                  <div className="font-semibold text-gray-800 text-[13px]">
                     {context.posts[3].postTitle}
                   </div>
                 )}
@@ -95,4 +105,4 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
   );
 };
 
-export default TypeFive; 
+export default TypeFive;

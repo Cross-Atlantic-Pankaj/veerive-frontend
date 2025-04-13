@@ -1,13 +1,23 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
 const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
-  const formatedsummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formatedsummaryPoints.slice(0,3);
+  const formattedSummaryPoints = formatSummary(context.summary);
+  const summaryPoints = formattedSummaryPoints.slice(0, 3);
+
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
 
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer"
@@ -56,8 +66,8 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
         <div className="flex flex-col sm:flex-row gap-2">
           {context.posts?.slice(0, 2).map((post, i) => (
             <div key={i} className="font-semibold text-gray-800 text-sm lg:pr-6">
-            {post.postTitle}
-          </div>
+              {post.postTitle}
+            </div>
           ))}
         </div>
       </div>
@@ -65,4 +75,4 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
   );
 };
 
-export default TypeTwo; 
+export default TypeTwo;

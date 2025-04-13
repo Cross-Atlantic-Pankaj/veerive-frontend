@@ -1,10 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
 const TypeNum = ({ context, formatSummary }) => {
   const summaryPoints = formatSummary(context.summary);
+
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
+
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/3 flex items-center justify-center">

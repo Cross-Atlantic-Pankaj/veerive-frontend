@@ -1,10 +1,21 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
-const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary  }) => {
+const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   const summaryPoints = formatSummary(context.summary);
+
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
+
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
@@ -16,20 +27,20 @@ const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary  }) =
             </div>
           </div>
           <div className="flex-1">
-          {summaryPoints.length > 0 ? (
-                summaryPoints.map((point, i) => (
-                  <div
-                    key={i}
-                    className="text-gray-800 font-semibold text-xs sm:text-sm mb-1"
-                  >
-                    {point}
-                  </div>
-                ))
-              ) : (
-                <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
-                  Summary will be available soon
+            {summaryPoints.length > 0 ? (
+              summaryPoints.map((point, i) => (
+                <div
+                  key={i}
+                  className="text-gray-800 font-semibold text-xs sm:text-sm mb-1"
+                >
+                  {point}
                 </div>
-              )}
+              ))
+            ) : (
+              <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
+                Summary will be available soon
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -37,4 +48,4 @@ const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary  }) =
   );
 };
 
-export default TypeNum; 
+export default TypeNum;

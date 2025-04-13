@@ -1,15 +1,25 @@
 import React from 'react';
 import Link from 'next/link';
+import slugify from 'slugify';
 
 const TypeFour = ({ context, formatSummary }) => {
   const sectorsLabel = [...(context.sectors || []), ...(context.subSectors || [])]
-    .map(item => item.sectorName || item.subSectorName || 'Unknown')
+    .map((item) => item.sectorName || item.subSectorName || 'Unknown')
     .join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
   const summaryPoints = formattedSummaryPoints.slice(0, 3);
 
+  const slug = context.contextTitle
+    ? slugify(context.contextTitle, {
+        lower: true,
+        strict: true,
+        remove: /[*+~.()'"!:@]/g,
+      })
+    : `context-${context.id}`;
+  const fullSlug = `${slug}-${context.id}`;
+
   return (
-    <Link href={`/context-details?id=${context.id}`}>
+    <Link href={`/context-details/${fullSlug}`}>
       <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">

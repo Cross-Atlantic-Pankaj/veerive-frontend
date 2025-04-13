@@ -101,23 +101,35 @@ export default function PulseToday() {
   }, [page]);
 
   const formatSummary = (summary) => {
-    if (!summary) return ['Summary will be available soon'];
+    if (!summary || summary.trim() === '') return ['Summary will be available soon'];
 
-    const paragraphs = summary.split('</p>').filter((p) => p.trim().length > 0);
-    const formattedPoints = [];
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(summary, 'text/html');
 
-    paragraphs.forEach((paragraph) => {
-      const cleaned = paragraph
-        .replace(/<[^>]*>/g, '')
-        .replace(/ /g, ' ')
-        .replace(/&/g, '&')
-        .trim();
+    const pointTags = ['li', 'p', 'div', 'span', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
 
-      if (cleaned.length > 0) {
-        const pointText = cleaned.startsWith('•') ? cleaned.slice(1).trim() : cleaned;
-        formattedPoints.push(`• ${pointText}`);
+    const collectPoints = (node, points = []) => {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        const tagName = node.tagName.toLowerCase();
+        if (pointTags.includes(tagName)) {
+          const text = node.textContent.trim();
+          if (text.length > 0) {
+            points.push(text);
+          }
+        } else {
+          Array.from(node.childNodes).forEach((child) => collectPoints(child, points));
+        }
       }
-    });
+      return points;
+    };
+
+    let formattedPoints = collectPoints(doc.body);
+
+    formattedPoints = formattedPoints
+      .map((point) => point.replace(/&/g, '&').replace(/\s+/g, ' ').trim())
+      .filter((point, index, self) => point.length > 0 && self.indexOf(point) === index);
+
+    formattedPoints = formattedPoints.map((point) => `• ${point}`);
 
     return formattedPoints.length > 0 ? formattedPoints : ['Summary will be available soon'];
   };
