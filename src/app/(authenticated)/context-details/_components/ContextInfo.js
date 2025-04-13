@@ -3,23 +3,6 @@
 import React from 'react';
 
 const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
-  const formatSummary = (summary) => {
-    if (!summary) return ['Summary will be available soon'];
-    const paragraphs = summary.split('</p>').filter((p) => p.trim().length > 0);
-    const formattedPoints = [];
-    paragraphs.forEach((paragraph) => {
-      const cleaned = paragraph
-        .replace(/<[^>]*>/g, '')
-        .replace(/&/g, '&')
-        .trim();
-      if (cleaned.length > 0) {
-        const pointText = cleaned.startsWith('•') ? cleaned.slice(1).trim() : cleaned;
-        formattedPoints.push(`• ${pointText}`);
-      }
-    });
-    return formattedPoints.length > 0 ? formattedPoints : ['Summary will be available soon'];
-  };
-
   const nextSlide = () => {
     if (!context || !context.slides || !context.slides.length) return;
     setCurrentSlide((prev) => (prev === context.slides.length - 1 ? 0 : prev + 1));
@@ -29,8 +12,6 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
     if (!context || !context.slides || !context.slides.length) return;
     setCurrentSlide((prev) => (prev === 0 ? context.slides.length - 1 : prev - 1));
   };
-
-  const summaryPoints = formatSummary(context.summary);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden p-6 mb-6">
@@ -66,19 +47,18 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 
       <div className="mb-6 ml-2">
         <h2 className="text-lg font-bold text-gray-800 mb-2">Summary:</h2>
-        <div className="text-gray-700">
-          {summaryPoints.map((point, idx) => (
-            <p key={idx} className="mb-2">{point}</p>
-          ))}
-        </div>
+        <ul className="text-gray-700 list-disc list-inside">
+          <div dangerouslySetInnerHTML={{__html:context.summary}}/>
+        </ul>
       </div>
 
       {context.hasSlider && context.slides && context.slides.length > 0 && (
         <div className="relative mt-8 mb-6 bg-slate-700 text-white rounded-lg overflow-hidden" ref={sliderRef}>
-          <div className="h-[300px] relative">
-            <div className="p-6 h-full flex flex-col justify-center">
+          <div className="h-full relative">
+            <div className="p-6 h-full flex flex-col justify-center px-20">
               <h3 className="text-xl font-bold mb-4">{context.slides[currentSlide].title}</h3>
-              <p className="text-gray-100">{context.slides[currentSlide].description}</p>
+              
+              <p dangerouslySetInnerHTML={{__html:context.slides[currentSlide].description}} className="text-gray-100"></p>
             </div>
             <button
               onClick={prevSlide}
@@ -86,7 +66,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -100,7 +80,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-5 w-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
