@@ -62,7 +62,7 @@ export default function ThemeDetails() {
 
 	return (
 		<div className="bg-gray-50 min-h-screen p-4">
-			<div className="max-full mx-auto p-6">
+			<div className="max-full mx-auto py-6 px-8">
 				<h1 className="text-2xl font-bold text-gray-800 mb-4">
 					{theme.themeTitle}
 				</h1>
@@ -73,7 +73,7 @@ export default function ThemeDetails() {
 								{theme.sectors.map((sector) => (
 									<span
 										key={sector._id}
-										className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+										className="py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
 									>
 										{sector.sectorName}
 									</span>
@@ -87,7 +87,7 @@ export default function ThemeDetails() {
 								{theme.subSectors.map((subSector) => (
 									<span
 										key={subSector._id}
-										className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
+										className="py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
 									>
 										{subSector.subSectorName}
 									</span>
@@ -96,19 +96,37 @@ export default function ThemeDetails() {
 						</div>
 					)}
 				</div>
-				<div
-					className="text-gray-600 mb-4 mt-4 text-base"
-					dangerouslySetInnerHTML={{ __html: theme.themeDescription }}
-				></div>
+				{theme.themeDescription && (
+					<div
+						className="text-gray-600 mb-2 mt-4 text-base"
+						dangerouslySetInnerHTML={{ __html: theme.themeDescription }}
+					></div>
+				)}
+
 				<div className="flex divide-x divide-black-500 bg-gray-50 rounded-lg text-sm">
 					<div className="flex">
-						<span className="text-gray-500 mr-2 text-base">Trending Pulse <span className="text-purple-600 font-bold text-base">{theme.trendingScore?.toFixed(2) || 'N/A'}</span></span>
+						<span className="text-gray-500 mr-2 text-base">
+							Trending Pulse{' '}
+							<span className="text-purple-600 font-bold text-base">
+								{theme.trendingScore?.toFixed(2) || 'N/A'}
+							</span>
+						</span>
 					</div>
 					<div className="flex px-2">
-						<span className="text-gray-500 mr-2 text-base">Disruption Potential <span className="text-purple-600 font-bold text-base">{theme.impactScore?.toFixed(2) || 'N/A'}</span></span>
+						<span className="text-gray-500 mr-2 text-base">
+							Disruption Potential{' '}
+							<span className="text-purple-600 font-bold text-base">
+								{theme.impactScore?.toFixed(2) || 'N/A'}
+							</span>
+						</span>
 					</div>
 					<div className="flex px-2">
-						<span className="text-gray-500 mr-2 text-base">Predictive Momentum <span className="text-purple-600 font-bold text-base">{theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}</span></span>
+						<span className="text-gray-500 mr-2 text-base">
+							Predictive Momentum{' '}
+							<span className="text-purple-600 font-bold text-base">
+								{theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}
+							</span>
+						</span>
 					</div>
 				</div>
 			</div>
