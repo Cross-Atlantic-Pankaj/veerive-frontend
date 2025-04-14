@@ -6,7 +6,7 @@ export default function TrendAnalyzer() {
 	const [themes, setThemes] = useState([]);
 	const [allThemes, setAllThemes] = useState([]);
 	const [sectors, setSectors] = useState([]);
-	const [selectedFilter, setSelectedFilter] = useState(''); // Tracks sectorId or subSectorId
+	const [selectedFilter, setSelectedFilter] = useState('');
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [currentPage, setCurrentPage] = useState(1);
