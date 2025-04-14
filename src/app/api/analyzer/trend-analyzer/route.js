@@ -15,43 +15,52 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '9');
-    const sectorId = searchParams.get('sectorId') || null;
-    const subSectorId = searchParams.get('subSectorId') || null;
-    const skip = (page - 1) * limit;
+    const sectorId = searchParams.get('sectorId');
+    const subSectorId = searchParams.get('subSectorId');
 
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
 
     const filter = {};
+
     if (sectorId) {
-      filter.sectors = new mongoose.Types.ObjectId(sectorId);
+      filter.sectors = { $in: [new mongoose.Types.ObjectId(sectorId)] };
     }
+
     if (subSectorId) {
-      filter.subSectors = new mongoose.Types.ObjectId(subSectorId);
       const subSector = await SubSector.findById(subSectorId).select('sectorId');
       if (subSector && subSector.sectorId) {
-        filter.sectors = subSector.sectorId;
+        filter.$and = [
+          { subSectors: { $in: [new mongoose.Types.ObjectId(subSectorId)] } },
+          { sectors: { $in: [subSector.sectorId] } }
+        ];
+      } else {
+        filter.subSectors = { $in: [new mongoose.Types.ObjectId(subSectorId)] };
       }
     }
+
     console.log(`Applied filter for page ${page}:`, filter);
 
-    const themes = await Theme.find(filter)
-      .sort({ overallScore: -1, _id: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('sectors', 'sectorName')
-      .populate('subSectors', 'subSectorName')
-      .select(
-        'themeTitle sectors subSectors trendingScore impactScore predictiveMomentumScore overallScore bannerImage'
-      )
-      .lean();
+    const aggregation = [
+      { $match: filter },
+      { $sort: { overallScore: -1, _id: -1 } },
+      { $skip: (page - 1) * limit },
+      { $limit: limit },
+    ];
 
-    console.log(`Raw themes for page ${page}:`, themes.map(t => t._id));
-    const themeIds = themes.map((theme) => theme._id.toString());
-    console.log(`Page ${page}: Theme IDs:`, themeIds);
+    const themes = await Theme.aggregate(aggregation);
+    console.log(`Raw page ${page} themes before deduplication:`, themes.map(t => t._id.toString()));
+
+    const uniqueThemes = [...new Set(themes.map(t => t._id.toString()))].map(id => themes.find(t => t._id.toString() === id));
+    console.log(`Page ${page} themes after deduplication:`, uniqueThemes.map(t => t._id.toString()));
 
     const totalThemes = await Theme.countDocuments(filter);
+
+    const populatedThemes = await Theme.populate(uniqueThemes, [
+      { path: 'sectors', select: 'sectorName' },
+      { path: 'subSectors', select: 'subSectorName' },
+    ]);
 
     let sectors, subsectors;
     if (cachedSectors && cachedSubsectors) {
@@ -83,7 +92,7 @@ export async function GET(request) {
 
     return NextResponse.json({
       success: true,
-      data: themes,
+      data: populatedThemes,
       Sectordata: formattedSectors,
       totalThemes,
       page,

@@ -10,6 +10,7 @@ export default function TrendAnalyzer() {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [totalThemes, setTotalThemes] = useState(0);
   const limit = 9;
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
@@ -23,13 +24,7 @@ export default function TrendAnalyzer() {
       observer.current = new IntersectionObserver(
         debounce((entries) => {
           if (entries[0].isIntersecting && hasMore) {
-            setPage((prev) => {
-              const nextPage = prev + 1;
-              if (!fetchedPages.current.has(nextPage)) {
-                return nextPage;
-              }
-              return prev;
-            });
+            setPage((prev) => prev + 1);
           }
         }, 300),
         { threshold: 0.1 }
@@ -76,19 +71,18 @@ export default function TrendAnalyzer() {
 
         if (result.success) {
           const newThemes = result.data || [];
-          const newThemeIds = newThemes.map((theme) => theme._id);
-          console.log(`Fetched page ${pageToFetch} theme IDs:`, newThemeIds);
+          console.log(`Fetched page ${pageToFetch} theme IDs:`, newThemes.map(t => t._id.toString()));
 
           setThemes((prev) => {
-            const updatedThemes = reset ? newThemes : [...prev, ...newThemes];
-            console.log(
-              'Updated themes state:',
-              updatedThemes.map((theme) => ({ _id: theme._id, title: theme.themeTitle }))
-            );
+            const existingIds = new Set(prev.map((theme) => theme._id.toString()));
+            const uniqueNewThemes = newThemes.filter((theme) => !existingIds.has(theme._id.toString()) || reset);
+            const updatedThemes = reset ? uniqueNewThemes : [...prev, ...uniqueNewThemes];
+            console.log('Updated themes state:', updatedThemes.map(t => ({ _id: t._id, title: t.themeTitle })));
             return updatedThemes;
           });
 
-          setHasMore(newThemes.length === limit);
+          setTotalThemes(result.totalThemes);
+          setHasMore((pageToFetch - 1) * limit + newThemes.length < result.totalThemes);
           if (reset) {
             setSectors(result.Sectordata || []);
             fetchedPages.current.clear();
@@ -117,7 +111,6 @@ export default function TrendAnalyzer() {
       setThemes([]);
       setPage(1);
       setHasMore(true);
-      fetchedPages.current.clear();
       fetchThemes(1, true);
     }
   }, [selectedFilter, fetchThemes]);
@@ -148,9 +141,7 @@ export default function TrendAnalyzer() {
     <div className="py-8 bg-gray-50 min-h-screen px-12">
       <div className="mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg font-bold text-gray-800">
-            Get Trends of Your Choice
-          </h2>
+          <h2 className="text-lg font-bold text-gray-800">Get Trends of Your Choice</h2>
           {selectedFilter && (
             <button
               onClick={clearFilters}
@@ -177,10 +168,7 @@ export default function TrendAnalyzer() {
 
         <div className="flex flex-wrap gap-6">
           <div className="flex-1 min-w-[250px]">
-            <label
-              htmlFor="filter"
-              className="block text-base font-semibold text-gray-700 mb-2"
-            >
+            <label htmlFor="filter" className="block text-base font-semibold text-gray-700 mb-2">
               Sector / SubSector
             </label>
             <div className="relative">
@@ -227,12 +215,9 @@ export default function TrendAnalyzer() {
 
       {themes.length === 0 && !loading ? (
         <div className="flex flex-col items-center justify-center py-16 bg-white rounded-xl shadow-sm">
-          <h3 className="text-xl font-semibold text-gray-700 mb-2">
-            No Trend available
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-700 mb-2">No Trend available</h3>
           <p className="text-gray-500 text-center max-w-md">
-            No themes match your current filter criteria. Try adjusting your
-            filters or check back later.
+            No themes match your current filter criteria. Try adjusting your filters or check back later.
           </p>
           <button
             onClick={clearFilters}
@@ -247,7 +232,7 @@ export default function TrendAnalyzer() {
             const isLastElement = themes.length === index + 1;
             return (
               <div
-                key={theme._id}
+                key={theme._id.toString()}
                 ref={isLastElement ? lastThemeElementRef : null}
                 className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
               >
@@ -267,36 +252,22 @@ export default function TrendAnalyzer() {
                 </div>
 
                 <div className="p-5">
-                  <h2 className="text-lg font-bold text-gray-800 mb-4">
-                    {theme.themeTitle || 'No Title'}
-                  </h2>
+                  <h2 className="text-lg font-bold text-gray-800 mb-4">{theme.themeTitle || 'No Title'}</h2>
 
                   <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
                     <div className="p-3 text-center border-r border-white">
-                      <div className="text-sm font-medium text-gray-500 mb-1">
-                        Trending <br /> Pulse
-                      </div>
-                      <div className="text-base font-bold text-blue-600">
-                        {theme.trendingScore?.toFixed(2) || 'N/A'}
-                      </div>
+                      <div className="text-sm font-medium text-gray-500 mb-1">Trending <br /> Pulse</div>
+                      <div className="text-base font-bold text-blue-600">{theme.trendingScore?.toFixed(2) || 'N/A'}</div>
                     </div>
 
                     <div className="p-3 text-center border-r border-white">
-                      <div className="text-sm font-medium text-gray-500 mb-1">
-                        Disruption Potential
-                      </div>
-                      <div className="text-base font-bold text-purple-600">
-                        {theme.impactScore?.toFixed(2) || 'N/A'}
-                      </div>
+                      <div className="text-sm font-medium text-gray-500 mb-1">Disruption Potential</div>
+                      <div className="text-base font-bold text-purple-600">{theme.impactScore?.toFixed(2) || 'N/A'}</div>
                     </div>
 
                     <div className="p-3 text-center">
-                      <div className="text-sm font-medium text-gray-500 mb-1">
-                        Predictive Momentum
-                      </div>
-                      <div className="text-base font-bold text-indigo-600">
-                        {theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}
-                      </div>
+                      <div className="text-sm font-medium text-gray-500 mb-1">Predictive Momentum</div>
+                      <div className="text-base font-bold text-indigo-600">{theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}</div>
                     </div>
                   </div>
 
