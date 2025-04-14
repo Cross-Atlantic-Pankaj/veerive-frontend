@@ -136,7 +136,7 @@ export default function TrendAnalyzer() {
     console.log('Navigating to slug:', slug);
     router.push(`/analyzer/theme-details/${slug}`);
   };
-
+  
   const slugify = (text) => {
     return text
       .toString()
