@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function TrendAnalyzer() {
   const [themes, setThemes] = useState([]);
@@ -15,6 +16,7 @@ export default function TrendAnalyzer() {
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
   const lastFetchFilter = useRef('');
+  const router = useRouter();
 
   const observer = useRef(null);
   const lastThemeElementRef = useCallback(
@@ -64,8 +66,10 @@ export default function TrendAnalyzer() {
           }
         }
 
+        console.log(`Fetching themes for page ${pageToFetch}, params: ${params}`);
         const response = await fetch(`/api/analyzer/trend-analyzer?${params}`);
         const result = await response.json();
+        console.log('API Response:', result);
 
         if (result.success) {
           const newThemes = result.data || [];
@@ -125,6 +129,23 @@ export default function TrendAnalyzer() {
 
   const clearFilters = () => {
     setSelectedFilter('');
+  };
+
+  const handleThemeClick = (theme) => {
+    const slug = slugify(theme.themeTitle);
+    console.log('Navigating to slug:', slug);
+    router.push(`/analyzer/theme-details/${slug}`);
+  };
+
+  const slugify = (text) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+|-+$/g, '');
   };
 
   if (error) {
@@ -232,12 +253,13 @@ export default function TrendAnalyzer() {
               <div
                 key={theme._id.toString()}
                 ref={isLastElement ? lastThemeElementRef : null}
-                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100"
+                className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 border border-gray-100 cursor-pointer"
+                onClick={() => handleThemeClick(theme)}
               >
                 <div className="relative w-full h-[160px]">
-                  {theme.bannerImage ? (
+                  {theme.trendingScoreImage ? (
                     <Image
-                      src={theme.bannerImage}
+                      src={theme.trendingScoreImage}
                       alt={theme.themeTitle || 'Trend Image'}
                       fill
                       className="object-cover"
