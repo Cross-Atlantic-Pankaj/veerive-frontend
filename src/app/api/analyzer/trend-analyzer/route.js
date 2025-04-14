@@ -40,8 +40,6 @@ export async function GET(request) {
       }
     }
 
-    console.log(`Applied filter for page ${page}:`, filter);
-
     const aggregation = [
       { $match: filter },
       { $sort: { overallScore: -1, _id: -1 } },
@@ -50,10 +48,8 @@ export async function GET(request) {
     ];
 
     const themes = await Theme.aggregate(aggregation);
-    console.log(`Raw page ${page} themes before deduplication:`, themes.map(t => t._id.toString()));
 
     const uniqueThemes = [...new Set(themes.map(t => t._id.toString()))].map(id => themes.find(t => t._id.toString() === id));
-    console.log(`Page ${page} themes after deduplication:`, uniqueThemes.map(t => t._id.toString()));
 
     const totalThemes = await Theme.countDocuments(filter);
 

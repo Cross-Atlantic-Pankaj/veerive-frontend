@@ -64,10 +64,8 @@ export default function TrendAnalyzer() {
           }
         }
 
-        console.log(`Fetching themes for page ${pageToFetch}, params: ${params}`);
         const response = await fetch(`/api/analyzer/trend-analyzer?${params}`);
         const result = await response.json();
-        console.log('API Response:', result);
 
         if (result.success) {
           const newThemes = result.data || [];
