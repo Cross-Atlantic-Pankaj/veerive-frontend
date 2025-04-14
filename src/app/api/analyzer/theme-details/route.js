@@ -4,6 +4,10 @@ import connectDB from '@/lib/db';
 import Theme from '@/models/Theme';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
+import Context from '@/models/Context';
+import Signal from '@/models/Signal';
+import SubSignal from '@/models/SubSignal';
+import Post from '@/models/Post';
 
 function normalizeTitle(text) {
   return text
@@ -33,6 +37,10 @@ export async function GET(request) {
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
+    if (!mongoose.models.Context) mongoose.model('Context', Context.schema);
+    if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
+    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
+    if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
 
     const normalizedSlug = normalizeTitle(slug);
 
@@ -63,15 +71,29 @@ export async function GET(request) {
       .sort({ overallScore: -1 })
       .lean();
 
+    const contexts = await Context.find({
+      themes: targetTheme._id,
+      isTrending: true
+    })
+      .populate('sectors', 'sectorName')
+      .populate('subSectors', 'subSectorName')
+      .populate('signalCategories', 'signalName')
+      .populate('signalSubCategories', 'subSignalName')
+      .populate('themes', 'themeTitle')
+      .populate('posts.postId')
+      .sort({ date: -1 })
+      .lean();
+
     return NextResponse.json({
       success: true,
       data: {
         theme: targetTheme,
-        relatedThemes: relatedThemes
+        relatedThemes: relatedThemes,
+        contexts: contexts
       }
     });
   } catch (error) {
-    console.error('Error fetching theme and related themes:', error);
+    console.error('Error fetching theme, related themes, and contexts:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch theme details' },
       { status: 500 }

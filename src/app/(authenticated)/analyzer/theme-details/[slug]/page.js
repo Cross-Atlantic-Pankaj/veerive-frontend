@@ -3,10 +3,12 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ThemeInfo from '../../_Components/ThemeInfo';
 import RelatedEvents from '../../_Components/RelatedEvents';
+import RelatedContexts from '../../_Components/RelatedContexts';
 
 export default function ThemeDetails() {
   const [theme, setTheme] = useState(null);
   const [relatedThemes, setRelatedThemes] = useState([]);
+  const [contexts, setContexts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { slug } = useParams();
@@ -24,6 +26,7 @@ export default function ThemeDetails() {
         if (result.success) {
           setTheme(result.data.theme);
           setRelatedThemes(result.data.relatedThemes || []);
+          setContexts(result.data.contexts || []);
         } else {
           setError(result.error || 'Failed to load theme details');
         }
@@ -66,6 +69,7 @@ export default function ThemeDetails() {
     <div className="bg-gray-50 min-h-screen p-4">
       <ThemeInfo theme={theme} />
       <RelatedEvents relatedThemes={relatedThemes} />
+      <RelatedContexts contexts={contexts} />
     </div>
   );
 }
