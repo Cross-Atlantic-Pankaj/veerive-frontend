@@ -4,11 +4,13 @@ import { useParams } from 'next/navigation';
 import ThemeInfo from '../../_Components/ThemeInfo';
 import RelatedEvents from '../../_Components/RelatedEvents';
 import RelatedContexts from '../../_Components/RelatedContexts';
+import TrendingExpertOpinions from '../../_Components/TrendingExpertOpinions';
 
 export default function ThemeDetails() {
   const [theme, setTheme] = useState(null);
   const [relatedThemes, setRelatedThemes] = useState([]);
   const [contexts, setContexts] = useState([]);
+  const [trendingExpertOpinions, setTrendingExpertOpinions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { slug } = useParams();
@@ -27,6 +29,7 @@ export default function ThemeDetails() {
           setTheme(result.data.theme);
           setRelatedThemes(result.data.relatedThemes || []);
           setContexts(result.data.contexts || []);
+          setTrendingExpertOpinions(result.data.trendingExpertOpinions || []);
         } else {
           setError(result.error || 'Failed to load theme details');
         }
@@ -69,7 +72,20 @@ export default function ThemeDetails() {
     <div className="bg-gray-50 min-h-screen p-4">
       <ThemeInfo theme={theme} />
       <RelatedEvents relatedThemes={relatedThemes} />
-      <RelatedContexts contexts={contexts} />
+      <div className="flex flex-col lg:flex-row mx-auto">
+        <div
+          className={`${
+            trendingExpertOpinions.length > 0 ? 'lg:w-[72%]' : 'w-full'
+          }`}
+        >
+          <RelatedContexts contexts={contexts} />
+        </div>
+        {trendingExpertOpinions.length > 0 && (
+          <div className="lg:w-[28%]">
+            <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

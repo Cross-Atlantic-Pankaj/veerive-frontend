@@ -52,7 +52,7 @@ export async function GET(request) {
     const targetTheme = themes.find(t => normalizeTitle(t.themeTitle) === normalizedSlug);
 
     if (!targetTheme) {
-      console.log(`No theme found for slug: ${slug}, normalized slug: ${normalizedSlug}, checked themes: ${themes.map(t => t.themeTitle).join(', ')}`);
+      console.log(`No theme found for slug: ${slug}, normalized slug: ${normalizedSlug}`);
       return NextResponse.json(
         { success: false, error: 'Theme not found' },
         { status: 404 }
@@ -80,20 +80,47 @@ export async function GET(request) {
       .populate('signalCategories', 'signalName')
       .populate('signalSubCategories', 'subSignalName')
       .populate('themes', 'themeTitle')
-      .populate('posts.postId')
+      .populate({
+        path: 'posts.postId',
+        model: 'Post'
+      })
       .sort({ date: -1 })
       .lean();
+
+    const trendingExpertOpinions = [];
+    contexts.forEach(ctx => {
+      if (ctx.posts && ctx.posts.length > 0) {
+        ctx.posts.forEach(post => {
+          if (
+            post.postId &&
+            typeof post.postId === 'object' &&
+            (post.postId.postType === 'ExpertOpinion' || post.postId.postType === 'Expert Opinion') &&
+            post.postId.isTrending === true
+          ) {
+            trendingExpertOpinions.push({
+              postId: post.postId._id,
+              postTitle: post.postId.postTitle,
+              postType: post.postId.postType,
+              date: post.postId.date,
+              contextTitle: ctx.contextTitle,
+              sourceUrl: post.postId.sourceUrl || (post.postId.sourceUrls && post.postId.sourceUrls[0]) || '',
+            });
+          }
+        });
+      }
+    });
 
     return NextResponse.json({
       success: true,
       data: {
         theme: targetTheme,
         relatedThemes: relatedThemes,
-        contexts: contexts
+        contexts: contexts,
+        trendingExpertOpinions: trendingExpertOpinions
       }
     });
   } catch (error) {
-    console.error('Error fetching theme, related themes, and contexts:', error);
+    console.error('Error fetching theme details:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch theme details' },
       { status: 500 }
