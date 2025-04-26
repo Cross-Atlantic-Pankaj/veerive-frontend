@@ -69,27 +69,38 @@ export async function GET(request) {
       cachedSubsectors = subsectors;
     }
 
-    const formattedSectors = sectors.map((sector) => {
-      const relatedSubsectors = subsectors
-        .filter((subsector) => subsector.sectorId && subsector.sectorId.toString() === sector._id.toString())
-        .map((subsector) => ({
-          subSectorId: subsector._id.toString(),
-          subSectorName: subsector.subSectorName,
-        }));
+    const sectorsInThemes = new Set();
+    const subSectorsInThemes = new Set();
 
-      return {
-        sectorId: sector._id.toString(),
-        sectorName: sector.sectorName,
-        subsectors: relatedSubsectors,
-      };
+    populatedThemes.forEach((theme) => {
+      theme.sectors.forEach((sector) => sectorsInThemes.add(sector._id.toString()));
+      theme.subSectors.forEach((subSector) => subSectorsInThemes.add(subSector._id.toString()));
     });
 
-    formattedSectors.sort((a, b) => a.sectorName.localeCompare(b.sectorName));
+    const filteredSectors = sectors
+      .filter((sector) => sectorsInThemes.has(sector._id.toString()))
+      .map((sector) => {
+        const relatedSubsectors = subsectors
+          .filter((subsector) => subsector.sectorId && subsector.sectorId.toString() === sector._id.toString())
+          .filter((subsector) => subSectorsInThemes.has(subsector._id.toString()))
+          .map((subsector) => ({
+            subSectorId: subsector._id.toString(),
+            subSectorName: subsector.subSectorName,
+          }));
+
+        return {
+          sectorId: sector._id.toString(),
+          sectorName: sector.sectorName,
+          subsectors: relatedSubsectors,
+        };
+      });
+
+    filteredSectors.sort((a, b) => a.sectorName.localeCompare(b.sectorName));
 
     return NextResponse.json({
       success: true,
       data: populatedThemes,
-      Sectordata: formattedSectors,
+      Sectordata: filteredSectors,
       totalThemes,
       page,
       limit,
