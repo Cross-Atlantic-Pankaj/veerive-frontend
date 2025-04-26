@@ -55,7 +55,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
                 summaryPoints.map((point, i) => (
                   <div
                     key={i}
-                    className="text-gray-600 text-xs sm:text-sm line-clamp-1 mb-1"
+                    className="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-1"
                   >
                     {point}
                   </div>
@@ -77,7 +77,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
         </div>
 
         <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2 mt-5">
-          {context.posts?.slice(1, 4).map((post, i) => (
+          {context.posts.slice(1, 4)?.map((post, i) => (
             <div key={i} className="flex-1 px-2">
               <div className="font-semibold text-gray-800 text-sm">
                 {post.postTitle}

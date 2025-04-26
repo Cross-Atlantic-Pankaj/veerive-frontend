@@ -183,6 +183,17 @@ export default function PulseToday() {
     return result;
   };
 
+  const slugify = (text) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
   const processNewContexts = (newContexts, prevDisplayItems) => {
     const uniqueNewContexts = Array.from(new Map(newContexts.map((c) => [c.id, c])).values());
     const newTypeOneContexts = uniqueNewContexts.filter((c) => c.containerType === 'Type-One');
@@ -364,6 +375,10 @@ export default function PulseToday() {
 
               <div className="space-y-3">
                 {trendingThemes.map((theme) => (
+                  <div className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0">
+                  <Link href={`/analyzer/theme-details/${slugify(
+                    theme.title
+                  )}`}>
                   <div
                     key={theme.id}
                     className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
@@ -379,6 +394,8 @@ export default function PulseToday() {
                         </div>
                       </div>
                     </div>
+                  </div>
+                  </Link>
                   </div>
                 ))}
               </div>

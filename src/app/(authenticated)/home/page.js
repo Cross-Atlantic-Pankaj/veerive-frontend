@@ -51,16 +51,16 @@ export default function HomePage() {
 		setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
 	};
 
-  const slugify = (text) => {
-    return text
-      .toString()
-      .toLowerCase()
-      .trim()
-      .replace(/\s+/g, '-')
-      .replace(/[^\w-]+/g, '')
-      .replace(/--+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  };
+	const slugify = (text) => {
+		return text
+			.toString()
+			.toLowerCase()
+			.trim()
+			.replace(/\s+/g, '-')
+			.replace(/[^\w-]+/g, '')
+			.replace(/--+/g, '-')
+			.replace(/^-+|-+$/g, '');
+	};
 
 	if (loading) {
 		return (
@@ -126,142 +126,175 @@ export default function HomePage() {
 
 				{/* Trending Events Section */}
 				<div className="w-full bg-white border-t border-gray-200">
-          <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
-            <div className="relative mb-8">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">TRENDING EVENTS</h2>
-                <Link href="/pulse-today" className="flex items-center text-[15px] text-blue-600">
-                  VIEW ALL ›
-                </Link>
-              </div>
-              <div className="absolute bottom-[-8px] left-0 w-full h-[1px] bg-gray-300"></div>
-            </div>
+					<div className="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
+						<div className="relative mb-8">
+							<div className="flex justify-between items-center">
+								<h2 className="text-xl md:text-2xl font-bold text-gray-900">
+									TRENDING EVENTS
+								</h2>
+								<Link
+									href="/pulse-today"
+									className="flex items-center text-[15px] text-blue-600"
+								>
+									VIEW ALL ›
+								</Link>
+							</div>
+							<div className="absolute bottom-[-8px] left-0 w-full h-[1px] bg-gray-300"></div>
+						</div>
 
-            {contexts.length === 0 ? (
-              <div className="text-gray-600 text-center py-12">No trending events found</div>
-            ) : (
-              <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {contexts
-                    .slice(currentPage * ITEMS_PER_PAGE, (currentPage + 1) * ITEMS_PER_PAGE)
-                    .map((context) => {
-                      const slug = context.contextTitle
-                        ? slugify(context.contextTitle, {
-                            lower: true,
-                            strict: true,
-                            remove: /[*+~.()'"!:@]/g,
-                          })
-                        : `context-${context.id}`;
-                      const fullSlug = `${slug}-${context._id}`;
+						{contexts.length === 0 ? (
+							<div className="text-gray-600 text-center py-12">
+								No trending events found
+							</div>
+						) : (
+							<>
+								<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+									{contexts
+										.slice(
+											currentPage * ITEMS_PER_PAGE,
+											(currentPage + 1) * ITEMS_PER_PAGE
+										)
+										.map((context) => {
+											const slug = context.contextTitle
+												? slugify(context.contextTitle, {
+														lower: true,
+														strict: true,
+														remove: /[*+~.()'"!:@]/g,
+												  })
+												: `context-${context.id}`;
+											const fullSlug = `${slug}-${context._id}`;
 
-                      return (
-                        <div key={context._id} className="flex flex-col">
-                          <Link href={`/context-details/${fullSlug}`}>
-                            <div className="bg-gray-100 aspect-[1000/630] relative mb-4 w-full">
-                              {context.bannerImage ? (
-                                <Image
-                                  src={context.bannerImage}
-                                  alt={context.contextTitle}
-                                  fill
-                                  className="object-cover"
-                                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-base md:text-xl">
-                                  1000 × 630
-                                </div>
-                              )}
-                            </div>
+											return (
+												<div
+													key={context._id}
+													className="flex flex-col"
+												>
+													<Link href={`/context-details/${fullSlug}`}>
+														<div className="bg-gray-100 aspect-[1000/630] relative mb-4 w-full">
+															{context.bannerImage ? (
+																<Image
+																	src={context.bannerImage}
+																	alt={context.contextTitle}
+																	fill
+																	className="object-cover"
+																	sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+																/>
+															) : (
+																<div className="w-full h-full flex items-center justify-center text-gray-400 text-base md:text-xl">
+																	1000 × 630
+																</div>
+															)}
+														</div>
 
-                            <div className="flex flex-wrap gap-y-2 mb-3">
-                              {context.sectors?.filter((sector) => sector.sectorName).length > 1 ? (
-                                context.sectors
-                                  .filter((sector) => sector.sectorName)
-                                  .slice(0, 2)
-                                  .map((sector) => (
-                                    <div key={sector._id} className="relative group inline-flex items-center">
-                                      <div className="relative">
-                                        <span className="text-sm md:text-[15px] text-gray-600">
-                                          {sector.sectorName}
-                                        </span>
-                                        <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
-                                      </div>
-                                    </div>
-                                  ))
-                              ) : context.sectors?.filter((sector) => sector.sectorName).length === 1 ? (
-                                <>
-                                  <div key={context.sectors[0]._id} className="relative group inline-flex items-center">
-                                    <div className="relative">
-                                      <span className="text-sm md:text-[15px] text-gray-600">
-                                        {context.sectors[0].sectorName}
-                                      </span>
-                                      <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
-                                    </div>
-                                  </div>
-                                  {context.subSectors?.filter((subSector) => subSector.subSectorName).length > 0 && (
-                                    <div key={context.subSectors[0]._id} className="relative group inline-flex items-center">
-                                      <span className="mx-2 text-gray-400">|</span>
-                                      <div className="relative">
-                                        <span className="text-sm md:text-[15px] text-gray-600">
-                                          {context.subSectors[0].subSectorName}
-                                        </span>
-                                        <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
-                                      </div>
-                                    </div>
-                                  )}
-                                </>
-                              ) : (
-                                context.subSectors
-                                  .filter((subSector) => subSector.subSectorName)
-                                  .map((subSector) => (
-                                    <div key={subSector._id} className="relative group inline-flex items-center">
-                                      <span className="text-sm md:text-[15px] text-gray-600">
-                                        {subSector.subSectorName}
-                                      </span>
-                                      <div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
-                                    </div>
-                                  ))
-                              )}
-                            </div>
+														<div className="flex flex-wrap gap-y-2 mb-3">
+															{context.sectors?.filter(
+																(sector) => sector.sectorName
+															).length > 1 ? (
+																context.sectors
+																	.filter((sector) => sector.sectorName)
+																	.slice(0, 2)
+																	.map((sector) => (
+																		<div
+																			key={sector._id}
+																			className="relative group inline-flex items-center"
+																		>
+																			<div className="relative">
+																				<span className="text-sm md:text-[15px] text-gray-600">
+																					{sector.sectorName}
+																				</span>
+																				<div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
+																			</div>
+																		</div>
+																	))
+															) : context.sectors?.filter(
+																	(sector) => sector.sectorName
+															  ).length === 1 ? (
+																<>
+																	<div
+																		key={context.sectors[0]._id}
+																		className="relative group inline-flex items-center"
+																	>
+																		<div className="relative">
+																			<span className="text-sm md:text-[15px] text-gray-600">
+																				{context.sectors[0].sectorName}
+																			</span>
+																			<div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
+																		</div>
+																	</div>
+																	{context.subSectors?.filter(
+																		(subSector) => subSector.subSectorName
+																	).length > 0 && (
+																		<div
+																			key={context.subSectors[0]._id}
+																			className="relative group inline-flex items-center"
+																		>
+																			<span className="mx-2 text-gray-400">
+																				|
+																			</span>
+																			<div className="relative">
+																				<span className="text-sm md:text-[15px] text-gray-600">
+																					{context.subSectors[0].subSectorName}
+																				</span>
+																				<div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
+																			</div>
+																		</div>
+																	)}
+																</>
+															) : (
+																context.subSectors
+																	.filter(
+																		(subSector) => subSector.subSectorName
+																	)
+																	.map((subSector) => (
+																		<div
+																			key={subSector._id}
+																			className="relative group inline-flex items-center"
+																		>
+																			<span className="text-sm md:text-[15px] text-gray-600">
+																				{subSector.subSectorName}
+																			</span>
+																			<div className="absolute bottom-[-4px] left-0 w-full h-[2px] bg-green-600"></div>
+																		</div>
+																	))
+															)}
+														</div>
 
-                            <h3 className="text-base md:text-[17px] font-medium text-gray-900 leading-tight">
-                              {context.contextTitle}
-                            </h3>
-                          </Link>
-                        </div>
-                      );
-                    })}
-                </div>
+														<h3 className="text-base md:text-[17px] font-medium text-gray-900 leading-tight">
+															{context.contextTitle}
+														</h3>
+													</Link>
+												</div>
+											);
+										})}
+								</div>
 
-                {totalPages > 1 && (
-                  <div className="flex justify-center mt-8 space-x-4">
-                    <button
-                      onClick={prevPage}
-                      className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-600 text-white hover:bg-indigo-700"
-                      aria-label="Previous page"
-                    >
-                      ←
-                    </button>
-                    <button
-                      onClick={nextPage}
-                      className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-600 text-white hover:bg-indigo-700"
-                      aria-label="Next page"
-                    >
-                      →
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-
+								{totalPages > 1 && (
+									<div className="flex justify-center mt-8 space-x-4">
+										<button
+											onClick={prevPage}
+											className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-600 text-white hover:bg-indigo-700"
+											aria-label="Previous page"
+										>
+											←
+										</button>
+										<button
+											onClick={nextPage}
+											className="w-10 h-10 flex items-center justify-center rounded-full bg-indigo-600 text-white hover:bg-indigo-700"
+											aria-label="Next page"
+										>
+											→
+										</button>
+									</div>
+								)}
+							</>
+						)}
+					</div>
+				</div>
 
 				{/* Trending Opinions and Market Statistics Section */}
 				<div className="w-full bg-gray-50 py-8">
 					<div className="max-w-[1400px] mx-auto px-8">
 						<div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-							{/* Trending Opinions */}
 							<div>
 								<div className="flex justify-between items-center">
 									<h2 className="text-xl font-semibold text-gray-900">
@@ -389,110 +422,126 @@ export default function HomePage() {
 				</div>
 
 				{/* Trends you may be interested in Section */}
-        <div className="w-full bg-white py-8">
-          <div className="max-w-[1400px] mx-auto px-8">
-            <div className="relative pb-4 mb-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-medium text-gray-900">TRENDS YOU MAYBE INTERESTED</h2>
-                <Link href="/analyzer/trend" className="text-[#6366F1] text-sm">
-                  VIEW ALL →
-                </Link>
-              </div>
-              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
-            </div>
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="lg:w-[40%]">
-                {trendingThemes?.[0] && (
-                  <Link
-                    href={`/analyzer/theme-details/${slugify(trendingThemes[0].themeTitle)}`}
-                    className="block"
-                  >
-                    <div className="bg-gray-100 h-[320px] relative w-full">
-                      {trendingThemes[0].trendingScoreImage ? (
-                        <Image
-                          src={trendingThemes[0].trendingScoreImage}
-                          alt={trendingThemes[0].themeTitle}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 1024px) 100vw, 40vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          1000 × 630
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-3">
-                      <div className="text-sm mb-2">
-                        Sector:{' '}
-                        {trendingThemes[0].sectors?.map((sector, index) => (
-                          <React.Fragment key={sector._id}>
-                            <span className="text-[#6366F1] relative inline-block">
-                              {sector.sectorName}
-                              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
-                            </span>
-                            {index < trendingThemes[0].sectors.length - 1 && (
-                              <span className="text-gray-400 mx-1">|</span>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                      <h3 className="text-base font-medium mb-2">{trendingThemes[0].themeTitle}</h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {trendingThemes[0].themeDescription?.replace(/<[^>]*>/g, '')}
-                      </p>
-                      <button className="text-white bg-[#6366F1] px-4 py-2 rounded text-sm hidden md:block hover:bg-[#5457E5] transition-colors">
-                        Continue reading
-                      </button>
-                    </div>
-                  </Link>
-                )}
-              </div>
-              <div className="lg:w-[60%] grid grid-cols-1 md:grid-cols-2 gap-4">
-                {trendingThemes?.slice(1, 5).map((theme) => (
-                  <Link
-                    key={theme._id}
-                    href={`/analyzer/theme-details/${slugify(theme.themeTitle)}`}
-                    className="block"
-                  >
-                    <div className="bg-gray-100 h-[150px] relative w-full">
-                      {theme.trendingScoreImage ? (
-                        <Image
-                          src={theme.trendingScoreImage}
-                          alt={theme.themeTitle}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 30vw"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          1000 × 630
-                        </div>
-                      )}
-                    </div>
-                    <div className="mt-3">
-                      <div className="text-sm mb-2">
-                        Sector:{' '}
-                        {theme.sectors?.map((sector, index) => (
-                          <React.Fragment key={sector._id}>
-                            <span className="text-[#6366F1] relative inline-block">
-                              {sector.sectorName}
-                              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
-                            </span>
-                            {index < theme.sectors.length - 1 && (
-                              <span className="text-gray-400 mx-1">|</span>
-                            )}
-                          </React.Fragment>
-                        ))}
-                      </div>
-                      <h3 className="text-base font-medium">{theme.themeTitle}</h3>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+				<div className="w-full bg-white py-8">
+					<div className="max-w-[1400px] mx-auto px-8">
+						<div className="relative pb-4 mb-6">
+							<div className="flex justify-between items-center">
+								<h2 className="text-xl font-medium text-gray-900">
+									TRENDS YOU MAYBE INTERESTED
+								</h2>
+								<Link
+									href="/analyzer/trend"
+									className="text-[#6366F1] text-sm"
+								>
+									VIEW ALL →
+								</Link>
+							</div>
+							<div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
+						</div>
+						<div className="flex flex-col lg:flex-row gap-4">
+							<div className="lg:w-[40%]">
+								{trendingThemes?.[0] && (
+									<Link
+										href={`/analyzer/theme-details/${slugify(
+											trendingThemes[0].themeTitle
+										)}`}
+										className="block"
+									>
+										<div className="bg-gray-100 h-[320px] relative w-full">
+											{trendingThemes[0].trendingScoreImage ? (
+												<Image
+													src={trendingThemes[0].trendingScoreImage}
+													alt={trendingThemes[0].themeTitle}
+													fill
+													className="object-cover"
+													sizes="(max-width: 1024px) 100vw, 40vw"
+												/>
+											) : (
+												<div className="w-full h-full flex items-center justify-center text-gray-400">
+													1000 × 630
+												</div>
+											)}
+										</div>
+										<div className="mt-3">
+											<div className="text-sm mb-2">
+												Sector:{' '}
+												{trendingThemes[0].sectors?.map((sector, index) => (
+													<React.Fragment key={sector._id}>
+														<span className="text-[#6366F1] relative inline-block">
+															{sector.sectorName}
+															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
+														</span>
+														{index < trendingThemes[0].sectors.length - 1 && (
+															<span className="text-gray-400 mx-1">|</span>
+														)}
+													</React.Fragment>
+												))}
+											</div>
+											<h3 className="text-base font-medium mb-2">
+												{trendingThemes[0].themeTitle}
+											</h3>
+											<p className="text-sm text-gray-600 mb-3">
+												{trendingThemes[0].themeDescription?.replace(
+													/<[^>]*>/g,
+													''
+												)}
+											</p>
+											<button className="text-white bg-[#6366F1] px-4 py-2 rounded text-sm hidden md:block hover:bg-[#5457E5] transition-colors">
+												Continue reading
+											</button>
+										</div>
+									</Link>
+								)}
+							</div>
+							<div className="lg:w-[60%] grid grid-cols-1 md:grid-cols-2 gap-4">
+								{trendingThemes?.slice(1, 5).map((theme) => (
+									<Link
+										key={theme._id}
+										href={`/analyzer/theme-details/${slugify(
+											theme.themeTitle
+										)}`}
+										className="block"
+									>
+										<div className="bg-gray-100 h-[150px] relative w-full">
+											{theme.trendingScoreImage ? (
+												<Image
+													src={theme.trendingScoreImage}
+													alt={theme.themeTitle}
+													fill
+													className="object-cover"
+													sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 30vw"
+												/>
+											) : (
+												<div className="w-full h-full flex items-center justify-center text-gray-400">
+													1000 × 630
+												</div>
+											)}
+										</div>
+										<div className="mt-3">
+											<div className="text-sm mb-2">
+												Sector:{' '}
+												{theme.sectors?.map((sector, index) => (
+													<React.Fragment key={sector._id}>
+														<span className="text-[#6366F1] relative inline-block">
+															{sector.sectorName}
+															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
+														</span>
+														{index < theme.sectors.length - 1 && (
+															<span className="text-gray-400 mx-1">|</span>
+														)}
+													</React.Fragment>
+												))}
+											</div>
+											<h3 className="text-base font-medium">
+												{theme.themeTitle}
+											</h3>
+										</div>
+									</Link>
+								))}
+							</div>
+						</div>
+					</div>
+				</div>
 
 				{/* Email Subscription Section */}
 				<div className="w-full bg-[#6366F1] py-10">
