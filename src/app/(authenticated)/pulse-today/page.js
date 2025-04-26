@@ -368,7 +368,7 @@ export default function PulseToday() {
             <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
-                <Link href="/trend-analyzer" className="text-indigo-600 text-sm flex items-center hover:text-indigo-700">
+                <Link href="/analyzer/trend" className="text-indigo-600 text-sm flex items-center hover:text-indigo-700">
                   VIEW More →
                 </Link>
               </div>
@@ -426,7 +426,7 @@ export default function PulseToday() {
               {hasMore && (
                 <div className="mt-4 text-right">
                   <Link
-                    href="/trend-analyzer"
+                    href="/analyzer/trend"
                     className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
                   >
                     VIEW More →
