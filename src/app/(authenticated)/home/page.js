@@ -51,6 +51,17 @@ export default function HomePage() {
 		setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
 	};
 
+  const slugify = (text) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^\w-]+/g, '')
+      .replace(/--+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  };
+
 	if (loading) {
 		return (
 			<div className="w-full py-8">
@@ -378,124 +389,110 @@ export default function HomePage() {
 				</div>
 
 				{/* Trends you may be interested in Section */}
-				<div className="w-full bg-white py-8">
-					<div className="max-w-[1400px] mx-auto px-8">
-						<div className="relative pb-4 mb-6">
-							<div className="flex justify-between items-center">
-								<h2 className="text-xl font-medium text-gray-900">
-									TRENDS YOU MAYBE INTERESTED
-								</h2>
-								<Link
-									href="/analyzer/trend"
-									className="text-[#6366F1] text-sm"
-								>
-									VIEW ALL →
-								</Link>
-							</div>
-							<div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
-						</div>
-
-						<div className="flex flex-col lg:flex-row gap-4">
-							<div className="lg:w-[40%]">
-								{trendingThemes?.[0] && (
-									<Link
-										href={`/analyzer/trend/${trendingThemes[0]._id}`}
-										className="block"
-									>
-										<div className="bg-gray-100 h-[320px] relative w-full">
-											{trendingThemes[0].trendingScoreImage ? (
-												<Image
-													src={trendingThemes[0].trendingScoreImage}
-													alt={trendingThemes[0].themeTitle}
-													fill
-													className="object-cover"
-													sizes="(max-width: 1024px) 100vw, 40vw"
-												/>
-											) : (
-												<div className="w-full h-full flex items-center justify-center text-gray-400">
-													1000 × 630
-												</div>
-											)}
-										</div>
-										<div className="mt-3">
-											<div className="text-sm mb-2">
-												Sector:{' '}
-												{trendingThemes[0].sectors?.map((sector, index) => (
-													<React.Fragment key={sector._id}>
-														<span className="text-[#6366F1] relative inline-block">
-															{sector.sectorName}
-															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
-														</span>
-														{index < trendingThemes[0].sectors.length - 1 && (
-															<span className="text-gray-400 mx-1">|</span>
-														)}
-													</React.Fragment>
-												))}
-											</div>
-											<h3 className="text-base font-medium mb-2">
-												{trendingThemes[0].themeTitle}
-											</h3>
-											<p className="text-sm text-gray-600 mb-3">
-												{trendingThemes[0].themeDescription?.replace(
-													/<[^>]*>/g,
-													''
-												)}
-											</p>
-											<button className="text-white bg-[#6366F1] px-4 py-2 rounded text-sm hidden md:block hover:bg-[#5457E5] transition-colors">
-												Continue reading
-											</button>
-										</div>
-									</Link>
-								)}
-							</div>
-
-							<div className="lg:w-[60%] grid grid-cols-1 md:grid-cols-2 gap-4">
-								{trendingThemes?.slice(1, 5).map((theme) => (
-									<Link
-										key={theme._id}
-										href={`/analyzer/trend/${theme._id}`}
-										className="block"
-									>
-										<div className="bg-gray-100 h-[150px] relative w-full">
-											{theme.trendingScoreImage ? (
-												<Image
-													src={theme.trendingScoreImage}
-													alt={theme.themeTitle}
-													fill
-													className="object-cover"
-													sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 30vw"
-												/>
-											) : (
-												<div className="w-full h-full flex items-center justify-center text-gray-400">
-													1000 × 630
-												</div>
-											)}
-										</div>
-										<div className="mt-3">
-											<div className="text-sm mb-2">
-												Sector:{' '}
-												{theme.sectors?.map((sector, index) => (
-													<React.Fragment key={sector._id}>
-														<span className="text-[#6366F1] relative inline-block">
-															{sector.sectorName}
-															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
-														</span>
-														{index < theme.sectors.length - 1 && (
-															<span className="text-gray-400 mx-1">|</span>
-														)}
-													</React.Fragment>
-												))}
-											</div>
-											<h3 className="text-base font-medium">
-												{theme.themeTitle}
-											</h3>
-										</div>
-									</Link>
-								))}
-							</div>
-						</div>
-					</div>
-				</div>
+        <div className="w-full bg-white py-8">
+          <div className="max-w-[1400px] mx-auto px-8">
+            <div className="relative pb-4 mb-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-medium text-gray-900">TRENDS YOU MAYBE INTERESTED</h2>
+                <Link href="/analyzer/trend" className="text-[#6366F1] text-sm">
+                  VIEW ALL →
+                </Link>
+              </div>
+              <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gray-200"></div>
+            </div>
+            <div className="flex flex-col lg:flex-row gap-4">
+              <div className="lg:w-[40%]">
+                {trendingThemes?.[0] && (
+                  <Link
+                    href={`/analyzer/theme-details/${slugify(trendingThemes[0].themeTitle)}`}
+                    className="block"
+                  >
+                    <div className="bg-gray-100 h-[320px] relative w-full">
+                      {trendingThemes[0].trendingScoreImage ? (
+                        <Image
+                          src={trendingThemes[0].trendingScoreImage}
+                          alt={trendingThemes[0].themeTitle}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 1024px) 100vw, 40vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          1000 × 630
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-3">
+                      <div className="text-sm mb-2">
+                        Sector:{' '}
+                        {trendingThemes[0].sectors?.map((sector, index) => (
+                          <React.Fragment key={sector._id}>
+                            <span className="text-[#6366F1] relative inline-block">
+                              {sector.sectorName}
+                              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
+                            </span>
+                            {index < trendingThemes[0].sectors.length - 1 && (
+                              <span className="text-gray-400 mx-1">|</span>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      <h3 className="text-base font-medium mb-2">{trendingThemes[0].themeTitle}</h3>
+                      <p className="text-sm text-gray-600 mb-3">
+                        {trendingThemes[0].themeDescription?.replace(/<[^>]*>/g, '')}
+                      </p>
+                      <button className="text-white bg-[#6366F1] px-4 py-2 rounded text-sm hidden md:block hover:bg-[#5457E5] transition-colors">
+                        Continue reading
+                      </button>
+                    </div>
+                  </Link>
+                )}
+              </div>
+              <div className="lg:w-[60%] grid grid-cols-1 md:grid-cols-2 gap-4">
+                {trendingThemes?.slice(1, 5).map((theme) => (
+                  <Link
+                    key={theme._id}
+                    href={`/analyzer/theme-details/${slugify(theme.themeTitle)}`}
+                    className="block"
+                  >
+                    <div className="bg-gray-100 h-[150px] relative w-full">
+                      {theme.trendingScoreImage ? (
+                        <Image
+                          src={theme.trendingScoreImage}
+                          alt={theme.themeTitle}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 30vw"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400">
+                          1000 × 630
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-3">
+                      <div className="text-sm mb-2">
+                        Sector:{' '}
+                        {theme.sectors?.map((sector, index) => (
+                          <React.Fragment key={sector._id}>
+                            <span className="text-[#6366F1] relative inline-block">
+                              {sector.sectorName}
+                              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
+                            </span>
+                            {index < theme.sectors.length - 1 && (
+                              <span className="text-gray-400 mx-1">|</span>
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </div>
+                      <h3 className="text-base font-medium">{theme.themeTitle}</h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
 
 				{/* Email Subscription Section */}
 				<div className="w-full bg-[#6366F1] py-10">
