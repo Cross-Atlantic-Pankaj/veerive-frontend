@@ -104,7 +104,7 @@ export default function ContextDetails() {
   return (
     <>
       <Head>
-        <title>{context.contextTitle} | Your App Name</title>
+        <title>{context.contextTitle}</title>
         <meta
           name="description"
           content={

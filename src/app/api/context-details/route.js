@@ -40,7 +40,7 @@ export async function POST(request) {
       })
       .populate({
         path: 'subSectors',
-        select: 'subSectorName _id',
+        select: 'subSectorName _id sectorId',
       })
       .populate({
         path: 'signalCategories',
@@ -69,6 +69,9 @@ export async function POST(request) {
         predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0,
       };
     }
+
+const sectors = context.sectors.map(sector => sector.sectorName);
+const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
 
     let matchingThemes = await Theme.find({
       subSectors: { $in: context.subSectors.map(ss => ss._id) },
@@ -145,6 +148,8 @@ export async function POST(request) {
         ...context,
         id: context._id.toString(),
         originalTheme,
+        originalContextSector: sectors,
+        originalContextSubSector: subSectors,
         trendingThemes: processedMatchingThemes,
         slides,
         matchingSubSectors: [],

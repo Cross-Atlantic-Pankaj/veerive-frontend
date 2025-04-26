@@ -44,9 +44,9 @@ export default function RelatedEvents({ relatedThemes }) {
             </div>
 
             <div className="p-5">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">
-                {relatedTheme.themeTitle || 'No Title'}
-              </h2>
+              {relatedTheme.themeTitle && <h2 className="text-lg font-bold text-gray-800 mb-4">
+                {relatedTheme.themeTitle}
+              </h2>}
 
               <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
                 <div className="p-3 text-center border-r border-white">

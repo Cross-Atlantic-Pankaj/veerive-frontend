@@ -3,6 +3,17 @@
 import React from 'react';
 import Link from 'next/link';
 
+const slugify = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+|-+$/g, '');
+};
+
 const TrendingThemes = ({ trendingThemes }) => {
   return (
     <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm lg:mt-12">
@@ -18,6 +29,10 @@ const TrendingThemes = ({ trendingThemes }) => {
       <div className="space-y-3">
         {trendingThemes?.length > 0 ? (
           trendingThemes.map((theme, index) => (
+            <div className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0">
+            <Link href={`/analyzer/theme-details/${slugify(
+              theme.themeTitle
+            )}`}>
             <div
               key={index}
               className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
@@ -35,6 +50,8 @@ const TrendingThemes = ({ trendingThemes }) => {
                   )}
                 </div>
               </div>
+            </div>
+            </Link>
             </div>
           ))
         ) : (
