@@ -222,13 +222,21 @@ export default function TrendAnalyzer() {
 				 <div className="flex flex-wrap gap-6">
           <div className="flex-1 min-w-[250px]">
             <div className="relative">
-              <Select
+			<Select
                 id="filter"
                 value={sectorOptions.find((option) => option.value === selectedFilter)}
                 onChange={handleFilterChange}
                 options={sectorOptions}
                 placeholder="Search and select a sector or sub-sector"
                 className="w-full"
+                isClearable={true}
+                filterOption={(candidate, input) => {
+                  const inputLower = input.toLowerCase();
+                  return (
+                    candidate.label.toLowerCase().includes(inputLower) ||
+                    candidate.label.toLowerCase().startsWith(inputLower)
+                  );
+                }}
               />
             </div>
           </div>
