@@ -20,7 +20,7 @@ export default function RelatedEvents({ relatedThemes }) {
 
   return (
     <div className="mt-8 px-8">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4 px-1">Related Events</h2>
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4 px-1">Other Key Trends in Sector</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         {relatedThemes.map((relatedTheme) => (
           <div

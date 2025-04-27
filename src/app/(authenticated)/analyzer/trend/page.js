@@ -148,17 +148,17 @@ export default function TrendAnalyzer() {
 	}, [page, fetchThemes]);
 
 	const handleFilterChange = (selectedOption) => {
-    setSelectedFilter(selectedOption ? selectedOption.value : '');
-  };
+		setSelectedFilter(selectedOption ? selectedOption.value : '');
+	};
 
 	const clearFilters = () => {
 		setSelectedFilter('');
 	};
 
 	const handleThemeClick = (theme) => {
-    const slug = slugify(theme.themeTitle);
-    router.push(`/analyzer/theme-details/${slug}`);
-  };
+		const slug = slugify(theme.themeTitle);
+		router.push(`/analyzer/theme-details/${slug}`);
+	};
 
 	const slugify = (text) => {
 		return text
@@ -179,14 +179,13 @@ export default function TrendAnalyzer() {
 		);
 	}
 
-  const sectorOptions = sectors.flatMap((sector) => [
-    { label: sector.sectorName, value: sector.sectorId },
-    ...sector.subsectors.map((subsector) => ({
-      label: `-- ${subsector.subSectorName}`,
-      value: subsector.subSectorId,
-    })),
-  ]);
-
+	const sectorOptions = sectors.flatMap((sector) => [
+		{ label: sector.sectorName, value: sector.sectorId },
+		...sector.subsectors.map((subsector) => ({
+			label: `-- ${subsector.subSectorName}`,
+			value: subsector.subSectorId,
+		})),
+	]);
 
 	return (
 		<div className="py-8 bg-gray-50 min-h-screen px-12">
@@ -219,28 +218,30 @@ export default function TrendAnalyzer() {
 					)}
 				</div>
 
-				 <div className="flex flex-wrap gap-6">
-          <div className="flex-1 min-w-[250px]">
-            <div className="relative">
-			<Select
-                id="filter"
-                value={sectorOptions.find((option) => option.value === selectedFilter)}
-                onChange={handleFilterChange}
-                options={sectorOptions}
-                placeholder="Search and select a sector or sub-sector"
-                className="w-full"
-                isClearable={true}
-                filterOption={(candidate, input) => {
-                  const inputLower = input.toLowerCase();
-                  return (
-                    candidate.label.toLowerCase().includes(inputLower) ||
-                    candidate.label.toLowerCase().startsWith(inputLower)
-                  );
-                }}
-              />
-            </div>
-          </div>
-        </div>
+				<div className="flex flex-wrap gap-6">
+					<div className="flex-1 min-w-[250px]">
+						<div className="relative">
+							<Select
+								id="filter"
+								value={sectorOptions.find(
+									(option) => option.value === selectedFilter
+								)}
+								onChange={handleFilterChange}
+								options={sectorOptions}
+								placeholder="Search and select a sector or sub-sector"
+								className="w-full"
+								isClearable={true}
+								filterOption={(candidate, input) => {
+									const inputLower = input.toLowerCase();
+									return (
+										candidate.label.toLowerCase().includes(inputLower) ||
+										candidate.label.toLowerCase().startsWith(inputLower)
+									);
+								}}
+							/>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			{themes.length === 0 && !loading ? (
@@ -287,7 +288,7 @@ export default function TrendAnalyzer() {
 
 								<div className="p-5">
 									<h2 className="text-lg font-bold text-gray-800 mb-4">
-										{theme.themeTitle || 'No Title'}
+										{theme.themeTitle}
 									</h2>
 
 									<div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
@@ -320,22 +321,9 @@ export default function TrendAnalyzer() {
 									</div>
 
 									<div className="space-y-3">
-										{theme.sectors?.length > 0 && (
+										{theme.subSectors?.length > 0 ? (
 											<div className="flex flex-wrap gap-2">
-												{theme.sectors.map((sector) => (
-													<span
-														key={sector._id}
-														className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium inline-flex items-center"
-													>
-														{sector.sectorName || 'Unknown Sector'}
-													</span>
-												))}
-											</div>
-										)}
-
-										{theme.subSectors?.length > 0 && (
-											<div className="flex flex-wrap gap-2">
-												{theme.subSectors.map((subSector) => (
+												{theme.subSectors.slice(0, 4).map((subSector) => (
 													<span
 														key={subSector._id}
 														className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium inline-flex items-center"
@@ -344,6 +332,17 @@ export default function TrendAnalyzer() {
 													</span>
 												))}
 											</div>
+										) : (
+											theme.sectors.slice(0, 4).map((sector) => (
+												<div
+													className="flex flex-wrap gap-2"
+													key={sector._id}
+												>
+													<span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium inline-flex items-center">
+														{sector.sectorName || 'Unknown Sector'}
+													</span>
+												</div>
+											))
 										)}
 									</div>
 								</div>

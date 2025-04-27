@@ -89,7 +89,7 @@ const RelatedContexts = ({ contexts }) => {
 
   return (
     <div className="mb-6 max-full mx-auto py-6 px-8">
-      <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Related Contexts</h2>
+      <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">Related Events</h2>
       <div className="space-y-6">
         {otherContexts.map((relatedContext, index) => (
           <div key={`other-${relatedContext._id}-${index}`} className="grid grid-cols-1">

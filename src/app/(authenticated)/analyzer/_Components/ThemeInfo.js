@@ -4,36 +4,32 @@ export default function ThemeInfo({ theme }) {
   return (
     <div className="max-full mx-auto py-6 px-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">{theme.themeTitle}</h1>
+      
       <div className="space-y-4">
-        {theme.sectors?.length > 0 && (
+        {theme.sectors?.length > 0 || theme.subSectors?.length > 0 ? (
           <div>
             <div className="flex flex-wrap gap-2 mt-2">
-              {theme.sectors.map((sector) => (
+              {theme.sectors?.map((sector) => (
                 <span
                   key={sector._id}
-                  className="py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+                  className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
                 >
                   {sector.sectorName}
                 </span>
               ))}
-            </div>
-          </div>
-        )}
-        {theme.subSectors?.length > 0 && (
-          <div>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {theme.subSectors.map((subSector) => (
+              {theme.subSectors?.map((subSector) => (
                 <span
                   key={subSector._id}
-                  className="py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
+                  className="p-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
                 >
                   {subSector.subSectorName}
                 </span>
               ))}
             </div>
           </div>
-        )}
+        ) : null}
       </div>
+
       {theme.themeDescription && (
         <div
           className="text-gray-600 mb-2 mt-4 text-base"
