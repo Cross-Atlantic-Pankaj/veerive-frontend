@@ -464,14 +464,14 @@ export default function HomePage() {
 										</div>
 										<div className="mt-3">
 											<div className="text-sm mb-2">
-												Sector:{' '}
-												{trendingThemes[0].sectors?.map((sector, index) => (
-													<React.Fragment key={sector._id}>
+												Subsector:{' '}
+												{trendingThemes[0].subSectors?.slice(0,3).map((subSector, index) => (
+													<React.Fragment key={subSector._id}>
 														<span className="text-[#6366F1] relative inline-block">
-															{sector.sectorName}
+															{subSector.subSectorName}
 															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
 														</span>
-														{index < trendingThemes[0].sectors.length - 1 && (
+														{index < trendingThemes[0].subSectors.length - 1 && (
 															<span className="text-gray-400 mx-1">|</span>
 														)}
 													</React.Fragment>
@@ -519,14 +519,14 @@ export default function HomePage() {
 										</div>
 										<div className="mt-3">
 											<div className="text-sm mb-2">
-												Sector:{' '}
-												{theme.sectors?.map((sector, index) => (
-													<React.Fragment key={sector._id}>
+												Subsector:{' '}
+												{theme.subSectors?.slice(0,3).map((subSector, index) => (
+													<React.Fragment key={subSector._id}>
 														<span className="text-[#6366F1] relative inline-block">
-															{sector.sectorName}
+														{subSector.subSectorName}
 															<span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
 														</span>
-														{index < theme.sectors.length - 1 && (
+														{index < theme.subSectors.length - 1 && (
 															<span className="text-gray-400 mx-1">|</span>
 														)}
 													</React.Fragment>

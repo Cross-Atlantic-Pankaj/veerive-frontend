@@ -328,7 +328,7 @@ export default function TrendAnalyzer() {
 														key={subSector._id}
 														className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-sm font-medium inline-flex items-center"
 													>
-														{subSector.subSectorName || 'Unknown SubSector'}
+														{subSector.subSectorName}
 													</span>
 												))}
 											</div>
@@ -338,8 +338,8 @@ export default function TrendAnalyzer() {
 													className="flex flex-wrap gap-2"
 													key={sector._id}
 												>
-													<span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium inline-flex items-center">
-														{sector.sectorName || 'Unknown Sector'}
+													<span className="px-3 py-1 bg-blue-50 text-blue-700 rounded-full text-sm font-medium inline-flex items-center ">
+														{sector.sectorName}
 													</span>
 												</div>
 											))

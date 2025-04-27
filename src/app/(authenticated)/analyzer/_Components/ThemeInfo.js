@@ -37,32 +37,33 @@ export default function ThemeInfo({ theme }) {
         ></div>
       )}
 
-      <div className="flex divide-x divide-black-500 bg-gray-50 rounded-lg text-sm">
-        <div className="flex">
-          <span className="text-gray-500 mr-2 text-base">
-            Trending Pulse{' '}
-            <span className="text-purple-600 font-bold text-base">
-              {theme.trendingScore?.toFixed(2) || 'N/A'}
-            </span>
-          </span>
-        </div>
-        <div className="flex px-2">
-          <span className="text-gray-500 mr-2 text-base">
-            Disruption Potential{' '}
-            <span className="text-purple-600 font-bold text-base">
-              {theme.impactScore?.toFixed(2) || 'N/A'}
-            </span>
-          </span>
-        </div>
-        <div className="flex px-2">
-          <span className="text-gray-500 mr-2 text-base">
-            Predictive Momentum{' '}
-            <span className="text-purple-600 font-bold text-base">
-              {theme.predictiveMomentumScore?.toFixed(2) || 'N/A'}
-            </span>
-          </span>
-        </div>
-      </div>
+      <div className="flex gap-4 flex-wrap">
+						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
+							<div className="text-sm text-[#174c77] leading-tight text-center">
+								Disruption Potential
+							</div>
+							<div className="bg-[#f76c3c] text-white font-bold w-9 h-9 p-2 flex items-center justify-center rounded">
+								{theme.impactScore?.toFixed(2)}
+							</div>
+						</div>
+						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
+							<div className="text-sm text-[#174c77] leading-tight text-center">
+								Predictive Momentum
+							</div>
+							<div className="bg-[#f76c3c] text-white font-bold w-9 h-9 p-2 flex items-center justify-center rounded">
+								{theme.predictiveMomentumScore?.toFixed(2)}
+							</div>
+						</div>
+						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
+							<div className="text-sm text-[#174c77] leading-tight text-center">
+								Trending Pulse
+							</div>
+							<div className="bg-[#f76c3c] text-white font-semibold w-9 h-9 p-2 flex items-center justify-center rounded">
+								{theme.trendingScore?.toFixed(2)}
+							</div>
+						</div>
+					</div>
+
     </div>
   );
 }
