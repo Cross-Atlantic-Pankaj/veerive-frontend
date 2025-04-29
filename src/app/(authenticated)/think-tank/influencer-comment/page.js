@@ -4,10 +4,14 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 
 export default function ThinkTankPage() {
   const [posts, setPosts] = useState([]);
+  const [sectors, setSectors] = useState([]);
+  const [signals, setSignals] = useState([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [totalPosts, setTotalPosts] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [expandedSectors, setExpandedSectors] = useState({});
+  const [expandedSignals, setExpandedSignals] = useState({});
   const limit = 10;
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
@@ -57,6 +61,8 @@ export default function ThinkTankPage() {
           page: result.page,
           totalPosts: result.totalPosts,
           postIds: result.data?.map((p) => p._id) || [],
+          sectors: result.sectors?.map((s) => s.sectorName) || [],
+          signals: result.signals?.map((s) => s.signalName) || [],
         });
 
         if (result.success) {
@@ -75,6 +81,13 @@ export default function ThinkTankPage() {
             return updatedPosts;
           });
 
+          if (reset) {
+            setSectors(result.sectors || []);
+            setSignals(result.signals || []);
+            setExpandedSectors({});
+            setExpandedSignals({});
+          }
+
           setTotalPosts(result.totalPosts);
           setHasMore((pageToFetch - 1) * limit + newPosts.length < result.totalPosts);
           if (reset) {
@@ -84,10 +97,14 @@ export default function ThinkTankPage() {
         } else {
           console.error('API Error:', result.error);
           setPosts([]);
+          setSectors([]);
+          setSignals([]);
         }
       } catch (error) {
         console.error('Fetch error:', error);
         setPosts([]);
+        setSectors([]);
+        setSignals([]);
       } finally {
         setLoading(false);
       }
@@ -110,57 +127,157 @@ export default function ThinkTankPage() {
     }
   }, [page, fetchPosts]);
 
+  const toggleSector = (sectorId) => {
+    setExpandedSectors((prev) => ({
+      ...prev,
+      [sectorId]: !prev[sectorId],
+    }));
+  };
+
+  const toggleSignal = (signalId) => {
+    setExpandedSignals((prev) => ({
+      ...prev,
+      [signalId]: !prev[signalId],
+    }));
+  };
+
   return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="space-y-6">
-        {posts.map((post, index) => {
-          const isLastElement = posts.length === index + 1;
-          return (
-            <div
-              key={post._id}
-              ref={isLastElement ? lastPostElementRef : null}
-              className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="flex justify-between items-center mb-4">
-                <div className="flex gap-2">
-                  {post.sectors.slice(0, 3).map((sector) => (
-                    <span
-                      key={sector._id}
-                      className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full"
-                    >
-                      {sector.sectorName}
-                    </span>
-                  ))}
-                </div>
-                <span className="text-sm text-gray-500">
-                  {new Date(post.date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </span>
-              </div>
-              <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.postTitle}</h2>
-              <p className="text-gray-600 mb-4 leading-relaxed">{post.summary}</p>
-              {post.sourceUrl && (
-                <a
-                  href={post.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+    <div className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-6">
+      {/* Left Column: Sectors and Signals */}
+      <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-6 h-fit">
+        {/* Sectors Section */}
+        <div className="mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Sectors</h2>
+          <div className="space-y-3">
+            {sectors.map((sector) => (
+              <div key={sector._id}>
+                <div
+                  className="flex items-center justify-between cursor-pointer p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                  onClick={() => toggleSector(sector._id)}
                 >
-                  Read Full
-                </a>
-              )}
-            </div>
-          );
-        })}
-      </div>
-      {loading && (
-        <div className="flex justify-center items-center py-8">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-400 border-t-transparent"></div>
+                  <span className="text-gray-800 font-semibold">{sector.sectorName}</span>
+                  <span className="text-gray-600 text-lg font-medium">
+                    {expandedSectors[sector._id] ? '−' : '+'}
+                  </span>
+                </div>
+                {expandedSectors[sector._id] && (
+                  <div className="ml-4 mt-2 space-y-2 animate-fade-in">
+                    {sector.subSectors.map((subSector) => (
+                      <div
+                        key={subSector._id}
+                        className="text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors"
+                      >
+                        {subSector.subSectorName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      )}
+        {/* Signals Section */}
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Signals</h2>
+          <div className="space-y-3">
+            {signals.map((signal) => (
+              <div key={signal._id}>
+                <div
+                  className="flex items-center justify-between cursor-pointer p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors duration-200"
+                  onClick={() => toggleSignal(signal._id)}
+                >
+                  <span className="text-gray-800 font-semibold">{signal.signalName}</span>
+                  <span className="text-gray-600 text-lg font-medium">
+                    {expandedSignals[signal._id] ? '−' : '+'}
+                  </span>
+                </div>
+                {expandedSignals[signal._id] && (
+                  <div className="ml-4 mt-2 space-y-2 animate-fade-in">
+                    {signal.subSignals.map((subSignal) => (
+                      <div
+                        key={subSignal._id}
+                        className="text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors"
+                      >
+                        {subSignal.subSignalName}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Posts */}
+      <div className="md:w-2/3">
+        <div className="space-y-6">
+          {posts.map((post, index) => {
+            const isLastElement = posts.length === index + 1;
+            return (
+              <div
+                key={post._id}
+                ref={isLastElement ? lastPostElementRef : null}
+                className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow"
+              >
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex gap-2">
+                    {post.sectors.slice(0, 3).map((sector) => (
+                      <span
+                        key={sector._id}
+                        className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full"
+                      >
+                        {sector.sectorName}
+                      </span>
+                    ))}
+                  </div>
+                  <span className="text-sm text-gray-500">
+                    {new Date(post.date).toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}
+                  </span>
+                </div>
+                <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.postTitle}</h2>
+                <p className="text-gray-600 mb-4 leading-relaxed">{post.summary}</p>
+                {post.sourceUrl && (
+                  <a
+                    href={post.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                  >
+                    Read Full
+                  </a>
+                )}
+              </div>
+            );
+          })}
+        </div>
+        {loading && (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-400 border-t-transparent"></div>
+          </div>
+        )}
+      </div>
+
+      {/* CSS for animation */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
