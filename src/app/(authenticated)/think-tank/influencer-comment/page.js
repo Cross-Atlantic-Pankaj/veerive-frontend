@@ -12,6 +12,7 @@ export default function ThinkTankPage() {
   const [loading, setLoading] = useState(false);
   const [expandedSectors, setExpandedSectors] = useState({});
   const [expandedSignals, setExpandedSignals] = useState({});
+  const [selectedSubSector, setSelectedSubSector] = useState(null);
   const limit = 10;
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
@@ -54,6 +55,9 @@ export default function ThinkTankPage() {
       fetchedPages.current.add(pageToFetch);
       try {
         const params = new URLSearchParams({ page: pageToFetch, limit });
+        if (selectedSubSector) {
+          params.append('subSectorId', selectedSubSector);
+        }
         console.log(`Fetching posts for page ${pageToFetch}, params: ${params}`);
         const response = await fetch(`/api/think-tank/influencer-comment?${params}`);
         const result = await response.json();
@@ -97,19 +101,23 @@ export default function ThinkTankPage() {
         } else {
           console.error('API Error:', result.error);
           setPosts([]);
-          setSectors([]);
-          setSignals([]);
+          if (reset) {
+            setSectors([]);
+            setSignals([]);
+          }
         }
       } catch (error) {
         console.error('Fetch error:', error);
         setPosts([]);
-        setSectors([]);
-        setSignals([]);
+        if (reset) {
+          setSectors([]);
+          setSignals([]);
+        }
       } finally {
         setLoading(false);
       }
     },
-    [loading]
+    [loading, selectedSubSector]
   );
 
   useEffect(() => {
@@ -141,11 +149,21 @@ export default function ThinkTankPage() {
     }));
   };
 
+  const handleSubSectorClick = (subSectorId) => {
+    if (selectedSubSector === subSectorId) {
+      setSelectedSubSector(null);
+    } else {
+      setSelectedSubSector(subSectorId);
+    }
+    setPage(1);
+    setPosts([]);
+    fetchedPages.current.clear();
+    fetchPosts(1, true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-6">
-      {/* Left Column: Sectors and Signals */}
       <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-6 h-fit">
-        {/* Sectors Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Sectors</h2>
           <div className="space-y-3">
@@ -165,7 +183,10 @@ export default function ThinkTankPage() {
                     {sector.subSectors.map((subSector) => (
                       <div
                         key={subSector._id}
-                        className="text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors"
+                        className={`text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors cursor-pointer ${
+                          selectedSubSector === subSector._id ? 'font-bold text-blue-600' : ''
+                        }`}
+                        onClick={() => handleSubSectorClick(subSector._id)}
                       >
                         {subSector.subSectorName}
                       </div>
@@ -176,7 +197,6 @@ export default function ThinkTankPage() {
             ))}
           </div>
         </div>
-        {/* Signals Section */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Signals</h2>
           <div className="space-y-3">
@@ -209,51 +229,54 @@ export default function ThinkTankPage() {
         </div>
       </div>
 
-      {/* Right Column: Posts */}
       <div className="md:w-2/3">
         <div className="space-y-6">
-          {posts.map((post, index) => {
-            const isLastElement = posts.length === index + 1;
-            return (
-              <div
-                key={post._id}
-                ref={isLastElement ? lastPostElementRef : null}
-                className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="flex justify-between items-center mb-4">
-                  <div className="flex gap-2">
-                    {post.sectors.slice(0, 3).map((sector) => (
-                      <span
-                        key={sector._id}
-                        className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full"
-                      >
-                        {sector.sectorName}
-                      </span>
-                    ))}
+          {posts.length === 0 && !loading ? (
+            <p className="text-gray-600">No posts found{selectedSubSector ? ' for the selected subsector.' : '.'}</p>
+          ) : (
+            posts.map((post, index) => {
+              const isLastElement = posts.length === index + 1;
+              return (
+                <div
+                  key={post._id}
+                  ref={isLastElement ? lastPostElementRef : null}
+                  className="border border-gray-200 rounded-lg p-6 bg-white shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="flex justify-between items-center mb-4">
+                    <div className="flex gap-2">
+                      {post.sectors.slice(0, 3).map((sector) => (
+                        <span
+                          key={sector._id}
+                          className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full"
+                        >
+                          {sector.sectorName}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      {new Date(post.date).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
                   </div>
-                  <span className="text-sm text-gray-500">
-                    {new Date(post.date).toLocaleDateString('en-US', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </span>
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.postTitle}</h2>
+                  <p className="text-gray-600 mb-4 leading-relaxed">{post.summary}</p>
+                  {post.sourceUrl && (
+                    <a
+                      href={post.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                    >
+                      Read Full
+                    </a>
+                  )}
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.postTitle}</h2>
-                <p className="text-gray-600 mb-4 leading-relaxed">{post.summary}</p>
-                {post.sourceUrl && (
-                  <a
-                    href={post.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-                  >
-                    Read Full
-                  </a>
-                )}
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
         {loading && (
           <div className="flex justify-center items-center py-8">
@@ -261,23 +284,6 @@ export default function ThinkTankPage() {
           </div>
         )}
       </div>
-
-      {/* CSS for animation */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 }

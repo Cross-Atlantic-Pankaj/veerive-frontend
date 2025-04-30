@@ -11,7 +11,7 @@ import connectDB from '@/lib/db';
 export async function GET(request) {
   try {
     await connectDB();
-    
+
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
@@ -22,6 +22,7 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
+    const subSectorId = searchParams.get('subSectorId') || null;
 
     if (limit < 1 || limit > 100) {
       return NextResponse.json({ success: false, error: 'Limit must be between 1 and 100' }, { status: 400 });
@@ -29,14 +30,42 @@ export async function GET(request) {
 
     const skip = (page - 1) * limit;
 
-    const posts = await Post.find({})
+    let postsQuery = Post.find({});
+
+    if (subSectorId) {
+      if (!mongoose.isValidObjectId(subSectorId)) {
+        return NextResponse.json({ success: false, error: 'Invalid SubSector ID' }, { status: 400 });
+      }
+
+      const contexts = await Context.find({ subSectors: subSectorId })
+        .select('_id')
+        .lean();
+
+      if (!contexts.length) {
+        return NextResponse.json({
+          success: true,
+          data: [],
+          totalPosts: 0,
+          page,
+          limit,
+          sectors: [],
+          signals: [],
+        });
+      }
+
+      const contextIds = contexts.map((context) => context._id);
+
+      postsQuery = postsQuery.where('contexts').in(contextIds);
+    }
+
+    const posts = await postsQuery
       .select('postTitle date summary sourceUrl sourceUrls contexts')
       .sort({ date: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
       .lean();
 
-    console.log('API Query:', { page, limit, skip });
+    console.log('API Query:', { page, limit, skip, subSectorId });
     console.log('API Fetched post IDs:', posts.map((p) => p._id.toString()));
 
     const processedPosts = await Promise.all(
@@ -64,7 +93,9 @@ export async function GET(request) {
       })
     );
 
-    const totalPosts = await Post.countDocuments({});
+    const totalPosts = await (subSectorId
+      ? Post.countDocuments({ contexts: { $in: (await Context.find({ subSectors: subSectorId }).select('_id').lean()).map(c => c._id) } })
+      : Post.countDocuments({}));
 
     const contexts = await Context.find({})
       .select('sectors subSectors signalCategories signalSubCategories')
@@ -78,7 +109,7 @@ export async function GET(request) {
     const sectors = await Sector.find({ _id: { $in: validSectorIds } })
       .select('sectorName')
       .lean();
-    
+
     const subSectors = await SubSector.find({ _id: { $in: validSubSectorIds } })
       .select('subSectorName sectorId')
       .lean();
@@ -88,20 +119,19 @@ export async function GET(request) {
         .filter(sub => sub.sectorId && sub.sectorId.toString() === sector._id.toString())
         .map(sub => ({
           _id: sub._id.toString(),
-          subSectorName: sub.subSectorName
+          subSectorName: sub.subSectorName,
         }));
-      
       return {
         _id: sector._id.toString(),
         sectorName: sector.sectorName,
-        subSectors: subSectorsForSector
+        subSectors: subSectorsForSector,
       };
     }).filter(sector => sector.subSectors.length > 0);
 
     const signals = await Signal.find({ _id: { $in: validSignalIds } })
       .select('signalName')
       .lean();
-    
+
     const subSignals = await SubSignal.find({ _id: { $in: validSubSignalIds } })
       .select('subSignalName signalId')
       .lean();
@@ -111,18 +141,14 @@ export async function GET(request) {
         .filter(sub => sub.signalId && sub.signalId.toString() === signal._id.toString())
         .map(sub => ({
           _id: sub._id.toString(),
-          subSignalName: sub.subSignalName
+          subSignalName: sub.subSignalName,
         }));
-      
       return {
         _id: signal._id.toString(),
         signalName: signal.signalName,
-        subSignals: subSignalsForSignal
+        subSignals: subSignalsForSignal,
       };
     }).filter(signal => signal.subSignals.length > 0);
-    console.log(JSON.stringify(groupedSectors, null, 2));
-    console.log("Length :", groupedSectors.length);
-
 
     return NextResponse.json({
       success: true,
@@ -131,7 +157,7 @@ export async function GET(request) {
       page,
       limit,
       sectors: groupedSectors,
-      signals: groupedSignals
+      signals: groupedSignals,
     });
   } catch (error) {
     console.error('Error fetching posts:', error);
