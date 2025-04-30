@@ -115,18 +115,6 @@ export default function Navbar({ user, onLogout }) {
   const [openMobileSection, setOpenMobileSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const thinkTankLinks = [
-    { name: 'INFLUENCER COMMENT', href: '/think-tank/influencer-comment' },
-    { name: 'REPORTS', href: '/think-tank/reports' },
-    { name: 'INTERVIEWS', href: '/think-tank/interviews' },
-    { name: 'INFOGRAPHICS & STATISTICS', href: '/think-tank/infographics' },
-  ];
-
-  const analyzerLinks = [
-    { name: 'SECTOR ANALYSER', href: '/analyzer/sector' },
-    { name: 'TREND ANALYZER', href: '/analyzer/trend' },
-  ];
-
   useEffect(() => {
     console.log('Current pathname:', pathname);
     setIsMobileMenuOpen(false);
@@ -150,22 +138,14 @@ export default function Navbar({ user, onLogout }) {
 
             <div className="hidden md:flex md:items-center md:space-x-6">
               <NavLink href="/pulse-today" isActive={pathname === '/pulse-today'}>
-                Pulse Today
+                PULSE TODAY
               </NavLink>
-              <NavDropdown
-                title="Think Tank"
-                items={thinkTankLinks}
-                isActive={thinkTankLinks.some(item => item.href === pathname)}
-                currentPath={pathname}
-                className="w-64"
-              />
-              <NavDropdown
-                title="Analyzer"
-                items={analyzerLinks}
-                isActive={analyzerLinks.some(item => item.href === pathname)}
-                currentPath={pathname}
-                className="w-48"
-              />
+              <NavLink href="/think-tank/influencer-comment" isActive={pathname === '/think-tank/influencer-comment'}>
+              INFLUENCER COMMENT
+              </NavLink>
+              <NavLink href="/analyzer/trend" isActive={pathname === '/analyzer/trend'}>
+              TREND ANALYZER
+              </NavLink>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -214,21 +194,21 @@ export default function Navbar({ user, onLogout }) {
                   Pulse Today
                 </MobileNavLink>
 
-                <MobileDropdown
-                  title="Think Tank"
-                  items={thinkTankLinks}
-                  isOpen={openMobileSection === 'think-tank'}
-                  onClick={() => setOpenMobileSection(openMobileSection === 'think-tank' ? '' : 'think-tank')}
-                  currentPath={pathname}
-                />
+                <MobileNavLink
+                  href="/think-tank/influencer-comment"
+                  isActive={pathname === '/think-tank/influencer-comment'}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  INFLUENCER COMMENT
+                </MobileNavLink>
 
-                <MobileDropdown
-                  title="Analyzer"
-                  items={analyzerLinks}
-                  isOpen={openMobileSection === 'analyzer'}
-                  onClick={() => setOpenMobileSection(openMobileSection === 'analyzer' ? '' : 'analyzer')}
-                  currentPath={pathname}
-                />
+                <MobileNavLink
+                  href="/analyzer/trend"
+                  isActive={pathname === '/analyzer/trend'}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Trend Analyzer
+                </MobileNavLink>
 
                 <div className="mt-4 pt-4 border-t border-gray-200">
                   <div className="flex items-center px-3 py-2">

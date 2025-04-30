@@ -282,7 +282,7 @@ export default function ThinkTankPage() {
                       href={post.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block bg-purple-600 text-white text-sm font-medium p-2 rounded-md hover:bg-blue-700 transition-colors"
+                      className="inline-block bg-purple-600 text-white text-sm font-medium p-2 rounded-md hover:bg-purple-800 transition-colors"
                     >
                       read full comment →
                     </a>
