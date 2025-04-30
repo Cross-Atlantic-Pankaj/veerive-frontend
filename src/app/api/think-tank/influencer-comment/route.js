@@ -23,6 +23,7 @@ export async function GET(request) {
     const page = parseInt(searchParams.get('page') || '1');
     const limit = parseInt(searchParams.get('limit') || '10');
     const subSectorId = searchParams.get('subSectorId') || null;
+    const subSignalId = searchParams.get('subSignalId') || null;
 
     if (limit < 1 || limit > 100) {
       return NextResponse.json({ success: false, error: 'Limit must be between 1 and 100' }, { status: 400 });
@@ -31,7 +32,9 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     let postsQuery = Post.find({});
+    let contextIds = null;
 
+    // Handle subSectorId filtering
     if (subSectorId) {
       if (!mongoose.isValidObjectId(subSectorId)) {
         return NextResponse.json({ success: false, error: 'Invalid SubSector ID' }, { status: 400 });
@@ -53,7 +56,52 @@ export async function GET(request) {
         });
       }
 
-      const contextIds = contexts.map((context) => context._id);
+      contextIds = contexts.map((context) => context._id);
+      postsQuery = postsQuery.where('contexts').in(contextIds);
+    }
+
+    // Handle subSignalId filtering
+    if (subSignalId) {
+      if (!mongoose.isValidObjectId(subSignalId)) {
+        return NextResponse.json({ success: false, error: 'Invalid SubSignal ID' }, { status: 400 });
+      }
+
+      const contexts = await Context.find({ signalSubCategories: subSignalId })
+        .select('_id')
+        .lean();
+
+      if (!contexts.length) {
+        return NextResponse.json({
+          success: true,
+          data: [],
+          totalPosts: 0,
+          page,
+          limit,
+          sectors: [],
+          signals: [],
+        });
+      }
+
+      const subSignalContextIds = contexts.map((context) => context._id);
+
+      if (contextIds) {
+        // If both subSectorId and subSignalId are provided, intersect the context IDs
+        contextIds = contextIds.filter((id) => subSignalContextIds.includes(id));
+      } else {
+        contextIds = subSignalContextIds;
+      }
+
+      if (!contextIds.length) {
+        return NextResponse.json({
+          success: true,
+          data: [],
+          totalPosts: 0,
+          page,
+          limit,
+          sectors: [],
+          signals: [],
+        });
+      }
 
       postsQuery = postsQuery.where('contexts').in(contextIds);
     }
@@ -65,7 +113,7 @@ export async function GET(request) {
       .limit(limit)
       .lean();
 
-    console.log('API Query:', { page, limit, skip, subSectorId });
+    console.log('API Query:', { page, limit, skip, subSectorId, subSignalId });
     console.log('API Fetched post IDs:', posts.map((p) => p._id.toString()));
 
     const processedPosts = await Promise.all(
@@ -93,8 +141,8 @@ export async function GET(request) {
       })
     );
 
-    const totalPosts = await (subSectorId
-      ? Post.countDocuments({ contexts: { $in: (await Context.find({ subSectors: subSectorId }).select('_id').lean()).map(c => c._id) } })
+    const totalPosts = await (subSectorId || subSignalId
+      ? Post.countDocuments({ contexts: { $in: contextIds } })
       : Post.countDocuments({}));
 
     const contexts = await Context.find({})

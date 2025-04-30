@@ -13,6 +13,7 @@ export default function ThinkTankPage() {
   const [expandedSectors, setExpandedSectors] = useState({});
   const [expandedSignals, setExpandedSignals] = useState({});
   const [selectedSubSector, setSelectedSubSector] = useState(null);
+  const [selectedSubSignal, setSelectedSubSignal] = useState(null); // Track selected subsignal
   const limit = 10;
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
@@ -57,6 +58,9 @@ export default function ThinkTankPage() {
         const params = new URLSearchParams({ page: pageToFetch, limit });
         if (selectedSubSector) {
           params.append('subSectorId', selectedSubSector);
+        }
+        if (selectedSubSignal) {
+          params.append('subSignalId', selectedSubSignal);
         }
         console.log(`Fetching posts for page ${pageToFetch}, params: ${params}`);
         const response = await fetch(`/api/think-tank/influencer-comment?${params}`);
@@ -117,7 +121,7 @@ export default function ThinkTankPage() {
         setLoading(false);
       }
     },
-    [loading, selectedSubSector]
+    [loading, selectedSubSector, selectedSubSignal]
   );
 
   useEffect(() => {
@@ -161,9 +165,23 @@ export default function ThinkTankPage() {
     fetchPosts(1, true);
   };
 
+  const handleSubSignalClick = (subSignalId) => {
+    if (selectedSubSignal === subSignalId) {
+      setSelectedSubSignal(null);
+    } else {
+      setSelectedSubSignal(subSignalId);
+    }
+    setPage(1);
+    setPosts([]);
+    fetchedPages.current.clear();
+    fetchPosts(1, true);
+  };
+
   return (
     <div className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-6">
+      {/* Left Column: Sectors and Signals */}
       <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-6 h-fit">
+        {/* Sectors Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Sectors</h2>
           <div className="space-y-3">
@@ -197,6 +215,7 @@ export default function ThinkTankPage() {
             ))}
           </div>
         </div>
+        {/* Signals Section */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Signals</h2>
           <div className="space-y-3">
@@ -216,7 +235,10 @@ export default function ThinkTankPage() {
                     {signal.subSignals.map((subSignal) => (
                       <div
                         key={subSignal._id}
-                        className="text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors"
+                        className={`text-gray-600 text-sm pl-3 border-l-2 border-blue-200 hover:text-gray-800 transition-colors cursor-pointer ${
+                          selectedSubSignal === subSignal._id ? 'font-bold text-blue-600' : ''
+                        }`}
+                        onClick={() => handleSubSignalClick(subSignal._id)}
                       >
                         {subSignal.subSignalName}
                       </div>
@@ -229,10 +251,13 @@ export default function ThinkTankPage() {
         </div>
       </div>
 
+      {/* Right Column: Posts */}
       <div className="md:w-2/3">
         <div className="space-y-6">
           {posts.length === 0 && !loading ? (
-            <p className="text-gray-600">No posts found{selectedSubSector ? ' for the selected subsector.' : '.'}</p>
+            <p className="text-gray-600">
+              No posts found{selectedSubSector || selectedSubSignal ? ' for the selected filter.' : '.'}
+            </p>
           ) : (
             posts.map((post, index) => {
               const isLastElement = posts.length === index + 1;
@@ -284,6 +309,23 @@ export default function ThinkTankPage() {
           </div>
         )}
       </div>
+
+      {/* CSS for animation */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fade-in {
+          animation: fadeIn 0.3s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
