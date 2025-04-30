@@ -58,7 +58,7 @@ export default function ThinkTankPage() {
         if (selectedSubSignal) {
           params.append('subSignalId', selectedSubSignal);
         }
-        const response = await fetch(`/api/think-tank/influencer-comment?${params}`);
+        const response = await fetch(`/api/influencer-comment?${params}`);
         const result = await response.json();
         console.log('API Response:', {
           page: result.page,
