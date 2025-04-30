@@ -34,7 +34,6 @@ export async function GET(request) {
     let postsQuery = Post.find({});
     let contextIds = null;
 
-    // Handle subSectorId filtering
     if (subSectorId) {
       if (!mongoose.isValidObjectId(subSectorId)) {
         return NextResponse.json({ success: false, error: 'Invalid SubSector ID' }, { status: 400 });
@@ -60,7 +59,6 @@ export async function GET(request) {
       postsQuery = postsQuery.where('contexts').in(contextIds);
     }
 
-    // Handle subSignalId filtering
     if (subSignalId) {
       if (!mongoose.isValidObjectId(subSignalId)) {
         return NextResponse.json({ success: false, error: 'Invalid SubSignal ID' }, { status: 400 });
@@ -85,7 +83,6 @@ export async function GET(request) {
       const subSignalContextIds = contexts.map((context) => context._id);
 
       if (contextIds) {
-        // If both subSectorId and subSignalId are provided, intersect the context IDs
         contextIds = contextIds.filter((id) => subSignalContextIds.includes(id));
       } else {
         contextIds = subSignalContextIds;
@@ -112,9 +109,6 @@ export async function GET(request) {
       .skip(skip)
       .limit(limit)
       .lean();
-
-    console.log('API Query:', { page, limit, skip, subSectorId, subSignalId });
-    console.log('API Fetched post IDs:', posts.map((p) => p._id.toString()));
 
     const processedPosts = await Promise.all(
       posts.map(async (post) => {

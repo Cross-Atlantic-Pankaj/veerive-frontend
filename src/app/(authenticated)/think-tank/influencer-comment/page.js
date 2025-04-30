@@ -13,7 +13,7 @@ export default function ThinkTankPage() {
   const [expandedSectors, setExpandedSectors] = useState({});
   const [expandedSignals, setExpandedSignals] = useState({});
   const [selectedSubSector, setSelectedSubSector] = useState(null);
-  const [selectedSubSignal, setSelectedSubSignal] = useState(null); // Track selected subsignal
+  const [selectedSubSignal, setSelectedSubSignal] = useState(null);
   const limit = 10;
   const fetchedPages = useRef(new Set());
   const isInitialMount = useRef(true);
@@ -26,10 +26,8 @@ export default function ThinkTankPage() {
       observer.current = new IntersectionObserver(
         (entries) => {
           if (entries[0].isIntersecting && hasMore && !loading) {
-            console.log('IntersectionObserver triggered, incrementing page');
             setPage((prev) => {
               const nextPage = prev + 1;
-              console.log('New page set:', nextPage);
               return nextPage;
             });
           }
@@ -44,11 +42,9 @@ export default function ThinkTankPage() {
   const fetchPosts = useCallback(
     async (pageToFetch, reset = false) => {
       if (loading && !reset) {
-        console.log('Fetch skipped: Already loading');
         return;
       }
       if (fetchedPages.current.has(pageToFetch) && !reset) {
-        console.log(`Fetch skipped: Page ${pageToFetch} already fetched`);
         return;
       }
 
@@ -62,7 +58,6 @@ export default function ThinkTankPage() {
         if (selectedSubSignal) {
           params.append('subSignalId', selectedSubSignal);
         }
-        console.log(`Fetching posts for page ${pageToFetch}, params: ${params}`);
         const response = await fetch(`/api/think-tank/influencer-comment?${params}`);
         const result = await response.json();
         console.log('API Response:', {
@@ -126,7 +121,6 @@ export default function ThinkTankPage() {
 
   useEffect(() => {
     if (isInitialMount.current) {
-      console.log('Initial mount, fetching page 1');
       isInitialMount.current = false;
       fetchPosts(1, true);
     }
@@ -134,7 +128,6 @@ export default function ThinkTankPage() {
 
   useEffect(() => {
     if (page > 1) {
-      console.log('Fetching next page:', page);
       fetchPosts(page);
     }
   }, [page, fetchPosts]);
@@ -179,9 +172,7 @@ export default function ThinkTankPage() {
 
   return (
     <div className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-6">
-      {/* Left Column: Sectors and Signals */}
       <div className="md:w-1/3 bg-white rounded-lg shadow-sm p-6 h-fit">
-        {/* Sectors Section */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-gray-900 mb-4">Sectors</h2>
           <div className="space-y-3">
@@ -215,7 +206,6 @@ export default function ThinkTankPage() {
             ))}
           </div>
         </div>
-        {/* Signals Section */}
         <div>
           <h2 className="text-xl font-bold text-gray-900 mb-4">Signals</h2>
           <div className="space-y-3">
@@ -251,12 +241,11 @@ export default function ThinkTankPage() {
         </div>
       </div>
 
-      {/* Right Column: Posts */}
       <div className="md:w-2/3">
-        <div className="space-y-6">
+        <div className="space-y-2">
           {posts.length === 0 && !loading ? (
             <p className="text-gray-600">
-              No posts found{selectedSubSector || selectedSubSignal ? ' for the selected filter.' : '.'}
+              No posts Available for {`for the selected ${selectedSubSector || selectedSubSignal}.`}Try another.
             </p>
           ) : (
             posts.map((post, index) => {
@@ -272,13 +261,13 @@ export default function ThinkTankPage() {
                       {post.sectors.slice(0, 3).map((sector) => (
                         <span
                           key={sector._id}
-                          className="bg-gray-100 text-gray-700 text-sm font-medium px-3 py-1 rounded-full"
+                          className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
                         >
                           {sector.sectorName}
                         </span>
                       ))}
                     </div>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-gray-700">
                       {new Date(post.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -287,15 +276,15 @@ export default function ThinkTankPage() {
                     </span>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.postTitle}</h2>
-                  <p className="text-gray-600 mb-4 leading-relaxed">{post.summary}</p>
+                  <p className="text-gray-600 mb-4 leading-relaxed"><div dangerouslySetInnerHTML={{ __html: post.summary }} /></p>
                   {post.sourceUrl && (
                     <a
                       href={post.sourceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-block bg-blue-600 text-white text-sm font-medium px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                      className="inline-block bg-purple-600 text-white text-sm font-medium p-2 rounded-md hover:bg-blue-700 transition-colors"
                     >
-                      Read Full
+                      read full comment →
                     </a>
                   )}
                 </div>
@@ -309,23 +298,6 @@ export default function ThinkTankPage() {
           </div>
         )}
       </div>
-
-      {/* CSS for animation */}
-      <style jsx>{`
-        @keyframes fadeIn {
-          from {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-fade-in {
-          animation: fadeIn 0.3s ease-out;
-        }
-      `}</style>
     </div>
   );
 }
