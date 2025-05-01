@@ -118,7 +118,7 @@ export default function Home() {
   const handleSectorClick = (sectorId) => {
     setSelectedSectorId(prev => prev === sectorId && !selectedSubsectorId ? null : sectorId);
     setSelectedSubsectorId(null);
-    setSelectedSignalId(null); 
+    setSelectedSignalId(null);
     setSelectedSubsignalId(null);
   };
 
@@ -168,45 +168,45 @@ export default function Home() {
   const visibleSignals = showMoreSignals ? signals : signals.slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <div className="w-1/4 bg-white shadow-md p-4 h-auto min-h-screen">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Categories</h2>
-        <ul className="mb-6">
+    <div className="bg-gray-50 flex px-12">
+      <div className="w-1/4 bg-white shadow-md p-6 h-fit my-5 rounded-lg">
+        <h2 className="text-lg font-bold text-gray-700 mb-4">Categories</h2>
+        <ul className="mb-4 space-y-2">
           <li
             key="all-posts"
-            className={`p-2 cursor-pointer rounded-md mb-2 flex items-center justify-between ${
-              selectedPostType === null ? 'bg-blue-100 text-blue-800' : 'text-gray-800 hover:bg-gray-100'
+            className={`p-2 rounded-md cursor-pointer flex items-center justify-between ${
+              selectedPostType === null ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
             }`}
             onClick={() => handlePostTypeClick(null)}
           >
             <span>All Posts</span>
-            <span className="text-gray-500">+</span>
           </li>
           {postTypes.map((type) => (
             <li
               key={type}
-              className={`p-2 cursor-pointer rounded-md mb-2 flex items-center justify-between ${
-                selectedPostType === type ? 'bg-blue-100 text-blue-800' : 'text-gray-800 hover:bg-gray-100'
+              className={`p-2 rounded-md cursor-pointer flex items-center justify-between ${
+                selectedPostType === type ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-100'
               }`}
               onClick={() => handlePostTypeClick(type)}
             >
               <span>{type}</span>
-              <span className="text-gray-500">+</span>
             </li>
           ))}
         </ul>
 
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Sectors</h2>
-        <ul className="mb-6">
+        <h2 className="text-lg font-bold text-gray-700 mb-4">Sectors</h2>
+        <ul className="mb-4 space-y-2">
           {visibleSectors.map((sector) => (
             <div key={sector._id}>
               <li
-                className="p-2 rounded-md mb-2 flex items-center justify-between text-gray-800 hover:bg-gray-100"
+                className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
+                  expandedSectors[sector._id] ? 'bg-gray-100' : ''
+                }`}
                 onClick={() => toggleSectorExpand(sector._id)}
               >
                 <span>{sector.sectorName}</span>
                 <span
-                  className="cursor-pointer text-gray-500"
+                  className="cursor-pointer text-gray-400"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleSectorExpand(sector._id);
@@ -216,13 +216,13 @@ export default function Home() {
                 </span>
               </li>
               {expandedSectors[sector._id] && (
-                <ul className="ml-4">
+                <ul className="ml-4 mt-1 space-y-1">
                   <li
-                    className={`p-2 cursor-pointer rounded-md mb-2 ${
+                    className={`p-2 rounded-md cursor-pointer relative ${
                       selectedSectorId === sector._id && !selectedSubsectorId
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'text-gray-800 hover:bg-gray-100'
-                    }`}
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
                     onClick={() => handleSectorClick(sector._id)}
                   >
                     {sector.sectorName}
@@ -234,11 +234,11 @@ export default function Home() {
                         .map((subsector) => (
                           <li
                             key={subsector._id}
-                            className={`p-2 cursor-pointer rounded-md mb-2 ${
+                            className={`p-2 rounded-md cursor-pointer relative ${
                               selectedSubsectorId === subsector._id
-                                ? 'bg-blue-100 text-blue-800'
+                                ? 'bg-blue-50 text-blue-700'
                                 : 'text-gray-600 hover:bg-gray-100'
-                            }`}
+                            } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
                             onClick={() => handleSubsectorClick(subsector._id, sector._id)}
                           >
                             {subsector.subSectorName}
@@ -247,10 +247,10 @@ export default function Home() {
                       {sector.subsectors.length > 4 && (
                         <li
                           key={`${sector._id}-more`}
-                          className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+                          className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
                           onClick={() => toggleShowAllSubsectors(sector._id)}
                         >
-                          {showAllSubsectors[sector._id] ? 'less' : 'more'}
+                          {showAllSubsectors[sector._id] ? 'Less' : 'More'}
                         </li>
                       )}
                     </>
@@ -262,7 +262,7 @@ export default function Home() {
           {sectors.length > 5 && (
             <li
               key="more-less-sectors"
-              className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+              className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
               onClick={() => setShowMoreSectors(!showMoreSectors)}
             >
               {showMoreSectors ? 'Less' : 'More'}
@@ -270,17 +270,19 @@ export default function Home() {
           )}
         </ul>
 
-        <h2 className="text-xl font-bold text-gray-800 mb-4">Signals</h2>
-        <ul className="mb-6">
+        <h2 className="text-lg font-bold text-gray-700 mb-4">Signals</h2>
+        <ul className="space-y-2">
           {visibleSignals.map((signal) => (
             <div key={signal._id}>
               <li
-                className="p-2 rounded-md mb-2 flex items-center justify-between text-gray-800 hover:bg-gray-100"
+                className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
+                  expandedSignals[signal._id] ? 'bg-gray-100' : ''
+                }`}
                 onClick={() => toggleSignalExpand(signal._id)}
               >
                 <span>{signal.signalName}</span>
                 <span
-                  className="cursor-pointer text-gray-500"
+                  className="cursor-pointer text-gray-400"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleSignalExpand(signal._id);
@@ -290,13 +292,13 @@ export default function Home() {
                 </span>
               </li>
               {expandedSignals[signal._id] && (
-                <ul className="ml-4">
+                <ul className="ml-4 mt-1 space-y-1">
                   <li
-                    className={`p-2 cursor-pointer rounded-md mb-2 ${
+                    className={`p-2 rounded-md cursor-pointer relative ${
                       selectedSignalId === signal._id && !selectedSubsignalId
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'text-gray-800 hover:bg-gray-100'
-                    }`}
+                        ? 'bg-blue-50 text-blue-700'
+                        : 'text-gray-600 hover:bg-gray-100'
+                    } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
                     onClick={() => handleSignalClick(signal._id)}
                   >
                     {signal.signalName}
@@ -308,11 +310,11 @@ export default function Home() {
                         .map((subsignal) => (
                           <li
                             key={subsignal._id}
-                            className={`p-2 cursor-pointer rounded-md mb-2 ${
+                            className={`p-2 rounded-md cursor-pointer relative ${
                               selectedSubsignalId === subsignal._id
-                                ? 'bg-blue-100 text-blue-800'
+                                ? 'bg-blue-50 text-blue-700'
                                 : 'text-gray-600 hover:bg-gray-100'
-                            }`}
+                            } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
                             onClick={() => handleSubsignalClick(subsignal._id, signal._id)}
                           >
                             {subsignal.subSignalName}
@@ -321,10 +323,10 @@ export default function Home() {
                       {signal.subsignals.length > 4 && (
                         <li
                           key={`${signal._id}-more`}
-                          className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+                          className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
                           onClick={() => toggleShowAllSubsignals(signal._id)}
                         >
-                          {showAllSubsignals[signal._id] ? 'Less' : 'more'}
+                          {showAllSubsignals[signal._id] ? 'Less' : 'More'}
                         </li>
                       )}
                     </>
@@ -336,7 +338,7 @@ export default function Home() {
           {signals.length > 5 && (
             <li
               key="more-less-signals"
-              className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+              className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
               onClick={() => setShowMoreSignals(!showMoreSignals)}
             >
               {showMoreSignals ? 'Less' : 'More'}
@@ -390,15 +392,13 @@ export default function Home() {
                     {formatDate(post.date || new Date())}
                   </span>
                 </div>
-                <h2 className="text-lg font-bold text-gray-900 mb-2">
-                  {post.postTitle}
-                </h2>
-
-                 <p className="text-gray-600 text-sm mb-2">
+                <h2 className="text-lg font-bold text-gray-900 mb-2">{post.postTitle}</h2>
+                <p className="text-gray-600 text-sm mb-2">
                   {post.source} | {post.postType}
                 </p>
-               
-                <div className="text-gray-700 mb-4"> <p dangerouslySetInnerHTML={{ __html: post.summary }} /></div>
+                <div className="text-gray-700 mb-4">
+                  <p dangerouslySetInnerHTML={{ __html: post.summary }} />
+                </div>
                 <a
                   href={post.sourceUrl}
                   target="_blank"
