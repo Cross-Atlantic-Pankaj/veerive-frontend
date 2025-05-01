@@ -18,15 +18,36 @@ export async function GET(request) {
     if (!mongoose.models.Context) mongoose.model('Context', Context.schema);
 
     const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1');
+    const page = parseInt(searchParams.get('page') || '1', 10);
     const postType = searchParams.get('postType') || null;
-    const sector = searchParams.get('sector') || null;
-    const subsector = searchParams.get('subsector') || null;
+    let sectorId = null;
+    let subsectorId = null;
+
+    // Safely convert and validate IDs
+    try {
+      const rawSectorId = searchParams.get('sectorId');
+      if (rawSectorId && mongoose.Types.ObjectId.isValid(rawSectorId)) {
+        sectorId = new mongoose.Types.ObjectId(rawSectorId);
+        console.log('Validated sectorId:', sectorId.toString());
+      }
+      const rawSubsectorId = searchParams.get('subsectorId');
+      if (rawSubsectorId && mongoose.Types.ObjectId.isValid(rawSubsectorId)) {
+        subsectorId = new mongoose.Types.ObjectId(rawSubsectorId);
+        console.log('Validated subsectorId:', subsectorId.toString());
+      }
+    } catch (error) {
+      console.error('Error converting ObjectId:', error.message);
+      return NextResponse.json(
+        { success: false, error: 'Invalid sectorId or subsectorId format' },
+        { status: 400 }
+      );
+    }
+
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    console.log('All query params:', Object.fromEntries(searchParams.entries()));
-    console.log('Sector:', sector, 'Subsector:', subsector);
+    console.log('Request query params:', Object.fromEntries(searchParams.entries()));
+    console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId);
 
     const validPostTypes = [
       'Expert Opinion',
@@ -43,32 +64,33 @@ export async function GET(request) {
     }
 
     let contextMatch = {};
-    if (subsector) {
-      const subsectorDoc = await SubSector.findOne({ subSectorName: subsector });
-      if (subsectorDoc) {
-        const matchingContexts = await Context.find({
-          subSectors: subsectorDoc._id
-        }).select('_id');
-        console.log('Matching contexts for subsector:', matchingContexts);
-        if (matchingContexts.length > 0) {
-          contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
-        }
-      }
-    } else if (sector) {
-      const sectorDoc = await Sector.findOne({ sectorName: sector });
-      if (sectorDoc) {
-        const matchingContexts = await Context.find({
-          sectors: sectorDoc._id
-        }).select('_id');
-        console.log('Matching contexts for sector:', matchingContexts);
-        if (matchingContexts.length > 0) {
-          contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
-        } else {
-          console.log('No contexts found for sector:', sector);
-        }
+    if (subsectorId) {
+      const matchingContexts = await Context.find({ subSectors: subsectorId }).select('_id');
+      console.log('Contexts found for subsectorId:', subsectorId, matchingContexts);
+      if (matchingContexts.length > 0) {
+        contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
-        console.log('Sector not found:', sector);
+        console.log('No contexts found for subsectorId:', subsectorId);
+        contextMatch = {}; // Explicitly set to empty if no contexts
       }
+    } else if (sectorId) {
+      const matchingContexts = await Context.find({ sectors: sectorId }).select('_id');
+      console.log('Contexts found for sectorId:', sectorId, matchingContexts);
+      if (matchingContexts.length > 0) {
+        contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
+      } else {
+        console.log('No contexts found for sectorId:', sectorId);
+        contextMatch = {}; // Explicitly set to empty if no contexts
+      }
+    }
+
+    if (Object.keys(contextMatch).length === 0 && (sectorId || subsectorId)) {
+      console.log('No valid context match, returning empty result');
+      return NextResponse.json({
+        success: true,
+        posts: [],
+        pagination: { currentPage: page, totalPages: 0, totalPosts: 0, hasMore: false }
+      });
     }
 
     const posts = await Post.aggregate([
@@ -145,7 +167,7 @@ export async function GET(request) {
       }
     ]);
 
-    console.log('Fetched posts:', posts);
+    console.log('Fetched posts:', posts.map(p => p.postTitle));
 
     const totalPosts = await Post.countDocuments({
       ...query,
@@ -164,9 +186,9 @@ export async function GET(request) {
     });
 
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching posts:', error.message);
     return NextResponse.json(
-      { success: false, error: 'Internal Server Error' },
+      { success: false, error: 'Internal Server Error: ' + error.message },
       { status: 500 }
     );
   }

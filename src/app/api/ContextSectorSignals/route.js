@@ -10,7 +10,7 @@ export async function GET(request) {
   try {
     await connectDB();
 
-    // Fetching sectors with their subsectors
+    // Fetching sectors with their subsectors, including _id
     const sectorsWithSubsectors = await Sector.aggregate([
       {
         $lookup: {
@@ -22,8 +22,10 @@ export async function GET(request) {
       },
       {
         $project: {
+          _id: 1,  // Include sector _id
           sectorName: 1,  // Include sector name
           subsectors: {
+            _id: 1,  // Include subsector _id
             subSectorName: 1,  // Include subsector name
           },
         },
@@ -38,7 +40,7 @@ export async function GET(request) {
       sector.subsectors.sort((a, b) => a.subSectorName.localeCompare(b.subSectorName));
     });
 
-    // Fetching signals with their subsignals
+    // Fetching signals with their subsignals, including _id
     const signalsWithSubsignals = await Signal.aggregate([
       {
         $lookup: {
@@ -50,8 +52,10 @@ export async function GET(request) {
       },
       {
         $project: {
+          _id: 1,  // Include signal _id
           signalName: 1,  // Include signal name
           subsignals: {
+            _id: 1,  // Include subsignal _id
             subSignalName: 1,  // Include subsignal name
           },
         },
