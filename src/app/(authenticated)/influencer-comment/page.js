@@ -112,33 +112,49 @@ export default function Home() {
   }, [page]);
 
   const handlePostTypeClick = (postType) => {
-    setSelectedPostType(prev => prev === postType ? null : postType);
+    setSelectedPostType(postType);
   };
 
   const handleSectorClick = (sectorId) => {
-    setSelectedSectorId(prev => prev === sectorId && !selectedSubsectorId ? null : sectorId);
-    setSelectedSubsectorId(null);
+    if (selectedSectorId === sectorId && !selectedSubsectorId) {
+      setSelectedSectorId(null);
+    } else {
+      setSelectedSectorId(sectorId);
+      setSelectedSubsectorId(null);
+    }
     setSelectedSignalId(null);
     setSelectedSubsignalId(null);
   };
 
   const handleSubsectorClick = (subsectorId, parentSectorId) => {
-    setSelectedSubsectorId(prev => prev === subsectorId ? null : subsectorId);
-    setSelectedSectorId(parentSectorId);
+    if (selectedSubsectorId === subsectorId) {
+      setSelectedSubsectorId(null);
+    } else {
+      setSelectedSubsectorId(subsectorId);
+      setSelectedSectorId(parentSectorId);
+    }
     setSelectedSignalId(null);
     setSelectedSubsignalId(null);
   };
 
   const handleSignalClick = (signalId) => {
-    setSelectedSignalId(prev => prev === signalId && !selectedSubsignalId ? null : signalId);
-    setSelectedSubsignalId(null);
+    if (selectedSignalId === signalId && !selectedSubsignalId) {
+      setSelectedSignalId(null);
+    } else {
+      setSelectedSignalId(signalId);
+      setSelectedSubsignalId(null);
+    }
     setSelectedSectorId(null);
     setSelectedSubsectorId(null);
   };
 
   const handleSubsignalClick = (subsignalId, parentSignalId) => {
-    setSelectedSubsignalId(prev => prev === subsignalId ? null : subsignalId);
-    setSelectedSignalId(parentSignalId);
+    if (selectedSubsignalId === subsignalId) {
+      setSelectedSubsignalId(null);
+    } else {
+      setSelectedSubsignalId(subsignalId);
+      setSelectedSignalId(parentSignalId);
+    }
     setSelectedSectorId(null);
     setSelectedSubsectorId(null);
   };
@@ -159,6 +175,49 @@ export default function Home() {
     setShowAllSubsignals(prev => ({ ...prev, [signalId]: !prev[signalId] }));
   };
 
+  const handleRemoveFilter = async (filterType) => {
+    let newPostType = selectedPostType;
+    let newSectorId = selectedSectorId;
+    let newSubsectorId = selectedSubsectorId;
+    let newSignalId = selectedSignalId;
+    let newSubsignalId = selectedSubsignalId;
+
+    switch (filterType) {
+      case 'postType':
+        newPostType = null;
+        setSelectedPostType(null);
+        break;
+      case 'sector':
+        newSectorId = null;
+        newSubsectorId = null;
+        setSelectedSectorId(null);
+        setSelectedSubsectorId(null);
+        break;
+      case 'subsector':
+        newSubsectorId = null;
+        setSelectedSubsectorId(null);
+        break;
+      case 'signal':
+        newSignalId = null;
+        newSubsignalId = null;
+        setSelectedSignalId(null);
+        setSelectedSubsignalId(null);
+        break;
+      case 'subsignal':
+        newSubsignalId = null;
+        setSelectedSubsignalId(null);
+        break;
+      default:
+        break;
+    }
+
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+
+    await fetchPosts(1, newPostType, newSectorId, newSubsectorId, newSignalId, newSubsignalId);
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
@@ -166,6 +225,19 @@ export default function Home() {
 
   const visibleSectors = showMoreSectors ? sectors : sectors.slice(0, 5);
   const visibleSignals = showMoreSignals ? signals : signals.slice(0, 5);
+
+  const selectedSector = selectedSectorId ? sectors.find(s => s._id === selectedSectorId)?.sectorName : null;
+  const selectedSubsector = selectedSubsectorId
+    ? sectors
+        .flatMap(s => s.subsectors)
+        .find(sub => sub._id === selectedSubsectorId)?.subSectorName
+    : null;
+  const selectedSignal = selectedSignalId ? signals.find(s => s._id === selectedSignalId)?.signalName : null;
+  const selectedSubsignal = selectedSubsignalId
+    ? signals
+        .flatMap(s => s.subsignals)
+        .find(sub => sub._id === selectedSubsignalId)?.subSignalName
+    : null;
 
   return (
     <div className="bg-gray-50 flex px-12">
@@ -348,25 +420,63 @@ export default function Home() {
       </div>
 
       <div className="w-3/4 p-6">
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">
-          {selectedPostType ? `${selectedPostType} Posts` : 'All Posts'}
-          {selectedSectorId && sectors.find(s => s._id === selectedSectorId)?.sectorName
-            && ` - ${sectors.find(s => s._id === selectedSectorId).sectorName}`}
-          {selectedSubsectorId && sectors
-            .flatMap(s => s.subsectors)
-            .find(sub => sub._id === selectedSubsectorId)?.subSectorName
-            && ` - ${sectors
-              .flatMap(s => s.subsectors)
-              .find(sub => sub._id === selectedSubsectorId).subSectorName}`}
-          {selectedSignalId && signals.find(s => s._id === selectedSignalId)?.signalName
-            && ` - ${signals.find(s => s._id === selectedSignalId).signalName}`}
-          {selectedSubsignalId && signals
-            .flatMap(s => s.subsignals)
-            .find(sub => sub._id === selectedSubsignalId)?.subSignalName
-            && ` - ${signals
-              .flatMap(s => s.subsignals)
-              .find(sub => sub._id === selectedSubsignalId).subSignalName}`}
-        </h1>
+        <div className="flex flex-wrap gap-2 mb-6">
+          {selectedPostType && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              <span>{selectedPostType}</span>
+              <button
+                onClick={() => handleRemoveFilter('postType')}
+                className="ml-2 text-blue-800 hover:text-blue-600"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {selectedSectorId && !selectedSubsectorId && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              <span>{selectedSector}</span>
+              <button
+                onClick={() => handleRemoveFilter('sector')}
+                className="ml-2 text-blue-800 hover:text-blue-600"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {selectedSubsectorId && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              <span>{`${selectedSector} > ${selectedSubsector}`}</span>
+              <button
+                onClick={() => handleRemoveFilter('subsector')}
+                className="ml-2 text-blue-800 hover:text-blue-600"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {selectedSignalId && !selectedSubsignalId && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              <span>{selectedSignal}</span>
+              <button
+                onClick={() => handleRemoveFilter('signal')}
+                className="ml-2 text-blue-800 hover:text-blue-600"
+              >
+                ×
+              </button>
+            </div>
+          )}
+          {selectedSubsignalId && (
+            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
+              <span>{`${selectedSignal} > ${selectedSubsignal}`}</span>
+              <button
+                onClick={() => handleRemoveFilter('subsignal')}
+                className="ml-2 text-blue-800 hover:text-blue-600"
+              >
+                ×
+              </button>
+            </div>
+          )}
+        </div>
         {posts.length === 0 && !isLoading ? (
           <p className="text-gray-600">No posts found.</p>
         ) : (
