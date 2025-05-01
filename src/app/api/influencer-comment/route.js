@@ -4,6 +4,8 @@ import Post from '@/models/Post';
 import Context from '@/models/Context';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
+import Signal from '@/models/Signal';
+import SubSignal from '@/models/SubSignal';
 import Source from '@/models/Source';
 import connectDB from '@/lib/db';
 
@@ -13,6 +15,8 @@ export async function GET(request) {
 
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
+    if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
+    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
     if (!mongoose.models.Source) mongoose.model('Source', Source.schema);
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
     if (!mongoose.models.Context) mongoose.model('Context', Context.schema);
@@ -22,8 +26,9 @@ export async function GET(request) {
     const postType = searchParams.get('postType') || null;
     let sectorId = null;
     let subsectorId = null;
+    let signalId = null;
+    let subsignalId = null;
 
-    // Safely convert and validate IDs
     try {
       const rawSectorId = searchParams.get('sectorId');
       if (rawSectorId && mongoose.Types.ObjectId.isValid(rawSectorId)) {
@@ -35,10 +40,28 @@ export async function GET(request) {
         subsectorId = new mongoose.Types.ObjectId(rawSubsectorId);
         console.log('Validated subsectorId:', subsectorId.toString());
       }
+      const rawSignalId = searchParams.get('signalId');
+      if (rawSignalId && mongoose.Types.ObjectId.isValid(rawSignalId)) {
+        signalId = new mongoose.Types.ObjectId(rawSignalId);
+        console.log('Validated signalId:', signalId.toString());
+      }
+      const rawSubsignalId = searchParams.get('subsignalId');
+      if (rawSubsignalId && mongoose.Types.ObjectId.isValid(rawSubsignalId)) {
+        subsignalId = new mongoose.Types.ObjectId(rawSubsignalId);
+        console.log('Validated subsignalId:', subsignalId.toString());
+      }
     } catch (error) {
       console.error('Error converting ObjectId:', error.message);
       return NextResponse.json(
-        { success: false, error: 'Invalid sectorId or subsectorId format' },
+        { success: false, error: 'Invalid sectorId, subsectorId, signalId, or subsignalId format' },
+        { status: 400 }
+      );
+    }
+
+    if ((sectorId || subsectorId) && (signalId || subsignalId)) {
+      console.error('Cannot filter by both sector and signal simultaneously');
+      return NextResponse.json(
+        { success: false, error: 'Cannot filter by both sector and signal simultaneously' },
         { status: 400 }
       );
     }
@@ -47,7 +70,7 @@ export async function GET(request) {
     const skip = (page - 1) * limit;
 
     console.log('Request query params:', Object.fromEntries(searchParams.entries()));
-    console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId);
+    console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId, 'SignalId:', signalId, 'SubsignalId:', subsignalId);
 
     const validPostTypes = [
       'Expert Opinion',
@@ -71,7 +94,7 @@ export async function GET(request) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
         console.log('No contexts found for subsectorId:', subsectorId);
-        contextMatch = {}; // Explicitly set to empty if no contexts
+        contextMatch = {};
       }
     } else if (sectorId) {
       const matchingContexts = await Context.find({ sectors: sectorId }).select('_id');
@@ -80,11 +103,29 @@ export async function GET(request) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
         console.log('No contexts found for sectorId:', sectorId);
-        contextMatch = {}; // Explicitly set to empty if no contexts
+        contextMatch = {};
+      }
+    } else if (subsignalId) {
+      const matchingContexts = await Context.find({ signalSubCategories: subsignalId }).select('_id');
+      console.log('Contexts found for subsignalId:', subsignalId, matchingContexts);
+      if (matchingContexts.length > 0) {
+        contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
+      } else {
+        console.log('No contexts found for subsignalId:', subsignalId);
+        contextMatch = {};
+      }
+    } else if (signalId) {
+      const matchingContexts = await Context.find({ signalCategories: signalId }).select('_id');
+      console.log('Contexts found for signalId:', signalId, matchingContexts);
+      if (matchingContexts.length > 0) {
+        contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
+      } else {
+        console.log('No contexts found for signalId:', signalId);
+        contextMatch = {};
       }
     }
 
-    if (Object.keys(contextMatch).length === 0 && (sectorId || subsectorId)) {
+    if (Object.keys(contextMatch).length === 0 && (sectorId || subsectorId || signalId || subsignalId)) {
       console.log('No valid context match, returning empty result');
       return NextResponse.json({
         success: true,

@@ -8,13 +8,19 @@ export default function Home() {
   const [selectedPostType, setSelectedPostType] = useState(null);
   const [selectedSectorId, setSelectedSectorId] = useState(null);
   const [selectedSubsectorId, setSelectedSubsectorId] = useState(null);
+  const [selectedSignalId, setSelectedSignalId] = useState(null);
+  const [selectedSubsignalId, setSelectedSubsignalId] = useState(null);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [sectors, setSectors] = useState([]);
+  const [signals, setSignals] = useState([]);
   const [showMoreSectors, setShowMoreSectors] = useState(false);
+  const [showMoreSignals, setShowMoreSignals] = useState(false);
   const [expandedSectors, setExpandedSectors] = useState({});
+  const [expandedSignals, setExpandedSignals] = useState({});
   const [showAllSubsectors, setShowAllSubsectors] = useState({});
+  const [showAllSubsignals, setShowAllSubsignals] = useState({});
 
   const observer = useRef();
   const lastPostElementRef = useCallback(
@@ -44,16 +50,17 @@ export default function Home() {
     try {
       const response = await fetch('/api/ContextSectorSignals');
       const data = await response.json();
-      console.log('Fetched sectors data:', data);
+      console.log('Fetched sectors and signals data:', data);
       if (data.success) {
         setSectors(data.data.sectors || []);
+        setSignals(data.data.signals || []);
       }
     } catch (error) {
-      console.error('Error fetching sectors:', error);
+      console.error('Error fetching sectors and signals:', error);
     }
   };
 
-  const fetchPosts = async (page, postType, sectorId, subsectorId) => {
+  const fetchPosts = async (page, postType, sectorId, subsectorId, signalId, subsignalId) => {
     setIsLoading(true);
     try {
       const queryParams = new URLSearchParams();
@@ -61,6 +68,8 @@ export default function Home() {
       if (postType) queryParams.append('postType', postType);
       if (subsectorId) queryParams.append('subsectorId', subsectorId);
       else if (sectorId) queryParams.append('sectorId', sectorId);
+      if (subsignalId) queryParams.append('subsignalId', subsignalId);
+      else if (signalId) queryParams.append('signalId', signalId);
 
       const url = `/api/influencer-comment?${queryParams.toString()}`;
       console.log('Fetching posts from URL:', url);
@@ -93,38 +102,61 @@ export default function Home() {
     setPosts([]);
     setPage(1);
     setHasMore(true);
-    fetchPosts(1, selectedPostType, selectedSectorId, selectedSubsectorId);
-  }, [selectedPostType, selectedSectorId, selectedSubsectorId]);
+    fetchPosts(1, selectedPostType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId);
+  }, [selectedPostType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId]);
 
   useEffect(() => {
     if (page > 1) {
-      fetchPosts(page, selectedPostType, selectedSectorId, selectedSubsectorId);
+      fetchPosts(page, selectedPostType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId);
     }
   }, [page]);
 
   const handlePostTypeClick = (postType) => {
     setSelectedPostType(prev => prev === postType ? null : postType);
-    // No clearing of sector or subsector filters
   };
 
   const handleSectorClick = (sectorId) => {
     setSelectedSectorId(prev => prev === sectorId && !selectedSubsectorId ? null : sectorId);
-    // No clearing of category filter
-    setSelectedSubsectorId(null); // Clear subsector when selecting a new sector
+    setSelectedSubsectorId(null);
+    setSelectedSignalId(null); 
+    setSelectedSubsignalId(null);
   };
 
   const handleSubsectorClick = (subsectorId, parentSectorId) => {
     setSelectedSubsectorId(prev => prev === subsectorId ? null : subsectorId);
     setSelectedSectorId(parentSectorId);
-    // No clearing of category filter
+    setSelectedSignalId(null);
+    setSelectedSubsignalId(null);
+  };
+
+  const handleSignalClick = (signalId) => {
+    setSelectedSignalId(prev => prev === signalId && !selectedSubsignalId ? null : signalId);
+    setSelectedSubsignalId(null);
+    setSelectedSectorId(null);
+    setSelectedSubsectorId(null);
+  };
+
+  const handleSubsignalClick = (subsignalId, parentSignalId) => {
+    setSelectedSubsignalId(prev => prev === subsignalId ? null : subsignalId);
+    setSelectedSignalId(parentSignalId);
+    setSelectedSectorId(null);
+    setSelectedSubsectorId(null);
   };
 
   const toggleSectorExpand = (sectorId) => {
     setExpandedSectors(prev => ({ ...prev, [sectorId]: !prev[sectorId] }));
   };
 
+  const toggleSignalExpand = (signalId) => {
+    setExpandedSignals(prev => ({ ...prev, [signalId]: !prev[signalId] }));
+  };
+
   const toggleShowAllSubsectors = (sectorId) => {
     setShowAllSubsectors(prev => ({ ...prev, [sectorId]: !prev[sectorId] }));
+  };
+
+  const toggleShowAllSubsignals = (signalId) => {
+    setShowAllSubsignals(prev => ({ ...prev, [signalId]: !prev[signalId] }));
   };
 
   const formatDate = (dateString) => {
@@ -133,10 +165,11 @@ export default function Home() {
   };
 
   const visibleSectors = showMoreSectors ? sectors : sectors.slice(0, 5);
+  const visibleSignals = showMoreSignals ? signals : signals.slice(0, 5);
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-      <div className="w-1/4 bg-white shadow-md p-4">
+      <div className="w-1/4 bg-white shadow-md p-4 h-auto min-h-screen">
         <h2 className="text-xl font-bold text-gray-800 mb-4">Categories</h2>
         <ul className="mb-6">
           <li
@@ -169,14 +202,14 @@ export default function Home() {
             <div key={sector._id}>
               <li
                 className="p-2 rounded-md mb-2 flex items-center justify-between text-gray-800 hover:bg-gray-100"
-                onClick={() => toggleSectorExpand(sector._id)} // Expand toggle only
+                onClick={() => toggleSectorExpand(sector._id)}
               >
                 <span>{sector.sectorName}</span>
                 <span
                   className="cursor-pointer text-gray-500"
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleSectorExpand(sector._id); // Expand toggle on click
+                    toggleSectorExpand(sector._id);
                   }}
                 >
                   {expandedSectors[sector._id] ? '−' : '+'}
@@ -190,7 +223,7 @@ export default function Home() {
                         ? 'bg-blue-100 text-blue-800'
                         : 'text-gray-800 hover:bg-gray-100'
                     }`}
-                    onClick={() => handleSectorClick(sector._id)} // Filter on sector click
+                    onClick={() => handleSectorClick(sector._id)}
                   >
                     {sector.sectorName}
                   </li>
@@ -217,7 +250,7 @@ export default function Home() {
                           className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
                           onClick={() => toggleShowAllSubsectors(sector._id)}
                         >
-                          {showAllSubsectors[sector._id] ? 'Less' : `More (${sector.subsectors.length - 4})`}
+                          {showAllSubsectors[sector._id] ? 'less' : 'more'}
                         </li>
                       )}
                     </>
@@ -228,11 +261,85 @@ export default function Home() {
           ))}
           {sectors.length > 5 && (
             <li
-              key="more-less"
+              key="more-less-sectors"
               className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
               onClick={() => setShowMoreSectors(!showMoreSectors)}
             >
               {showMoreSectors ? 'Less' : 'More'}
+            </li>
+          )}
+        </ul>
+
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Signals</h2>
+        <ul className="mb-6">
+          {visibleSignals.map((signal) => (
+            <div key={signal._id}>
+              <li
+                className="p-2 rounded-md mb-2 flex items-center justify-between text-gray-800 hover:bg-gray-100"
+                onClick={() => toggleSignalExpand(signal._id)}
+              >
+                <span>{signal.signalName}</span>
+                <span
+                  className="cursor-pointer text-gray-500"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toggleSignalExpand(signal._id);
+                  }}
+                >
+                  {expandedSignals[signal._id] ? '−' : '+'}
+                </span>
+              </li>
+              {expandedSignals[signal._id] && (
+                <ul className="ml-4">
+                  <li
+                    className={`p-2 cursor-pointer rounded-md mb-2 ${
+                      selectedSignalId === signal._id && !selectedSubsignalId
+                        ? 'bg-blue-100 text-blue-800'
+                        : 'text-gray-800 hover:bg-gray-100'
+                    }`}
+                    onClick={() => handleSignalClick(signal._id)}
+                  >
+                    {signal.signalName}
+                  </li>
+                  {signal.subsignals && (
+                    <>
+                      {signal.subsignals
+                        .slice(0, showAllSubsignals[signal._id] ? signal.subsignals.length : 4)
+                        .map((subsignal) => (
+                          <li
+                            key={subsignal._id}
+                            className={`p-2 cursor-pointer rounded-md mb-2 ${
+                              selectedSubsignalId === subsignal._id
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'text-gray-600 hover:bg-gray-100'
+                            }`}
+                            onClick={() => handleSubsignalClick(subsignal._id, signal._id)}
+                          >
+                            {subsignal.subSignalName}
+                          </li>
+                        ))}
+                      {signal.subsignals.length > 4 && (
+                        <li
+                          key={`${signal._id}-more`}
+                          className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+                          onClick={() => toggleShowAllSubsignals(signal._id)}
+                        >
+                          {showAllSubsignals[signal._id] ? 'Less' : 'more'}
+                        </li>
+                      )}
+                    </>
+                  )}
+                </ul>
+              )}
+            </div>
+          ))}
+          {signals.length > 5 && (
+            <li
+              key="more-less-signals"
+              className="p-2 cursor-pointer rounded-md text-blue-600 hover:bg-gray-100"
+              onClick={() => setShowMoreSignals(!showMoreSignals)}
+            >
+              {showMoreSignals ? 'Less' : 'More'}
             </li>
           )}
         </ul>
@@ -249,6 +356,14 @@ export default function Home() {
             && ` - ${sectors
               .flatMap(s => s.subsectors)
               .find(sub => sub._id === selectedSubsectorId).subSectorName}`}
+          {selectedSignalId && signals.find(s => s._id === selectedSignalId)?.signalName
+            && ` - ${signals.find(s => s._id === selectedSignalId).signalName}`}
+          {selectedSubsignalId && signals
+            .flatMap(s => s.subsignals)
+            .find(sub => sub._id === selectedSubsignalId)?.subSignalName
+            && ` - ${signals
+              .flatMap(s => s.subsignals)
+              .find(sub => sub._id === selectedSubsignalId).subSignalName}`}
         </h1>
         {posts.length === 0 && !isLoading ? (
           <p className="text-gray-600">No posts found.</p>
@@ -278,7 +393,12 @@ export default function Home() {
                 <h2 className="text-lg font-bold text-gray-900 mb-2">
                   {post.postTitle}
                 </h2>
-                <p className="text-gray-700 mb-4">{post.summary}</p>
+
+                 <p className="text-gray-600 text-sm mb-2">
+                  {post.source} | {post.postType}
+                </p>
+               
+                <div className="text-gray-700 mb-4"> <p dangerouslySetInnerHTML={{ __html: post.summary }} /></div>
                 <a
                   href={post.sourceUrl}
                   target="_blank"
