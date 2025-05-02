@@ -21,6 +21,7 @@ export default function Home() {
   const [expandedSignals, setExpandedSignals] = useState({});
   const [showAllSubsectors, setShowAllSubsectors] = useState({});
   const [showAllSubsignals, setShowAllSubsignals] = useState({});
+  const [savedPosts, setSavedPosts] = useState([]);
 
   const observer = useRef();
   const lastPostElementRef = useCallback(
@@ -110,6 +111,14 @@ export default function Home() {
       fetchPosts(page, selectedPostType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId);
     }
   }, [page]);
+
+  useEffect(() => {
+    // Load saved posts from localStorage
+    const saved = localStorage.getItem('savedPosts');
+    if (saved) {
+      setSavedPosts(JSON.parse(saved));
+    }
+  }, []);
 
   const handlePostTypeClick = (postType) => {
     setSelectedPostType(postType);
@@ -250,8 +259,6 @@ export default function Home() {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        // Fallback for browsers that don't support Web Share API
-        // Copy to clipboard
         const shareText = `${post.postTitle}\n\n${post.summary}\n\nRead more: ${post.sourceUrl}`;
         await navigator.clipboard.writeText(shareText);
         alert('Link copied to clipboard!');
@@ -259,6 +266,20 @@ export default function Home() {
     } catch (error) {
       console.error('Error sharing:', error);
     }
+  };
+
+  const handleSavePost = (post) => {
+    const isAlreadySaved = savedPosts.some(savedPost => savedPost._id === post._id);
+    let newSavedPosts;
+    
+    if (isAlreadySaved) {
+      newSavedPosts = savedPosts.filter(savedPost => savedPost._id !== post._id);
+    } else {
+      newSavedPosts = [...savedPosts, post];
+    }
+    
+    setSavedPosts(newSavedPosts);
+    localStorage.setItem('savedPosts', JSON.stringify(newSavedPosts));
   };
 
   return (
@@ -559,6 +580,30 @@ export default function Home() {
                       />
                     </svg>
                     Share
+                  </button>
+                  <button
+                    onClick={() => handleSavePost(post)}
+                    className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                      savedPosts.some(savedPost => savedPost._id === post._id)
+                        ? 'bg-blue-100 text-blue-700'
+                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    }`}
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-4 w-4 mr-2" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" 
+                      />
+                    </svg>
+                    {savedPosts.some(savedPost => savedPost._id === post._id) ? 'Saved' : 'Save'}
                   </button>
                 </div>
               </div>
