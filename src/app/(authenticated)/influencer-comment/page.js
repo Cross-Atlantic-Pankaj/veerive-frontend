@@ -239,6 +239,28 @@ export default function Home() {
         .find(sub => sub._id === selectedSubsignalId)?.subSignalName
     : null;
 
+  const handleShare = async (post) => {
+    try {
+      const shareData = {
+        title: post.postTitle,
+        text: post.summary,
+        url: post.sourceUrl
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        // Fallback for browsers that don't support Web Share API
+        // Copy to clipboard
+        const shareText = `${post.postTitle}\n\n${post.summary}\n\nRead more: ${post.sourceUrl}`;
+        await navigator.clipboard.writeText(shareText);
+        alert('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
   return (
     <div className="bg-gray-50 flex px-12">
       <div className="w-1/4 bg-white shadow-md p-6 h-fit my-5 rounded-lg">
@@ -509,14 +531,36 @@ export default function Home() {
                 <div className="text-gray-700 mb-4">
                   <p dangerouslySetInnerHTML={{ __html: post.summary }} />
                 </div>
-                <a
-                  href={post.sourceUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-sm font-medium"
-                >
-                  read full comment <span className="ml-1">→</span>
-                </a>
+                <div className="flex gap-3">
+                  <a
+                    href={post.sourceUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-sm font-medium"
+                  >
+                    read full comment <span className="ml-1">→</span>
+                  </a>
+                  <button
+                    onClick={() => handleShare(post)}
+                    className="inline-flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 text-sm font-medium"
+                  >
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      className="h-4 w-4 mr-2" 
+                      fill="none" 
+                      viewBox="0 0 24 24" 
+                      stroke="currentColor"
+                    >
+                      <path 
+                        strokeLinecap="round" 
+                        strokeLinejoin="round" 
+                        strokeWidth={2} 
+                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" 
+                      />
+                    </svg>
+                    Share
+                  </button>
+                </div>
               </div>
             ))}
           </div>
