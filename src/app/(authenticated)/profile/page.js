@@ -10,8 +10,7 @@ export default function Profile() {
   const [showModal, setShowModal] = useState(false);
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [timeLeft, setTimeLeft] = useState(240); // 4 minutes
-  const [savedPosts, setSavedPosts] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(240);
 
   useEffect(() => {
     const userDataStr = localStorage.getItem('user');
@@ -21,12 +20,6 @@ export default function Profile() {
         name: user.name,
         email: user.email
       });
-    }
-
-    // Load saved posts
-    const saved = localStorage.getItem('savedPosts');
-    if (saved) {
-      setSavedPosts(JSON.parse(saved));
     }
   }, []);
 
@@ -166,76 +159,6 @@ export default function Profile() {
           </div>
           <p className="text-gray-600">{userData.email}</p>
         </div>
-      </div>
-
-      {/* Saved Posts Section */}
-      <div className="mt-8 ml-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Saved Posts</h2>
-        {savedPosts.length === 0 ? (
-          <p className="text-gray-600">No saved posts yet.</p>
-        ) : (
-          <div className="space-y-6">
-            {savedPosts.map((post, index) => (
-              <div
-                key={`${post._id}-${index}`}
-                className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex space-x-2">
-                    {post.sectors.slice(0, 3).map((sector, i) => (
-                      <span
-                        key={`${sector}-${i}`}
-                        className="bg-blue-100 text-blue-700 text-sm px-2 py-1 rounded-full"
-                      >
-                        {sector}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="text-gray-500 text-sm">
-                    {formatDate(post.date || new Date())}
-                  </span>
-                </div>
-                <h2 className="text-lg font-bold text-gray-900 mb-2">{post.postTitle}</h2>
-                <p className="text-gray-600 text-sm mb-2">
-                  {post.source} | {post.postType}
-                </p>
-                <div className="text-gray-700 mb-4">
-                  <p dangerouslySetInnerHTML={{ __html: post.summary }} />
-                </div>
-                <div className="flex gap-3">
-                  <a
-                    href={post.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-sm font-medium"
-                  >
-                    read full comment <span className="ml-1">→</span>
-                  </a>
-                  <button
-                    onClick={() => handleShare(post)}
-                    className="inline-flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 text-sm font-medium"
-                  >
-                    <svg 
-                      xmlns="http://www.w3.org/2000/svg" 
-                      className="h-4 w-4 mr-2" 
-                      fill="none" 
-                      viewBox="0 0 24 24" 
-                      stroke="currentColor"
-                    >
-                      <path 
-                        strokeLinecap="round" 
-                        strokeLinejoin="round" 
-                        strokeWidth={2} 
-                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" 
-                      />
-                    </svg>
-                    Share
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
 
       {showModal && (
