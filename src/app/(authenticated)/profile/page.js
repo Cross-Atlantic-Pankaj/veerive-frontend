@@ -125,6 +125,27 @@ export default function Profile() {
     setTimeLeft(240);
   };
 
+  const handleShare = async (post) => {
+    try {
+      const shareData = {
+        title: post.postTitle,
+        text: post.summary,
+        url: post.sourceUrl
+      };
+
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        const shareText = `${post.postTitle}\n\n${post.summary}\n\nRead more: ${post.sourceUrl}`;
+        await navigator.clipboard.writeText(shareText);
+        toast.success('Link copied to clipboard!');
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast.error('Failed to share post');
+    }
+  };
+
   return (
     <div className="p-6 relative mb-64">
       <Toaster position="top-right" />
