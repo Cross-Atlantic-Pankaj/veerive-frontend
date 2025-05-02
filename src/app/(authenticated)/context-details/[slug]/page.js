@@ -113,11 +113,6 @@ export default function ContextDetails() {
             'Explore detailed insights and updates.'
           }
         />
-        <meta name="robots" content="index, follow" />
-        <link
-          rel="canonical"
-          href={`https://yourdomain.com/context-details/${slug}`}
-        />
       </Head>
       <div className="min-h-screen bg-white py-4">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
