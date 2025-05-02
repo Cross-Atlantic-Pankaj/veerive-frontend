@@ -117,16 +117,16 @@ export default function Profile() {
 	};
 
 	return (
-		<div className="p-6 relative mb-64">
+		<div className="p-6 relative mb-64 ">
 			<Toaster position="top-right" />
-			<div className="flex items-start gap-6 bg-white rounded-xl shadow-lg px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-6">
+			<div className="flex items-start gap-6 bg-white rounded-xl shadow-base px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-12">
 				<div className="text-purple-600 bg-purple-50 p-3 rounded-full">
 					<FaUserCircle size={48} />
 				</div>
 				<div className="flex flex-col flex-grow">
 					<div className="flex justify-between items-center">
 						<h2 className="text-2xl font-semibold text-gray-800">
-							{userData.name}
+						{userData.name}
 						</h2>
 						<button
 							onClick={handleForgotPassword}

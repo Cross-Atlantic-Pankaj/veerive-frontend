@@ -163,6 +163,7 @@ export default function SavedThemes() {
 
   return (
     <div className="w-full mt-8">
+      <p className='text-xl font-semibold text-gray-800 mt-5 flex justify-center items-center mb-3'>Saved Themes</p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
         {themes.map((theme) => (
           <div
@@ -171,7 +172,6 @@ export default function SavedThemes() {
             onClick={() => handleThemeClick(theme)}
           >
             <div className="relative w-full h-[160px]">
-              {/* Placeholder as trendingScoreImage is not in API response */}
               <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center text-gray-400">
                 1000 x 630
               </div>

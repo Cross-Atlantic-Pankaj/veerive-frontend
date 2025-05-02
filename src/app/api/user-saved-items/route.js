@@ -15,12 +15,10 @@ export async function POST(request) {
 
     const { email } = await request.json();
 
-    // Validate email
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 401 });
     }
 
-    // Find the user
     const user = await User.findOne({ email }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -32,7 +30,6 @@ export async function POST(request) {
       themes: [],
     };
 
-    // Process savedPosts
     for (const savedPost of user.savedPosts) {
       const savedPostId = savedPost.SavedpostId;
       if (!mongoose.Types.ObjectId.isValid(savedPostId)) {
@@ -98,9 +95,7 @@ export async function POST(request) {
           })
           .lean();
         if (post) {
-          // Determine sourceUrl
           const sourceUrl = post.sourceUrl || (Array.isArray(post.sourceUrls) && post.sourceUrls[0]) || '';
-          // Collect unique sector names from all contexts
           const sectorNames = Array.from(
             new Set(
               post.contexts

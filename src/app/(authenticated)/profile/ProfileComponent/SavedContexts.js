@@ -177,7 +177,8 @@ export default function SavedContext() {
   ];
 
   return (
-    <div className="w-full mt-8">
+    <div className="w-full mt-4">
+      <p className='text-xl font-semibold text-gray-800 mt-5 flex justify-center items-center mb-3'>Saved context</p>
       <div className="space-y-6">
         {containerTypes.map((type) =>
           groupedContexts[type].length > 0 ? (

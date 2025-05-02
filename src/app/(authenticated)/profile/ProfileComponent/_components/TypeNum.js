@@ -45,7 +45,7 @@ const TypeNum = ({ context, formatSummary, handleUnsave }) => {
 
   return (
     <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4">
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/3 flex items-center justify-center">
             <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">

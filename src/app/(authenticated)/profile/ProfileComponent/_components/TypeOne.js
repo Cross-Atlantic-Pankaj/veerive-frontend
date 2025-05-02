@@ -4,7 +4,7 @@ import slugify from 'slugify';
 import toast from 'react-hot-toast';
 
 const TypeOne = ({ context, formatSummary, handleUnsave }) => {
-  const [isSaved, setIsSaved] = useState(true); // Always saved initially in profile
+  const [isSaved, setIsSaved] = useState(true);
 
   const slug = context.contextTitle
     ? slugify(context.contextTitle, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })

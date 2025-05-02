@@ -47,7 +47,7 @@ const TypeThree = ({ context, formatSummary, handleUnsave }) => {
 
   return (
     <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-2">
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="flex-1 flex flex-col">
             <div className="flex flex-row items-start gap-3 sm:gap-4">

@@ -149,6 +149,7 @@ export default function SavedPosts() {
 
   return (
     <div className="w-full mt-8">
+      <p className='text-xl font-semibold text-gray-800 mt-5 flex justify-center items-center mb-3'>Saved Posts</p>
       <div className="space-y-6">
         {posts.map((post, index) => (
           <div

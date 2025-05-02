@@ -46,7 +46,7 @@ const TypeFive = ({ context, formatSummary, handleUnsave }) => {
 
   return (
     <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
+      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4">
         <div className="text-black-600 text-lg font-semibold mb-2">
           {context.contextTitle}
         </div>
