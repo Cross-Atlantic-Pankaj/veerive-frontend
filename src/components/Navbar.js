@@ -150,14 +150,19 @@ export default function Navbar({ user, onLogout }) {
 
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-3">
-                <span className="text-sm font-medium text-gray-700">{user?.name}</span>
-                <div className="relative">
-                  <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white">
-                    <span className="text-sm font-medium text-white">
-                      {user?.name?.[0]?.toUpperCase()}
-                    </span>
+                <Link 
+                  href="/profile" 
+                  className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
+                >
+                  <span>{user?.name}</span>
+                  <div className="relative">
+                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white">
+                      <span className="text-sm font-medium text-white">
+                        {user?.name?.[0]?.toUpperCase()}
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </Link>
                 <button
                   onClick={onLogout}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg"
