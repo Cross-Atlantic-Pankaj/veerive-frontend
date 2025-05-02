@@ -9,13 +9,13 @@ const savedPostSchema = new mongoose.Schema({
   SavedpostType: {
     type: String,
     required: true,
-    enum: ['Post', 'Context', 'Theme']  // Post model types
+    enum: ['Post', 'Context', 'Theme'] 
   },
   savedAt: {
     type: Date,
     default: Date.now
   }
-}, { _id: false }); // Prevents _id generation for each savedPost entry
+}, { _id: false });
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -56,7 +56,7 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  savedPosts: [savedPostSchema],  // ✅ NEW FIELD
+  savedPosts: [savedPostSchema],
   createdAt: {
     type: Date,
     default: Date.now

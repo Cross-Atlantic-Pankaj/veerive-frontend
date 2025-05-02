@@ -374,8 +374,8 @@ export default function PulseToday() {
               </div>
 
               <div className="space-y-3">
-                {trendingThemes.map((theme) => (
-                  <div className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0">
+                {trendingThemes.map((theme,index) => (
+                  <div key={index} className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0">
                   <Link href={`/analyzer/theme-details/${slugify(
                     theme.title
                   )}`}>
