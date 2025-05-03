@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import slugify from 'slugify';
 import toast from 'react-hot-toast';
+
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, '');
+};
 
 const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
   const slug = context.contextTitle
-    ? slugify(context.contextTitle, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      })
-    : `context-${context.id}`;
-  const fullSlug = `${slug}-${context.id}`;
+    ? normalizeTitle(context.contextTitle)
+    : 'context-unnamed';
+  console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
@@ -60,13 +67,13 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
       const shareData = {
         title: context.contextTitle,
         text: `Check out this context: ${context.contextTitle}`,
-        url: window.location.origin + `/context-details/${fullSlug}`,
+        url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${fullSlug}`;
+        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
         await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
@@ -107,7 +114,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
   };
 
   return (
-    <Link href={`/context-details/${fullSlug}`}>
+    <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200"
@@ -125,12 +132,12 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
         )}
         <div className="px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
-            {[...context.sectors, ...context.subSectors].slice(0, 3).map((name, idx) => (
+            {[...context.sectors, ...context.subSectors].slice(0, 3).map((item, idx) => (
               <span
                 key={idx}
                 className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
               >
-                {name}
+                {item.sectorName || item.subSectorName || 'Unknown'}
               </span>
             ))}
           </div>

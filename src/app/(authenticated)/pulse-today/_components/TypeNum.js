@@ -1,8 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import slugify from 'slugify';
 import toast from 'react-hot-toast';
+
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, '');
+};
 
 const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   const [isSaved, setIsSaved] = useState(false);
@@ -11,13 +22,9 @@ const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
   const summaryPoints = formatSummary(context.summary);
 
   const slug = context.contextTitle
-    ? slugify(context.contextTitle, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      })
-    : `context-${context.id}`;
-  const fullSlug = `${slug}-${context.id}`;
+    ? normalizeTitle(context.contextTitle)
+    : 'context-unnamed';
+  console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
@@ -62,13 +69,13 @@ const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
       const shareData = {
         title: context.contextTitle,
         text: `Check out this context: ${context.contextTitle}`,
-        url: window.location.origin + `/context-details/${fullSlug}`,
+        url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${fullSlug}`;
+        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
         await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
@@ -109,7 +116,7 @@ const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
   };
 
   return (
-    <Link href={`/context-details/${fullSlug}`}>
+    <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"

@@ -9,9 +9,33 @@ import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import connectDB from '@/lib/db';
 
-export async function POST(request) {
+function normalizeTitle(text) {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, '');
+}
+
+export async function GET(request) {
   try {
     await connectDB();
+
+    const { searchParams } = new URL(request.url);
+    const slug = searchParams.get('slug');
+
+    if (!slug) {
+      return NextResponse.json(
+        { success: false, error: 'Slug is required' },
+        { status: 400 }
+      );
+    }
+
+    // Ensure all models are registered
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
@@ -19,63 +43,82 @@ export async function POST(request) {
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
     if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
 
-    const body = await request.json();
-    const { contextId } = body;
+    const normalizedSlug = normalizeTitle(slug);
+    const altNormalizedSlug = normalizedSlug.replace(/dollar/g, '');
 
-    if (!contextId) {
-      return NextResponse.json(
-        { error: 'Context ID is required' },
-        { status: 400 }
-      );
+    let contexts = await Context.find()
+      .select('contextTitle _id')
+      .lean();
+    let targetContext = contexts.find(
+      (ctx) =>
+        normalizeTitle(ctx.contextTitle) === normalizedSlug ||
+        normalizeTitle(ctx.contextTitle) === altNormalizedSlug
+    );
+
+    if (targetContext) {
+      targetContext = await Context.findById(targetContext._id)
+        .populate({
+          path: 'themes',
+          select: 'themeTitle themeDescription trendingScore impactScore predictiveMomentumScore',
+        })
+        .populate({
+          path: 'sectors',
+          select: 'sectorName _id',
+        })
+        .populate({
+          path: 'subSectors',
+          select: 'subSectorName _id sectorId',
+        })
+        .populate({
+          path: 'signalCategories',
+          select: 'signalName _id',
+        })
+        .populate({
+          path: 'posts.postId',
+          select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
+        })
+        .lean();
     }
 
-    const context = await Context.findById(contextId)
-      .populate({
-        path: 'themes',
-        select: 'themeTitle themeDescription trendingScore impactScore predictiveMomentumScore',
-      })
-      .populate({
-        path: 'sectors',
-        select: 'sectorName _id',
-      })
-      .populate({
-        path: 'subSectors',
-        select: 'subSectorName _id sectorId',
-      })
-      .populate({
-        path: 'signalCategories',
-        select: 'signalName _id',
-      })
-      .populate({
-        path: 'posts.postId',
-        select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
-      })
-      .lean();
-
-    if (!context) {
+    if (!targetContext) {
+      console.log(
+        `No context found for slug: ${slug}, normalized slug: ${normalizedSlug}, alt normalized slug: ${altNormalizedSlug}`
+      );
+      console.log(
+        'Available contexts:',
+        contexts.map((ctx) => ({
+          contextTitle: ctx.contextTitle,
+          normalizedTitle: normalizeTitle(ctx.contextTitle),
+        }))
+      );
       return NextResponse.json(
-        { error: 'Context not found' },
+        { success: false, error: 'Context not found' },
         { status: 404 }
       );
     }
 
+    const canonicalSlug = normalizeTitle(targetContext.contextTitle);
+    if (normalizedSlug !== canonicalSlug) {
+      return NextResponse.redirect(new URL(`/context-details/${canonicalSlug}`, request.url));
+    }
+
     let originalTheme = null;
-    if (context.themes && context.themes.length > 0) {
+    if (targetContext.themes && targetContext.themes.length > 0) {
       originalTheme = {
-        themeTitle: context.themes[0].themeTitle,
-        themeDescription: context.themes[0].themeDescription,
-        trendingScore: context.themes[0].trendingScore || 0,
-        impactScore: context.themes[0].impactScore || 0,
-        predictiveMomentumScore: context.themes[0].predictiveMomentumScore || 0,
+        themeTitle: targetContext.themes[0].themeTitle,
+        themeDescription: targetContext.themes[0].themeDescription,
+        trendingScore: targetContext.themes[0].trendingScore || 0,
+        impactScore: targetContext.themes[0].impactScore || 0,
+        predictiveMomentumScore: targetContext.themes[0].predictiveMomentumScore || 0,
       };
     }
 
-const sectors = context.sectors.map(sector => sector.sectorName);
-const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
+    const sectors = targetContext.sectors.map((sector) => sector.sectorName);
+    const subSectors = targetContext.subSectors.map((subSector) => subSector.subSectorName);
 
     let matchingThemes = await Theme.find({
-      subSectors: { $in: context.subSectors.map(ss => ss._id) },
-      isTrending: true
+      subSectors: { $in: targetContext.subSectors.map((ss) => ss._id) },
+      isTrending: true,
     })
       .populate({
         path: 'subSectors',
@@ -87,8 +130,8 @@ const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
 
     if (matchingThemes.length === 0) {
       matchingThemes = await Theme.find({
-        sectors: { $in: context.sectors.map(s => s._id) },
-        isTrending: true
+        sectors: { $in: targetContext.sectors.map((s) => s._id) },
+        isTrending: true,
       })
         .populate({
           path: 'sectors',
@@ -99,134 +142,124 @@ const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
         .lean();
     }
 
-    const processedMatchingThemes = matchingThemes.map(theme => {
-      const contextSectorIds = context.sectors.map(s => s._id.toString());
-      const contextSubSectorIds = context.subSectors.map(ss => ss._id.toString());
+    const processedMatchingThemes = matchingThemes
+      .map((theme) => {
+        const contextSectorIds = targetContext.sectors.map((s) => s._id.toString());
+        const contextSubSectorIds = targetContext.subSectors.map((ss) => ss._id.toString());
 
-      const matchingSubSector = theme.subSectors.find(subSector =>
-        contextSubSectorIds.includes(subSector._id.toString())
-      );
-      const matchingSector = theme.sectors.find(sector =>
-        contextSectorIds.includes(sector._id.toString())
-      );
+        const matchingSubSector = theme.subSectors.find((subSector) =>
+          contextSubSectorIds.includes(subSector._id.toString())
+        );
+        const matchingSector = theme.sectors.find((sector) =>
+          contextSectorIds.includes(sector._id.toString())
+        );
 
-      const matchedCategory = matchingSubSector 
-        ? matchingSubSector.subSectorName 
-        : matchingSector 
-          ? matchingSector.sectorName 
+        const matchedCategory = matchingSubSector
+          ? matchingSubSector.subSectorName
+          : matchingSector
+          ? matchingSector.sectorName
           : null;
 
-      return {
-        themeTitle: theme.themeTitle,
-        overallScore: theme.overallScore || 0,
-        matchedCategory: matchedCategory,
-      };
-    }).filter(theme => theme.matchedCategory);
+        return {
+          themeTitle: theme.themeTitle,
+          overallScore: theme.overallScore || 0,
+          matchedCategory: matchedCategory,
+        };
+      })
+      .filter((theme) => theme.matchedCategory);
 
     let slides = [];
-    if (context.hasSlider) {
+    if (targetContext.hasSlider) {
       for (let i = 1; i <= 10; i++) {
         const slideKey = `slide${i}`;
-        if (context[slideKey] && (context[slideKey].title || context[slideKey].description)) {
+        if (
+          targetContext[slideKey] &&
+          (targetContext[slideKey].title || targetContext[slideKey].description)
+        ) {
           slides.push({
-            title: context[slideKey].title || '',
-            description: context[slideKey].description || '',
+            title: targetContext[slideKey].title || '',
+            description: targetContext[slideKey].description || '',
           });
         }
       }
     }
 
-    const contextSubSectorIds = context.subSectors.map(ss => ss._id);
-    const contextSignalCategoryIds = context.signalCategories ? context.signalCategories.map(s => s._id) : [];
-
-    if (contextSubSectorIds.length === 0 || contextSignalCategoryIds.length === 0) {
-      console.log('Input context has empty subSectors or signalCategories, no matches possible:', {
-        subSectors: contextSubSectorIds,
-        signalCategories: contextSignalCategoryIds
-      });
-      const processedContext = {
-        ...context,
-        id: context._id.toString(),
-        originalTheme,
-        originalContextSector: sectors,
-        originalContextSubSector: subSectors,
-        trendingThemes: processedMatchingThemes,
-        slides,
-        matchingSubSectors: [],
-        matchingSignalCategories: [],
-        posts: [],
-        matchingContexts: [],
-        trendingExpertOpinions: [],
-      };
-      return NextResponse.json({ context: processedContext });
-    }
-
-    const pairConditions = [];
-    for (const subSectorId of contextSubSectorIds) {
-      for (const signalCategoryId of contextSignalCategoryIds) {
-        pairConditions.push({
-          subSectors: { $in: [subSectorId] },
-          signalCategories: { $in: [signalCategoryId] }
-        });
-      }
-    }
-
-    const matchingContexts = await Context.find({
-      _id: { $ne: contextId },
-      $or: pairConditions
-    })
-      .populate({
-        path: 'sectors',
-        select: 'sectorName _id',
-      })
-      .populate({
-        path: 'subSectors',
-        select: 'subSectorName _id',
-      })
-      .populate({
-        path: 'signalCategories',
-        select: 'signalName _id',
-      })
-      .populate({
-        path: 'posts.postId',
-        select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
-      })
-      .lean();
-
-    const uniqueMatchingContexts = Array.from(
-      new Map(matchingContexts.map(ctx => [ctx._id.toString(), ctx])).values()
-    ).map(ctx => ({
-      ...ctx,
-      id: ctx._id.toString(),
-    }));
+    const contextSubSectorIds = targetContext.subSectors.map((ss) => ss._id);
+    const contextSignalCategoryIds = targetContext.signalCategories
+      ? targetContext.signalCategories.map((s) => s._id)
+      : [];
 
     let processedMatchingSubSectors = [];
     let processedMatchingSignalCategories = [];
+    let matchingContexts = [];
 
-    if (uniqueMatchingContexts.length > 0) {
-      const firstMatch = uniqueMatchingContexts[0];
-      
-      processedMatchingSubSectors = firstMatch.subSectors.map(subSector => ({
-        subSectorId: subSector._id,
-        subSectorName: subSector.subSectorName,
+    if (contextSubSectorIds.length > 0 && contextSignalCategoryIds.length > 0) {
+      const pairConditions = [];
+      for (const subSectorId of contextSubSectorIds) {
+        for (const signalCategoryId of contextSignalCategoryIds) {
+          pairConditions.push({
+            subSectors: { $in: [subSectorId] },
+            signalCategories: { $in: [signalCategoryId] },
+          });
+        }
+      }
+
+      matchingContexts = await Context.find({
+        _id: { $ne: targetContext._id },
+        $or: pairConditions,
+      })
+        .populate({
+          path: 'sectors',
+          select: 'sectorName _id',
+        })
+        .populate({
+          path: 'subSectors',
+          select: 'subSectorName _id',
+        })
+        .populate({
+          path: 'signalCategories',
+          select: 'signalName _id',
+        })
+        .populate({
+          path: 'posts.postId',
+          select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
+        })
+        .lean();
+
+      const uniqueMatchingContexts = Array.from(
+        new Map(matchingContexts.map((ctx) => [ctx._id.toString(), ctx])).values()
+      ).map((ctx) => ({
+        ...ctx,
+        id: ctx._id.toString(),
+        slug: normalizeTitle(ctx.contextTitle),
       }));
 
-      processedMatchingSignalCategories = firstMatch.signalCategories
-        ? firstMatch.signalCategories.map(signal => ({
-            signalCategoryId: signal._id,
-            signalName: signal.signalName,
-          }))
-        : [];
+      if (uniqueMatchingContexts.length > 0) {
+        const firstMatch = uniqueMatchingContexts[0];
+        processedMatchingSubSectors = firstMatch.subSectors.map((subSector) => ({
+          subSectorId: subSector._id,
+          subSectorName: subSector.subSectorName,
+        }));
+
+        processedMatchingSignalCategories = firstMatch.signalCategories
+          ? firstMatch.signalCategories.map((signal) => ({
+              signalCategoryId: signal._id,
+              signalName: signal.signalName,
+            }))
+          : [];
+      }
+
+      matchingContexts = uniqueMatchingContexts;
     }
 
     let processedPosts = [];
-    if (context.posts && context.posts.length > 0) {
+    if (targetContext.posts && targetContext.posts.length > 0) {
       const uniquePosts = Array.from(
-        new Map(context.posts.map(post => [post.postId?._id.toString(), post])).values()
-      ).filter(post => post.postId);
+        new Map(targetContext.posts.map((post) => [post.postId?._id.toString(), post])).values()
+      ).filter((post) => post.postId);
 
       processedPosts = uniquePosts
-        .map(post => ({
+        .map((post) => ({
           postId: post.postId._id,
           postTitle: post.postId.postTitle,
           postType: post.postId.postType,
@@ -237,23 +270,26 @@ const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
     }
 
     let contextPosts = [];
-    if (context.posts && context.posts.length > 0) {
-      contextPosts = context.posts
-        .filter(post => post.postId)
-        .map(post => ({
+    if (targetContext.posts && targetContext.posts.length > 0) {
+      contextPosts = targetContext.posts
+        .filter((post) => post.postId)
+        .map((post) => ({
           postId: post.postId._id,
           postTitle: post.postId.postTitle,
           postType: post.postId.postType,
           date: post.postId.date,
           isTrending: post.postId.isTrending,
-          sourceUrl: post.postId.sourceUrl || (post.postId.sourceUrls && post.postId.sourceUrls[0]) || '',
+          sourceUrl:
+            post.postId.sourceUrl ||
+            (post.postId.sourceUrls && post.postId.sourceUrls[0]) ||
+            '',
         }));
     }
 
     let trendingExpertOpinions = [];
-    uniqueMatchingContexts.forEach(ctx => {
+    matchingContexts.forEach((ctx) => {
       if (ctx.posts && ctx.posts.length > 0) {
-        ctx.posts.forEach(post => {
+        ctx.posts.forEach((post) => {
           if (
             post.postId &&
             post.postId.postType === 'Expert Opinion' &&
@@ -265,7 +301,11 @@ const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
               postType: post.postId.postType,
               date: post.postId.date,
               contextTitle: ctx.contextTitle,
-              sourceUrl: post.postId.sourceUrl || (post.postId.sourceUrls && post.postId.sourceUrls[0]) || '',
+              contextSlug: normalizeTitle(ctx.contextTitle),
+              sourceUrl:
+                post.postId.sourceUrl ||
+                (post.postId.sourceUrls && post.postId.sourceUrls[0]) ||
+                '',
             });
           }
         });
@@ -277,27 +317,32 @@ const subSectors = context.subSectors.map(subSector => subSector.subSectorName);
       .slice(0, 5);
 
     const processedContext = {
-      ...context,
-      id: context._id.toString(),
+      ...targetContext,
+      id: targetContext._id.toString(),
       originalTheme,
       trendingThemes: processedMatchingThemes,
       slides,
       matchingSubSectors: processedMatchingSubSectors,
       matchingSignalCategories: processedMatchingSignalCategories,
       posts: processedPosts,
-      matchingContexts: uniqueMatchingContexts,
+      matchingContexts,
       trendingExpertOpinions,
       contextPosts,
     };
 
     return NextResponse.json({
+      success: true,
       context: processedContext,
     });
-
   } catch (error) {
     console.error('Error fetching context details:', error);
+    const isDev = process.env.NODE_ENV === 'development';
     return NextResponse.json(
-      { error: 'Internal server error', details: error.message },
+      {
+        success: false,
+        error: 'Failed to fetch context details',
+        ...(isDev && { details: error.message }),
+      },
       { status: 500 }
     );
   }

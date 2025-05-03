@@ -1,20 +1,30 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import PostCard from './_components/PostCard';
 import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
 import RelatedEvents from './_components/RelatedEvents';
 import TrendingExpertOpinion from './_components/TrendingExpertOpinion';
 import Head from 'next/head';
-import slugify from 'slugify';
+
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, '');
+};
 
 export default function ContextDetails() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug;
-
-  const contextId = slug.includes('-') ? slug.split('-').pop() : null;
 
   const [context, setContext] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,8 +35,8 @@ export default function ContextDetails() {
   const sliderRef = useRef(null);
 
   useEffect(() => {
-    if (!contextId) {
-      setError('No context ID provided');
+    if (!slug) {
+      setError('No slug provided');
       setLoading(false);
       return;
     }
@@ -34,19 +44,22 @@ export default function ContextDetails() {
     const fetchContextDetails = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/context-details', {
-          method: 'POST',
+        const response = await fetch(`/api/context-details?slug=${encodeURIComponent(slug)}`, {
+          method: 'GET',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ contextId }),
         });
 
-        if (!response.ok) throw new Error('Failed to fetch context details');
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error('API error response:', errorData);
+          throw new Error(errorData.error || 'Failed to fetch context details');
+        }
 
         const data = await response.json();
         console.log('Fetched context:', data.context);
         setContext(data.context);
       } catch (err) {
-        console.error('Error fetching context details:', err);
+        console.error('Error fetching context details:', err.message, err.stack);
         setError(err.message);
       } finally {
         setLoading(false);
@@ -54,21 +67,17 @@ export default function ContextDetails() {
     };
 
     fetchContextDetails();
-  }, [contextId]);
+  }, [slug]);
 
   useEffect(() => {
-    if (context) {
-      const expectedSlug = slugify(context.contextTitle, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      });
-      const currentSlugWithoutId = slug.split('-').slice(0, -1).join('-');
-      if (currentSlugWithoutId !== expectedSlug) {
-        window.location.href = `/context-details/${expectedSlug}-${contextId}`;
+    if (context && slug) {
+      const expectedSlug = normalizeTitle(context.contextTitle);
+      if (slug !== expectedSlug) {
+        console.log(`Redirecting from slug: ${slug} to: ${expectedSlug}`);
+        router.replace(`/context-details/${expectedSlug}`);
       }
     }
-  }, [context, slug, contextId]);
+  }, [context, slug, router]);
 
   const handleSearch = (e) => {
     e.preventDefault();
