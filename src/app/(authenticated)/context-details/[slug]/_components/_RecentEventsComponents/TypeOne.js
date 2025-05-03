@@ -1,21 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import slugify from 'slugify';
 import toast from 'react-hot-toast';
 
-const TypeOne = ({ context }) => {
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, '');
+};
+
+const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
   const slug = context.contextTitle
-    ? slugify(context.contextTitle, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      })
-    : `context-${context.id}`;
-  const fullSlug = `${slug}-${context.id}`;
+    ? normalizeTitle(context.contextTitle)
+    : 'context-unnamed';
+  console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
@@ -60,13 +67,13 @@ const TypeOne = ({ context }) => {
       const shareData = {
         title: context.contextTitle,
         text: `Check out this context: ${context.contextTitle}`,
-        url: window.location.origin + `/context-details/${fullSlug}`,
+        url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${fullSlug}`;
+        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
         await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
@@ -107,8 +114,11 @@ const TypeOne = ({ context }) => {
   };
 
   return (
-    <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-lg overflow-hidden w-full shadow-md cursor-pointer hover:shadow-md transition-all duration-200">
+    <Link href={`/context-details/${slug}`}>
+      <div
+        ref={isLastItem ? lastContextCallback : null}
+        className="bg-white rounded-lg overflow-hidden w-full shadow-md cursor-pointer hover:shadow-md transition-all duration-200"
+      >
         {context.bannerImage ? (
           <img
             src={context.bannerImage}
