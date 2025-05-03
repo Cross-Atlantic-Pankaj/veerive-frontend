@@ -9,10 +9,13 @@ import SavedThemes from './ProfileComponent/SavedThemes';
 
 export default function Profile() {
 	const [userData, setUserData] = useState({ name: '', email: '' });
-	const [isLoading, setIsLoading] = useState(false);
-	const [showModal, setShowModal] = useState(false);
+	const [isPasswordLoading, setIsPasswordLoading] = useState(false);
+	const [isEmailLoading, setIsEmailLoading] = useState(false);
+	const [showPasswordModal, setShowPasswordModal] = useState(false);
+	const [showEmailModal, setShowEmailModal] = useState(false);
 	const [otp, setOtp] = useState('');
 	const [newPassword, setNewPassword] = useState('');
+	const [newEmail, setNewEmail] = useState('');
 	const [timeLeft, setTimeLeft] = useState(240);
 
 	useEffect(() => {
@@ -27,7 +30,7 @@ export default function Profile() {
 	}, []);
 
 	useEffect(() => {
-		if (showModal && timeLeft > 0) {
+		if ((showPasswordModal || showEmailModal) && timeLeft > 0) {
 			const timer = setInterval(() => {
 				setTimeLeft((prev) => prev - 1);
 			}, 1000);
@@ -36,7 +39,7 @@ export default function Profile() {
 			toast.error('OTP has expired. Please try again.');
 			handleCloseModal();
 		}
-	}, [showModal, timeLeft]);
+	}, [showPasswordModal, showEmailModal, timeLeft]);
 
 	const formatTime = (seconds) => {
 		const mins = Math.floor(seconds / 60);
@@ -45,7 +48,7 @@ export default function Profile() {
 	};
 
 	const handleForgotPassword = async () => {
-		setIsLoading(true);
+		setIsPasswordLoading(true);
 		try {
 			const res = await fetch('/api/auth/forgot-password', {
 				method: 'POST',
@@ -63,12 +66,40 @@ export default function Profile() {
 			}
 
 			toast.success('OTP sent to your email');
-			setShowModal(true);
+			setShowPasswordModal(true);
 			setTimeLeft(240);
 		} catch (error) {
 			toast.error(error.message || 'An unexpected error occurred');
 		} finally {
-			setIsLoading(false);
+			setIsPasswordLoading(false);
+		}
+	};
+
+	const handleChangeEmail = async () => {
+		setIsEmailLoading(true);
+		try {
+			const res = await fetch('/api/auth/forgot-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ email: userData.email }),
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				toast.error(data.error || 'Something went wrong');
+				return;
+			}
+
+			toast.success('OTP sent to your email');
+			setShowEmailModal(true);
+			setTimeLeft(240);
+		} catch (error) {
+			toast.error(error.message || 'An unexpected error occurred');
+		} finally {
+			setIsEmailLoading(false);
 		}
 	};
 
@@ -79,7 +110,7 @@ export default function Profile() {
 			return;
 		}
 
-		setIsLoading(true);
+		setIsPasswordLoading(true);
 		try {
 			const res = await fetch('/api/auth/reset-password', {
 				method: 'POST',
@@ -105,19 +136,63 @@ export default function Profile() {
 		} catch (error) {
 			toast.error(error.message || 'An unexpected error occurred');
 		} finally {
-			setIsLoading(false);
+			setIsPasswordLoading(false);
+		}
+	};
+
+	const handleUpdateEmail = async (e) => {
+		e.preventDefault();
+		if (!otp || !newEmail) {
+			toast.error('Please enter both OTP and new email');
+			return;
+		}
+
+		setIsEmailLoading(true);
+		try {
+			const res = await fetch('/api/auth/change-email', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					currentEmail: userData.email,
+					otp,
+					newEmail,
+				}),
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				toast.error(data.error || 'Something went wrong');
+				return;
+			}
+
+			// Update localStorage and state with new email
+			const updatedUser = { ...JSON.parse(localStorage.getItem('user')), email: newEmail };
+			localStorage.setItem('user', JSON.stringify(updatedUser));
+			setUserData((prev) => ({ ...prev, email: newEmail }));
+			
+			toast.success('Email updated successfully');
+			handleCloseModal();
+		} catch (error) {
+			toast.error(error.message || 'An unexpected error occurred');
+		} finally {
+			setIsEmailLoading(false);
 		}
 	};
 
 	const handleCloseModal = () => {
-		setShowModal(false);
+		setShowPasswordModal(false);
+		setShowEmailModal(false);
 		setOtp('');
 		setNewPassword('');
+		setNewEmail('');
 		setTimeLeft(240);
 	};
 
 	return (
-		<div className="p-6 relative mb-64 ">
+		<div className="p-6 relative mb-64">
 			<Toaster position="top-right" />
 			<div className="flex items-start gap-6 bg-white rounded-xl shadow-base px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-12">
 				<div className="text-purple-600 bg-purple-50 p-3 rounded-full">
@@ -126,21 +201,30 @@ export default function Profile() {
 				<div className="flex flex-col flex-grow">
 					<div className="flex justify-between items-center">
 						<h2 className="text-2xl font-semibold text-gray-800">
-						{userData.name}
+							{userData.name}
 						</h2>
-						<button
-							onClick={handleForgotPassword}
-							disabled={isLoading}
-							className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
-						>
-							{isLoading ? 'Sending OTP...' : 'Change Password'}
-						</button>
+						<div className="flex gap-2">
+							<button
+								onClick={handleForgotPassword}
+								disabled={isPasswordLoading}
+								className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+							>
+								{isPasswordLoading ? 'Sending OTP...' : 'Change Password'}
+							</button>
+							<button
+								onClick={handleChangeEmail}
+								disabled={isEmailLoading}
+								className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+							>
+								{isEmailLoading ? 'Sending OTP...' : 'Change Email'}
+							</button>
+						</div>
 					</div>
 					<p className="text-gray-600">{userData.email}</p>
 				</div>
 			</div>
 
-			{showModal && (
+			{showPasswordModal && (
 				<div className="fixed inset-0 flex justify-center z-50 h-fit mt-22">
 					<div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all">
 						<div className="flex justify-between items-center px-5 py-2 border-b">
@@ -205,10 +289,10 @@ export default function Profile() {
 
 								<button
 									type="submit"
-									disabled={isLoading}
+									disabled={isPasswordLoading}
 									className="w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
 								>
-									{isLoading ? 'Resetting Password...' : 'Reset Password'}
+									{isPasswordLoading ? 'Resetting Password...' : 'Reset Password'}
 								</button>
 							</form>
 						</div>
@@ -216,7 +300,83 @@ export default function Profile() {
 				</div>
 			)}
 
-			<div className='px-12'>
+			{showEmailModal && (
+				<div className="fixed inset-0 flex justify-center z-50 h-fit mt-22">
+					<div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all">
+						<div className="flex justify-between items-center px-5 py-2 border-b">
+							<h3 className="text-xl font-semibold text-gray-800">
+								Change Email
+							</h3>
+							<button
+								onClick={handleCloseModal}
+								className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-2 rounded-full transition-colors duration-200"
+							>
+								<IoClose size={20} />
+							</button>
+						</div>
+
+						<div className="p-6">
+							<form
+								onSubmit={handleUpdateEmail}
+								className="space-y-5"
+							>
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										Enter OTP
+									</label>
+									<input
+										type="text"
+										value={otp}
+										onChange={(e) => setOtp(e.target.value)}
+										className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+										placeholder="Enter 6-digit OTP"
+										maxLength={6}
+									/>
+									<div className="mt-2 flex items-center text-sm text-gray-500">
+										<svg
+											className="w-4 h-4 mr-1.5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												strokeWidth="2"
+												d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+											/>
+										</svg>
+										Time remaining: {formatTime(timeLeft)}
+									</div>
+								</div>
+
+								<div>
+									<label className="block text-sm font-medium text-gray-700 mb-2">
+										New Email
+									</label>
+									<input
+										type="email"
+										value={newEmail}
+										onChange={(e) => setNewEmail(e.target.value)}
+										className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+										placeholder="Enter new email"
+									/>
+								</div>
+
+								<button
+									type="submit"
+									disabled={isEmailLoading}
+									className="w-full py-3 px-4 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium text-sm"
+								>
+									{isEmailLoading ? 'Updating Email...' : 'Update Email'}
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			)}
+
+			<div className="px-12">
 				<SavedContext />
 				<SavedPosts />
 				<SavedThemes />
