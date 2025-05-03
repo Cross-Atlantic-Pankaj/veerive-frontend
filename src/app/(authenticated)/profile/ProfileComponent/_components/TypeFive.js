@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import slugify from 'slugify';
 import toast from 'react-hot-toast';
 
-const TypeFive = ({ context, formatSummary, handleUnsave }) => {
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, ''); 
+};
+
+const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
 
-  const summaryPoints = formatSummary(context.summary);
-  const summaryPoint = summaryPoints.slice(0, 1);
+  const formattedSummaryPoints = formatSummary(context.summary);
+  const summaryPoint = formattedSummaryPoints.slice(0, 1);
 
   const slug = context.contextTitle
-    ? slugify(context.contextTitle, { lower: true, strict: true, remove: /[*+~.()'"!:@]/g })
+    ? normalizeTitle(context.contextTitle)
     : `context-${context._id}`;
-  const fullSlug = `${slug}-${context._id}`;
+  console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
   const handleShare = async (e) => {
     e.preventDefault();
@@ -21,13 +32,13 @@ const TypeFive = ({ context, formatSummary, handleUnsave }) => {
       const shareData = {
         title: context.contextTitle,
         text: `Check out this context: ${context.contextTitle}\nSectors: ${context.sectorNames.join(', ')}\nSub-Sectors: ${context.subSectorNames.join(', ')}`,
-        url: `${window.location.origin}/context-details/${fullSlug}`,
+        url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nSectors: ${context.sectorNames.join(', ')}\nSub-Sectors: ${context.subSectorNames.join(', ')}\n\nCheck out this context: ${window.location.origin}/context-details/${fullSlug}`;
+        const shareText = `${context.contextTitle}\n\nSectors: ${context.sectorNames.join(', ')}\nSub-Sectors: ${context.subSectorNames.join(', ')}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
         await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
@@ -45,8 +56,11 @@ const TypeFive = ({ context, formatSummary, handleUnsave }) => {
   };
 
   return (
-    <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4">
+    <Link href={`/context-details/${slug}`}>
+      <div
+        ref={isLastItem ? lastContextCallback : null}
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4"
+      >
         <div className="text-black-600 text-lg font-semibold mb-2">
           {context.contextTitle}
         </div>
