@@ -1,10 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import slugify from 'slugify';
 import toast from 'react-hot-toast';
 
-const TypeNum = ({ context, formatSummary }) => {
+const normalizeTitle = (text) => {
+  return text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
+    .replace(/^-+|-+$/g, ''); 
+};
+
+const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
@@ -12,13 +23,9 @@ const TypeNum = ({ context, formatSummary }) => {
   const summaryPoints = formatSummary(context.summary);
 
   const slug = context.contextTitle
-    ? slugify(context.contextTitle, {
-        lower: true,
-        strict: true,
-        remove: /[*+~.()'"!:@]/g,
-      })
-    : `context-${contextId}`;
-  const fullSlug = `${slug}-${contextId}`;
+    ? normalizeTitle(context.contextTitle)
+    : 'context-unnamed';
+  console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
@@ -63,13 +70,13 @@ const TypeNum = ({ context, formatSummary }) => {
       const shareData = {
         title: context.contextTitle,
         text: `Check out this context: ${context.contextTitle}`,
-        url: window.location.origin + `/context-details/${fullSlug}`,
+        url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${fullSlug}`;
+        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
         await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
@@ -110,8 +117,11 @@ const TypeNum = ({ context, formatSummary }) => {
   };
 
   return (
-    <Link href={`/context-details/${fullSlug}`}>
-      <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer">
+    <Link href={`/context-details/${slug}`}>
+      <div
+        ref={isLastItem ? lastContextCallback : null}
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
+      >
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/3 flex items-center justify-center">
             <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
