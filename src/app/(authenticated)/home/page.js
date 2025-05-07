@@ -84,15 +84,14 @@ export default function HomePage() {
 		<Suspense fallback={<div>Loading...</div>}>
 			<div className="w-full">
 				<div className="w-full bg-[#6366F1] min-h-[500px] flex items-center">
-					<div className="w-full max-w-[990px] mx-auto px-4 sm:px-6 lg:px-8">
+					<div className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 lg:px-6">
 						<div className="flex flex-col max-[530px]:flex-col min-[531px]:flex-row items-center min-[531px]:items-start py-8 max-[530px]:py-6 min-[531px]:py-12">
-							<div className="w-full min-[531px]:w-1/2 min-[531px]:pr-8 text-center min-[531px]:text-left">
+							<div className="w-full min-[531px]:w-2/5 min-[531px]:pr-4 text-center min-[531px]:text-left">
 								<h1 className="text-white block text-[24px] sm:text-[32px] md:text-[40px] lg:text-[50px] font-bold leading-tight">
 									Democratizing fintech intelligence
 								</h1>
 								<p className="mt-3 max-[530px]:mt-2 text-white/90 text-xs max-[530px]:text-xs sm:text-sm md:text-base lg:text-xl leading-relaxed max-w-[400px] mx-auto min-[531px]:mx-0">
-									One platform. Every fintech insight that matters. Get answers,
-									not links.
+									One platform. Every fintech insight that matters.
 								</p>
 								<div className="mt-4 max-[530px]:mt-3 flex justify-center min-[531px]:justify-start">
 									<div className="flex w-full max-w-[350px] max-[530px]:max-w-[300px]">
@@ -108,13 +107,13 @@ export default function HomePage() {
 									</div>
 								</div>
 							</div>
-							<div className="w-full min-[531px]:w-1/2 mt-6 max-[530px]:mt-4 min-[531px]:mt-0">
+							<div className="w-full min-[531px]:w-3/5 mt-6 max-[530px]:mt-4 min-[531px]:mt-0 flex justify-end">
 								<Image
 									src="/assets/Home_Page_section_1.png"
 									alt="Illustration of fintech analytics with news, events, analyzer, and insights"
 									width={500}
 									height={500}
-									className="w-full h-auto max-w-[300px] max-[530px]:max-w-[300px] sm:max-w-[350px] lg:max-w-[450px] mx-auto"
+									className="w-full h-auto max-w-[300px] max-[530px]:max-w-[300px] sm:max-w-[350px] lg:max-w-[450px]"
 									priority
 								/>
 							</div>
