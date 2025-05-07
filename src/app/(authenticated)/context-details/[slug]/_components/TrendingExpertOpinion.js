@@ -34,7 +34,7 @@ const TrendingExpertOpinion = ({ trendingExpertOpinions }) => {
 
 			<div className="mt-4 text-right">
 				<Link
-					href="/trend-analyzer"
+					href="/influencer-comment/Expert Opinion"
 					className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
 				>
 					VIEW MORE →

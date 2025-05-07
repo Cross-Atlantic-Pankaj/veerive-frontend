@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import toast from 'react-hot-toast';
 
 export default function Home() {
@@ -25,6 +25,7 @@ export default function Home() {
   const [showAllSubsignals, setShowAllSubsignals] = useState({});
   const [savedPosts, setSavedPosts] = useState({});
   const router = useRouter();
+  const params = useParams();
 
   const observer = useRef();
   const lastPostElementRef = useCallback(
@@ -56,6 +57,39 @@ export default function Home() {
     'News': 'News',
     'Research Report': 'Research Report',
   };
+
+  const postTypeReverseMap = Object.fromEntries(
+    Object.entries(postTypeDisplayMap).map(([key, value]) => [value, key])
+  );
+
+  useEffect(() => {
+    const urlPostType = params.postType?.[0];
+    console.log('urlPostType:', urlPostType);
+    let newPostType = null;
+    if (urlPostType) {
+      const decodedPostType = decodeURIComponent(urlPostType);
+      console.log('decodedPostType:', decodedPostType);
+      const backendPostType = postTypeReverseMap[decodedPostType] || decodedPostType;
+      console.log('backendPostType:', backendPostType);
+      console.log('postTypes includes backendPostType:', postTypes.includes(backendPostType));
+      if (postTypes.includes(backendPostType)) {
+        newPostType = backendPostType;
+      }
+    }
+    setSelectedPostType(newPostType);
+
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts(
+      1,
+      newPostType,
+      selectedSectorId,
+      selectedSubsectorId,
+      selectedSignalId,
+      selectedSubsignalId
+    );
+  }, [params.postType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId]);
 
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
@@ -154,26 +188,6 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    setPosts([]);
-    setPage(1);
-    setHasMore(true);
-    fetchPosts(
-      1,
-      selectedPostType,
-      selectedSectorId,
-      selectedSubsectorId,
-      selectedSignalId,
-      selectedSubsignalId
-    );
-  }, [
-    selectedPostType,
-    selectedSectorId,
-    selectedSubsectorId,
-    selectedSignalId,
-    selectedSubsignalId,
-  ]);
-
-  useEffect(() => {
     if (page > 1) {
       fetchPosts(
         page,
@@ -184,10 +198,12 @@ export default function Home() {
         selectedSubsignalId
       );
     }
-  }, [page]);
+  }, [page, selectedPostType, selectedSectorId, selectedSubsectorId, selectedSignalId, selectedSubsignalId]);
 
   const handlePostTypeClick = (postType) => {
     setSelectedPostType(postType);
+    const formattedPostType = postType ? encodeURIComponent(postType) : '';
+    router.push(`/influencer-comment${postType ? `/${formattedPostType}` : ''}`);
   };
 
   const handleSectorClick = (sectorId) => {
@@ -261,6 +277,7 @@ export default function Home() {
       case 'postType':
         newPostType = null;
         setSelectedPostType(null);
+        router.push('/influencer-comment');
         break;
       case 'sector':
         newSectorId = null;
