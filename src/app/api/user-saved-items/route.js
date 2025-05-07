@@ -30,7 +30,9 @@ export async function POST(request) {
       themes: [],
     };
 
-    for (const savedPost of user.savedPosts) {
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
+
+    for (const savedPost of savedPosts) {
       const savedPostId = savedPost.SavedpostId;
       if (!mongoose.Types.ObjectId.isValid(savedPostId)) {
         console.warn(`Invalid SavedpostId: ${savedPostId}`);

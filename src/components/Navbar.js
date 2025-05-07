@@ -129,8 +129,8 @@ export default function Navbar({ user, onLogout }) {
               <Image
                 src="/assets/veerive_logo.svg"
                 alt="Veerive"
-                width={130}
-                height={40}
+                width={150}
+                height={50}
                 className="h-8 w-auto"
                 priority
               />
