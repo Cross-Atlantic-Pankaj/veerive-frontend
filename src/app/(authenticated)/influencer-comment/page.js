@@ -49,7 +49,6 @@ export default function Home() {
     'Research Report',
   ];
 
-  // Mapping for display names
   const postTypeDisplayMap = {
     'Expert Opinion': 'Expert Opinion',
     'Infographic': 'Market Statistics',
@@ -664,7 +663,7 @@ export default function Home() {
                   {post.postTitle}
                 </h2>
                 <p className="text-gray-600 text-sm mb-2">
-                  {post.source} | {postTypeDisplayMap[post.postType] || post.postType}
+                  {post.source} | {post.postType}
                 </p>
                 <div className="text-gray-700 mb-4">
                   <p dangerouslySetInnerHTML={{ __html: post.summary }} />
@@ -674,9 +673,9 @@ export default function Home() {
                     href={post.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-sm font-medium"
+                    className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
                   >
-                    read full comment <span className="ml-1">→</span>
+                    Read More <span className="ml-1">→</span>
                   </a>
                   <button
                     onClick={() => handleSave(post._id)}
