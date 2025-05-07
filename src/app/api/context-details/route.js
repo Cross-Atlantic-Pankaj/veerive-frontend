@@ -74,6 +74,10 @@ export async function GET(request) {
           select: 'signalName _id',
         })
         .populate({
+          path: 'signalSubCategories',
+          select: 'subSignalName _id signalId',
+        })
+        .populate({
           path: 'posts.postId',
           select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
         })
@@ -115,6 +119,8 @@ export async function GET(request) {
 
     const sectors = targetContext.sectors.map((sector) => sector.sectorName);
     const subSectors = targetContext.subSectors.map((subSector) => subSector.subSectorName);
+    const signalCategories = targetContext.signalCategories.map((signal) => signal.signalName);
+    const signalSubCategories = targetContext.signalSubCategories.map((subSignal) => subSignal.subSignalName);
 
     let matchingThemes = await Theme.find({
       subSectors: { $in: targetContext.subSectors.map((ss) => ss._id) },
@@ -319,6 +325,10 @@ export async function GET(request) {
     const processedContext = {
       ...targetContext,
       id: targetContext._id.toString(),
+      originalContextSector: sectors,
+      originalContextSubSector: subSectors,
+      originalContextSignalCategory: signalCategories,
+      originalContextSignalSubCategory: signalSubCategories,
       originalTheme,
       trendingThemes: processedMatchingThemes,
       slides,
