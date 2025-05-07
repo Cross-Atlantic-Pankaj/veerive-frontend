@@ -416,7 +416,6 @@ export default function HomePage() {
 										</div>
 										<div className="mt-3">
 											<div className="text-sm mb-2">
-												Subsector:{' '}
 												{trendingThemes[0].subSectors
 													?.slice(0, 3)
 													.map((subSector, index) => (
@@ -474,7 +473,6 @@ export default function HomePage() {
 										</div>
 										<div className="mt-3">
 											<div className="text-sm mb-2">
-												Subsector:{' '}
 												{theme.subSectors
 													?.slice(0, 3)
 													.map((subSector, index) => (
