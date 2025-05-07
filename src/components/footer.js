@@ -23,8 +23,7 @@ const Footer = () => {
     },
     {
       href: "https://linkedin.com",
-      icon:
-        "M4.98 3.5C4.98 4.88 3.88 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1 4.98 2.12 4.98 3.5zM0 8h5v16H0V8zm7.5 0h4.7v2.2h.1c.7-1.3 2.3-2.2 4.3-2.2 4.6 0 5.5 3 5.5 6.8V24h-5v-7.2c0-1.7 0-3.9-2.4-3.9-2.4 0-2.8 1.9-2.8 3.8V24h-5V8z"
+      icon: "M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.25 6.5 1.75 1.75 0 016.5 8.25zM19 19h-3v-4.74c0-1.42-.6-2.73-2.23-2.73a2.57 2.57 0 00-2.43 2.74V19h-3v-9h3v1.37a3.94 3.94 0 013.53-2.08C17.87 9.29 19 11 19 12.76z"
     },
     {
       href: "https://youtube.com",
@@ -33,16 +32,18 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="bg-black text-white px-6 md:px-10 lg:px-16 py-12">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
+    <footer className="bg-black text-white px-4 md:px-8 lg:px-12 py-12">
+      <div className="w-full mx-auto px-16">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
           <div>
             <h3 className="text-cyan-400 font-semibold mb-4">Insights</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              <a href='/pulse-today' className="hover:underline">Pulse Today</a>
-            </ul>
-            <ul className="space-y-2 text-sm text-gray-300 mt-2">
-              <a href='/analyzer/trend' className="hover:underline">Trend Analyzer</a>
+              <li>
+                <a href='/pulse-today' className="hover:underline">Pulse Today</a>
+              </li>
+              <li>
+                <a href='/analyzer/trend' className="hover:underline">Trend Analyzer</a>
+              </li>
             </ul>
           </div>
 
@@ -75,19 +76,17 @@ const Footer = () => {
             </ul>
           </div>
 
-          <div className="lg:col-span-3 sm:col-span-2 col-span-1">
-            <div>
-              <h3 className="text-cyan-400 font-semibold mb-2">SOCIAL STREAM</h3>
-              <div className="flex gap-4 flex-wrap sm:justify-start justify-center">
-                {socialIcons.map((item, i) => (
-                  <a key={`icon-${i}`} href={item.href} target="_blank" rel="noreferrer"
-                    className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
-                    <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-                      <path d={item.icon} />
-                    </svg>
-                  </a>
-                ))}
-              </div>
+          <div>
+            <h3 className="text-cyan-400 font-semibold mb-2">SOCIAL STREAM</h3>
+            <div className="flex gap-4 flex-wrap sm:justify-start justify-center">
+              {socialIcons.map((item, i) => (
+                <a key={`icon-${i}`} href={item.href} target="_blank" rel="noreferrer"
+                  className="bg-[#1e1e1e] p-3 rounded-full hover:bg-gray-700">
+                  <svg className="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                    <path d={item.icon} />
+                  </svg>
+                </a>
+              ))}
             </div>
           </div>
         </div>
