@@ -253,7 +253,7 @@ export default function HomePage() {
 										TRENDING OPINIONS
 									</h2>
 									<Link
-										href="/think-tank"
+										href="/influencer-comment"
 										className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
 									>
 										VIEW ALL →
@@ -315,7 +315,7 @@ export default function HomePage() {
 										MARKET STATISTICS
 									</h2>
 									<Link
-										href="/think-tank/statistics"
+										href="/influencer-comment"
 										className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
 									>
 										VIEW ALL →
