@@ -49,6 +49,15 @@ export default function Home() {
     'Research Report',
   ];
 
+  // Mapping for display names
+  const postTypeDisplayMap = {
+    'Expert Opinion': 'Expert Opinion',
+    'Infographic': 'Market Statistics',
+    'Interview': 'Interview',
+    'News': 'News',
+    'Research Report': 'Research Report',
+  };
+
   const getUserEmail = () => {
     const userDataStr = localStorage.getItem('user');
     if (userDataStr) {
@@ -373,7 +382,7 @@ export default function Home() {
   return (
     <div className="bg-gray-50 flex px-12">
       <div className="w-1/4 bg-white shadow-md p-6 h-fit my-5 rounded-lg">
-        <h2 className="text-lg font-bold text-gray-700 mb-4">Categories</h2>
+        <h2 className="text-lg font-bold text-gray-700 mb-4">Insights Modules</h2>
         <ul className="mb-4 space-y-2">
           <li
             key="all-posts"
@@ -396,7 +405,7 @@ export default function Home() {
               }`}
               onClick={() => handlePostTypeClick(type)}
             >
-              <span>{type}</span>
+              <span>{postTypeDisplayMap[type]}</span>
             </li>
           ))}
         </ul>
@@ -572,7 +581,7 @@ export default function Home() {
         <div className="flex flex-wrap gap-2 mb-6">
           {selectedPostType && (
             <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{selectedPostType}</span>
+              <span>{postTypeDisplayMap[selectedPostType]}</span>
               <button
                 onClick={() => handleRemoveFilter('postType')}
                 className="ml-2 text-blue-800 hover:text-blue-600"
@@ -655,7 +664,7 @@ export default function Home() {
                   {post.postTitle}
                 </h2>
                 <p className="text-gray-600 text-sm mb-2">
-                  {post.source} | {post.postType}
+                  {post.source} | {postTypeDisplayMap[post.postType] || post.postType}
                 </p>
                 <div className="text-gray-700 mb-4">
                   <p dangerouslySetInnerHTML={{ __html: post.summary }} />
