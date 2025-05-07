@@ -37,7 +37,7 @@ const TrendingExpertOpinion = ({ trendingExpertOpinions }) => {
 					href="/trend-analyzer"
 					className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
 				>
-					VIEW More →
+					VIEW MORE →
 				</Link>
 			</div>
 		</div>

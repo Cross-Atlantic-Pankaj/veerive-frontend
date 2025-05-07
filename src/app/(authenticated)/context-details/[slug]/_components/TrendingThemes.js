@@ -23,7 +23,7 @@ const TrendingThemes = ({ trendingThemes }) => {
           href="/analyzer/trend"
           className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
         >
-          VIEW More →
+          VIEW MORE →
         </Link>
       </div>
       <div className="space-y-3">

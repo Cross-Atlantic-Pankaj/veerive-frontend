@@ -310,9 +310,9 @@ export default function TrendAnalyzer() {
             <div className="relative">
               <Select
                 id="filter"
-                value={sectorOptions.find(
+                value={selectedFilter ? sectorOptions.find(
                   (option) => option.value === selectedFilter
-                )}
+                ) : null}
                 onChange={handleFilterChange}
                 options={sectorOptions}
                 placeholder="Search and select a sector or sub-sector"
