@@ -37,15 +37,12 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           <div>
-            <h3 className="text-cyan-400 font-semibold mb-4">ANALYZER</h3>
+            <h3 className="text-cyan-400 font-semibold mb-4">Insights</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              {analyzerLinks.map((item, i) => (
-                <li key={`analyzer-${i}`}>
-                  <a href={`/${item.toLowerCase().replace(/ /g, "-")}`} className="hover:underline">
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <a href='/pulse-today' className="hover:underline">Pulse Today</a>
+            </ul>
+            <ul className="space-y-2 text-sm text-gray-300 mt-2">
+              <a href='/analyzer/trend' className="hover:underline">Trend Analyzer</a>
             </ul>
           </div>
 
@@ -55,7 +52,7 @@ const Footer = () => {
               {thinkTankLinks.map((item, i) => (
                 <li key={`think-${i}`}>
                   <a
-                    href={`/${item.toLowerCase().replace(/ & /g, "-").replace(/ /g, "-")}`}
+                    href="/influencer-comment"
                     className="hover:underline"
                   >
                     {item}
@@ -79,30 +76,7 @@ const Footer = () => {
           </div>
 
           <div className="lg:col-span-3 sm:col-span-2 col-span-1">
-            <h3 className="text-cyan-400 font-semibold mb-4">JOIN OUR MAILING LIST</h3>
-            <p className="text-sm text-gray-300 mb-4">
-              Enter your e-mail address and get started for free
-            </p>
-            <form className="flex flex-col sm:flex-row w-full mb-4">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="w-full bg-[#111] text-white px-4 py-2 mb-2 sm:mb-0 sm:mr-2 outline-none rounded"
-              />
-              <button
-                type="submit"
-                className="bg-indigo-600 hover:bg-indigo-700 px-5 py-2 rounded text-white font-semibold"
-              >
-                Subscribe
-              </button>
-            </form>
-            <p className="text-xs text-gray-400">
-              By pressing the Subscribe button, you confirm that you have read and are agreeing to our{" "}
-              <a href="/privacy-policy" className="underline">Privacy Policy</a> and{" "}
-              <a href="/terms-of-use" className="underline">Terms of Use</a>.
-            </p>
-
-            <div className="mt-6">
+            <div>
               <h3 className="text-cyan-400 font-semibold mb-2">SOCIAL STREAM</h3>
               <div className="flex gap-4 flex-wrap sm:justify-start justify-center">
                 {socialIcons.map((item, i) => (
