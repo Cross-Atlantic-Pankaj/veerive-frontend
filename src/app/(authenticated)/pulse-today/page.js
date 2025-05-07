@@ -369,7 +369,7 @@ export default function PulseToday() {
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
                 <Link href="/analyzer/trend" className="text-indigo-600 text-sm flex items-center hover:text-indigo-700">
-                  VIEW More →
+                  VIEW MORE →
                 </Link>
               </div>
 
@@ -429,7 +429,7 @@ export default function PulseToday() {
                     href="/influencer-comment"
                     className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
                   >
-                    VIEW More →
+                    VIEW MORE →
                   </Link>
                 </div>
               )}
