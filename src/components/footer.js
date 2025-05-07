@@ -50,16 +50,21 @@ const Footer = () => {
           <div>
             <h3 className="text-cyan-400 font-semibold mb-4">THINK TANK</h3>
             <ul className="space-y-2 text-sm text-gray-300">
-              {thinkTankLinks.map((item, i) => (
-                <li key={`think-${i}`}>
-                  <a
-                    href="/influencer-comment"
-                    className="hover:underline"
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
+              <li>
+                <a href="/influencer-comment/Expert Opinion" className="hover:underline">Expert Opinion</a>
+              </li>
+              <li>
+                <a href='/influencer-comment/Infographic' className="hover:underline">Market Statistics</a>
+              </li>
+              <li>
+                <a href='/influencer-comment/Interview' className="hover:underline">Interview</a>
+              </li>
+              <li>
+                <a href='/influencer-comment/News' className="hover:underline">News</a>
+              </li>
+              <li>
+                <a href='/influencer-comment/Research Report' className="hover:underline">Research Report</a>
+              </li>
             </ul>
           </div>
 
