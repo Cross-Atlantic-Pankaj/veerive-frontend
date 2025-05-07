@@ -137,7 +137,7 @@ export async function GET(request) {
     const posts = await Post.aggregate([
       { $match: query },
       { $match: contextMatch },
-      { $sort: { date: -1 } },
+      { $sort: { date: -1,id :1 } },
       { $skip: skip },
       { $limit: limit },
       {

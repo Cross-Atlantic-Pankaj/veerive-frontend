@@ -4,13 +4,14 @@ import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
 import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
+import Context from '@/models/Context';
 import connectDB from '@/lib/db';
 
 export async function GET(request) {
   try {
     await connectDB();
 
-    const sectorsWithSubsectors = await Sector.aggregate([
+    const sectorsWithDetails = await Sector.aggregate([
       {
         $lookup: {
           from: 'subsectors',
@@ -20,24 +21,99 @@ export async function GET(request) {
         },
       },
       {
-        $project: {
-          _id: 1, 
-          sectorName: 1, 
+        $lookup: {
+          from: 'contexts',
+          localField: '_id',
+          foreignField: 'sectors',
+          as: 'contexts',
+        },
+      },
+      {
+        $unwind: {
+          path: '$contexts',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'posts',
+          localField: 'contexts._id',
+          foreignField: 'contexts',
+          as: 'contextPosts',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          sectorName: { $first: '$sectorName' },
+          subsectors: { $first: '$subsectors' },
+          totalPostCount: {
+            $sum: { $size: { $ifNull: ['$contextPosts', []] } },
+          },
+        },
+      },      {
+        $unwind: {
+          path: '$subsectors',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'contexts',
+          localField: 'subsectors._id',
+          foreignField: 'subSectors',
+          as: 'subsectors.contexts',
+        },
+      },
+      {
+        $lookup: {
+          from: 'posts',
+          localField: 'subsectors.contexts._id',
+          foreignField: 'contexts',
+          as: 'subsectors.posts',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          sectorName: { $first: '$sectorName' },
+          totalPostCount: { $first: '$totalPostCount' },
           subsectors: {
-            _id: 1,
-            subSectorName: 1,
+            $push: {
+              _id: '$subsectors._id',
+              subSectorName: '$subsectors.subSectorName',
+              postCount: { $size: { $ifNull: ['$subsectors.posts', []] } },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          totalPostCount: -1,
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          sectorName: 1,
+          totalPostCount: 1,
+          subsectors: {
+            $cond: {
+              if: { $eq: ['$subsectors', []] },
+              then: [],
+              else: {
+                $sortArray: {
+                  input: '$subsectors',
+                  sortBy: { postCount: -1 },
+                },
+              },
+            },
           },
         },
       },
     ]);
 
-    sectorsWithSubsectors.sort((a, b) => a.sectorName.localeCompare(b.sectorName));
-
-    sectorsWithSubsectors.forEach(sector => {
-      sector.subsectors.sort((a, b) => a.subSectorName.localeCompare(b.subSectorName));
-    });
-
-    const signalsWithSubsignals = await Signal.aggregate([
+    const signalsWithDetails = await Signal.aggregate([
       {
         $lookup: {
           from: 'subsignals',
@@ -47,34 +123,109 @@ export async function GET(request) {
         },
       },
       {
+        $lookup: {
+          from: 'contexts',
+          localField: '_id',
+          foreignField: 'signalCategories',
+          as: 'contexts',
+        },
+      },
+      {
+        $unwind: {
+          path: '$contexts',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'posts',
+          localField: 'contexts._id',
+          foreignField: 'contexts',
+          as: 'contextPosts',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          signalName: { $first: '$signalName' },
+          subsignals: { $first: '$subsignals' },
+          totalPostCount: {
+            $sum: { $size: { $ifNull: ['$contextPosts', []] } },
+          },
+        },
+      },
+      {
+        $unwind: {
+          path: '$subsignals',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: 'contexts',
+          localField: 'subsignals._id',
+          foreignField: 'signalSubCategories',
+          as: 'subsignals.contexts',
+        },
+      },
+      {
+        $lookup: {
+          from: 'posts',
+          localField: 'subsignals.contexts._id',
+          foreignField: 'contexts',
+          as: 'subsignals.posts',
+        },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          signalName: { $first: '$signalName' },
+          totalPostCount: { $first: '$totalPostCount' },
+          subsignals: {
+            $push: {
+              _id: '$subsignals._id',
+              subSignalName: '$subsignals.subSignalName',
+              postCount: { $size: { $ifNull: ['$subsignals.posts', []] } },
+            },
+          },
+        },
+      },
+      {
+        $sort: {
+          totalPostCount: -1,
+        },
+      },
+      {
         $project: {
           _id: 1,
-          signalName: 1, 
+          signalName: 1,
+          totalPostCount: 1,
           subsignals: {
-            _id: 1,
-            subSignalName: 1,  
+            $cond: {
+              if: { $eq: ['$subsignals', []] },
+              then: [],
+              else: {
+                $sortArray: {
+                  input: '$subsignals',
+                  sortBy: { postCount: -1 },
+                },
+              },
+            },
           },
         },
       },
     ]);
 
-    signalsWithSubsignals.sort((a, b) => a.signalName.localeCompare(b.signalName));
-
-    signalsWithSubsignals.forEach(signal => {
-      signal.subsignals.sort((a, b) => a.subSignalName.localeCompare(b.subSignalName));
-    });
-
     return NextResponse.json(
-      { 
-        success: true, 
-        data: { 
-          sectors: sectorsWithSubsectors, 
-          signals: signalsWithSubsignals 
-        }
+      {
+        success: true,
+        data: {
+          sectors: sectorsWithDetails,
+          signals: signalsWithDetails,
+        },
       },
       { status: 200 }
     );
-
   } catch (error) {
     console.error('Error fetching sectors, subsectors, signals, and subsignals:', error);
     return NextResponse.json(
