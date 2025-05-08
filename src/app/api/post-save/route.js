@@ -9,29 +9,24 @@ export async function POST(request) {
 
     const { postId, email, action } = await request.json();
 
-    // Validate email
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 401 });
     }
 
-    // Validate postId
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
-    // Validate action
     if (!['save', 'unsave'].includes(action)) {
       return NextResponse.json({ error: 'Invalid action' }, { status: 400 });
     }
 
-    // Find the user
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     if (action === 'save') {
-      // Check if the post is already saved
       const isAlreadySaved = user.savedPosts.some(
         (post) => post.SavedpostId.toString() === postId && post.SavedpostType === 'Post'
       );
@@ -40,7 +35,6 @@ export async function POST(request) {
         return NextResponse.json({ message: 'Post already saved' }, { status: 200 });
       }
 
-      // Add the post to savedPosts
       user.savedPosts.push({
         SavedpostId: postId,
         SavedpostType: 'Post',
@@ -51,7 +45,6 @@ export async function POST(request) {
 
       return NextResponse.json({ message: 'Post saved successfully' }, { status: 200 });
     } else if (action === 'unsave') {
-      // Check if the post is saved
       const isSaved = user.savedPosts.some(
         (post) => post.SavedpostId.toString() === postId && post.SavedpostType === 'Post'
       );
@@ -60,7 +53,6 @@ export async function POST(request) {
         return NextResponse.json({ message: 'Post not saved' }, { status: 200 });
       }
 
-      // Remove the post from savedPosts
       user.savedPosts = user.savedPosts.filter(
         (post) => post.SavedpostId.toString() !== postId || post.SavedpostType !== 'Post'
       );
@@ -86,23 +78,19 @@ export async function GET(request) {
     const postId = searchParams.get('postId');
     const email = searchParams.get('email');
 
-    // Validate email
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 401 });
     }
 
-    // Validate postId
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       return NextResponse.json({ error: 'Invalid post ID' }, { status: 400 });
     }
 
-    // Find the user
     const user = await User.findOne({ email });
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Check if the post is saved
     const isSaved = user.savedPosts.some(
       (post) => post.SavedpostId.toString() === postId && post.SavedpostType === 'Post'
     );

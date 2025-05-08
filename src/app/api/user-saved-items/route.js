@@ -14,6 +14,11 @@ export async function POST(request) {
     await connectDB();
 
     const { email } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const sectorId = searchParams.get('sectorId');
+    const subsectorId = searchParams.get('subsectorId');
+    const signalId = searchParams.get('signalId');
+    const subsignalId = searchParams.get('subsignalId');
 
     if (!email) {
       return NextResponse.json({ error: 'Email is required' }, { status: 401 });
@@ -22,6 +27,66 @@ export async function POST(request) {
     const user = await User.findOne({ email }).lean();
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    let sectorObjectId, subsectorObjectId, signalObjectId, subsignalObjectId;
+    try {
+      if (sectorId && mongoose.Types.ObjectId.isValid(sectorId)) {
+        sectorObjectId = new mongoose.Types.ObjectId(sectorId);
+      }
+      if (subsectorId && mongoose.Types.ObjectId.isValid(subsectorId)) {
+        subsectorObjectId = new mongoose.Types.ObjectId(subsectorId);
+      }
+      if (signalId && mongoose.Types.ObjectId.isValid(signalId)) {
+        signalObjectId = new mongoose.Types.ObjectId(signalId);
+      }
+      if (subsignalId && mongoose.Types.ObjectId.isValid(subsignalId)) {
+        subsignalObjectId = new mongoose.Types.ObjectId(subsignalId);
+      }
+    } catch (error) {
+      console.error('Error converting ObjectId:', error.message);
+      return NextResponse.json(
+        { success: false, error: 'Invalid sectorId, subsectorId, signalId, or subsignalId format' },
+        { status: 400 }
+      );
+    }
+
+    if ((sectorObjectId || subsectorObjectId) && (signalObjectId || subsignalObjectId)) {
+      return NextResponse.json(
+        { success: false, error: 'Cannot filter by both sector and signal simultaneously' },
+        { status: 400 }
+      );
+    }
+
+    let contextMatch = {};
+    if (subsectorObjectId) {
+      const matchingContexts = await Context.find({ subSectors: subsectorObjectId }).select('_id');
+      if (matchingContexts.length > 0) {
+        contextMatch = { $in: matchingContexts.map(ctx => ctx._id) };
+      } else {
+        contextMatch = { $in: [] };
+      }
+    } else if (sectorObjectId) {
+      const matchingContexts = await Context.find({ sectors: sectorObjectId }).select('_id');
+      if (matchingContexts.length > 0) {
+        contextMatch = { $in: matchingContexts.map(ctx => ctx._id) };
+      } else {
+        contextMatch = { $in: [] };
+      }
+    } else if (subsignalObjectId) {
+      const matchingContexts = await Context.find({ signalSubCategories: subsignalObjectId }).select('_id');
+      if (matchingContexts.length > 0) {
+        contextMatch = { $in: matchingContexts.map(ctx => ctx._id) };
+      } else {
+        contextMatch = { $in: [] };
+      }
+    } else if (signalObjectId) {
+      const matchingContexts = await Context.find({ signalCategories: signalObjectId }).select('_id');
+      if (matchingContexts.length > 0) {
+        contextMatch = { $in: matchingContexts.map(ctx => ctx._id) };
+      } else {
+        contextMatch = { $in: [] };
+      }
     }
 
     const savedItems = {
@@ -40,7 +105,13 @@ export async function POST(request) {
       }
 
       if (savedPost.SavedpostType === 'Context') {
-        const context = await Context.findById(savedPostId)
+        let query = { _id: savedPostId };
+        if (sectorObjectId) query.sectors = sectorObjectId;
+        if (subsectorObjectId) query.subSectors = subsectorObjectId;
+        if (signalObjectId) query.signalCategories = signalObjectId;
+        if (subsignalObjectId) query.signalSubCategories = subsignalObjectId;
+
+        const context = await Context.findOne(query)
           .select('contextTitle summary containerType posts date')
           .populate({
             path: 'sectors',
@@ -78,7 +149,12 @@ export async function POST(request) {
           });
         }
       } else if (savedPost.SavedpostType === 'Post') {
-        const post = await Post.findById(savedPostId)
+        let postQuery = { _id: savedPostId };
+        if (Object.keys(contextMatch).length > 0) {
+          postQuery.contexts = contextMatch;
+        }
+
+        const post = await Post.findOne(postQuery)
           .select('postTitle postType summary sourceUrl sourceUrls contexts date')
           .populate({
             path: 'source',
@@ -118,7 +194,15 @@ export async function POST(request) {
           });
         }
       } else if (savedPost.SavedpostType === 'Theme') {
-        const theme = await Theme.findById(savedPostId)
+        if (signalObjectId || subsignalObjectId) {
+          continue;
+        }
+
+        let themeQuery = { _id: savedPostId };
+        if (sectorObjectId) themeQuery.sectors = sectorObjectId;
+        if (subsectorObjectId) themeQuery.subSectors = subsectorObjectId;
+
+        const theme = await Theme.findOne(themeQuery)
           .select(
             'themeTitle themeDescription trendingScore impactScore predictiveMomentumScore date'
           )
