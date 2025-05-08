@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import toast, { Toaster } from 'react-hot-toast';
-import SavedContext from './ProfileComponent/SavedContexts';
-import SavedPosts from './ProfileComponent/SavedPosts';
-import SavedThemes from './ProfileComponent/SavedThemes';
+// import SavedContext from './ProfileComponent/SavedContexts';
+// import SavedPosts from './ProfileComponent/SavedPosts';
+// import SavedThemes from './ProfileComponent/SavedThemes';
+import SavedItems from './ProfileComponent/SavedItems';
 
 export default function Profile() {
 	const [userData, setUserData] = useState({ name: '', email: '' });
@@ -168,7 +169,6 @@ export default function Profile() {
 				return;
 			}
 
-			// Update localStorage and state with new email
 			const updatedUser = { ...JSON.parse(localStorage.getItem('user')), email: newEmail };
 			localStorage.setItem('user', JSON.stringify(updatedUser));
 			setUserData((prev) => ({ ...prev, email: newEmail }));
@@ -377,9 +377,10 @@ export default function Profile() {
 			)}
 
 			<div className="px-12">
-				<SavedContext />
+				{/* <SavedContext />
 				<SavedPosts />
-				<SavedThemes />
+				<SavedThemes /> */}
+				<SavedItems />
 			</div>
 		</div>
 	);
