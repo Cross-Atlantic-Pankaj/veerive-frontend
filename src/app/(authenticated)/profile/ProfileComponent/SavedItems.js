@@ -575,10 +575,8 @@ export default function SavedItems() {
       {/* Left Sidebar - Always rendered, no loading state */}
       <div className="w-1/4 bg-white p-6 border-r border-gray-200 shadow-sm">
         {/* Categories Section */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
-            Categories
-          </h3>
+        <div className="mb-4">
+        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Categories</h2>
           <ul className="space-y-3">
             {categories.map((category) => (
               <li key={category.key}>
@@ -598,11 +596,9 @@ export default function SavedItems() {
         </div>
 
         {/* Sectors Section */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
-            Sectors
-          </h3>
-          <ul className="space-y-3">
+        <div className="mb-4">
+        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Sectors</h2>
+          <ul className="space-y-2">
             {sectorSignalData.sectors
               .slice(0, showMoreSectors ? undefined : 5)
               .map((sector) => (
@@ -677,10 +673,8 @@ export default function SavedItems() {
 
         {/* Signals Section */}
         <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4 border-b border-gray-200 pb-2">
-            Signals
-          </h3>
-          <ul className="space-y-3">
+          <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Signals</h2>
+          <ul className="space-y-2">
             {sectorSignalData.signals
               .slice(0, showMoreSignals ? undefined : 5)
               .map((signal) => (

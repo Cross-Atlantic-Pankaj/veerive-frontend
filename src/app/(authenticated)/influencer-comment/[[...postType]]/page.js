@@ -398,7 +398,7 @@ export default function Home() {
   return (
     <div className="bg-gray-50 flex px-12">
       <div className="w-1/4 bg-white shadow-md p-6 h-fit my-5 rounded-lg">
-        <h2 className="text-lg font-bold text-gray-700 mb-4">Insights Modules</h2>
+        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Insights Modules</h2>
         <ul className="mb-4 space-y-2">
           <li
             key="all-posts"
@@ -426,7 +426,7 @@ export default function Home() {
           ))}
         </ul>
 
-        <h2 className="text-lg font-bold text-gray-700 mb-4">Sectors</h2>
+        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Sectors</h2>
         <ul className="mb-4 space-y-2">
           {visibleSectors.map((sector) => (
             <div key={sector._id}>
@@ -509,7 +509,7 @@ export default function Home() {
           )}
         </ul>
 
-        <h2 className="text-lg font-bold text-gray-700 mb-4">Signals</h2>
+        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-1 py-1 rounded-sm">Signals</h2>
         <ul className="space-y-2">
           {visibleSignals.map((signal) => (
             <div key={signal._id}>
