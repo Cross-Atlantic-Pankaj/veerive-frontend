@@ -23,84 +23,132 @@ export async function GET(request) {
     if (!mongoose.models.Theme) {
       mongoose.model('Theme', Theme.schema);
     }
-    
+
     const trendingEvents = await Context.find({ isTrending: true })
       .populate({
         path: 'sectors',
         model: 'Sector',
-        select: 'sectorName'
+        select: 'sectorName',
       })
       .populate({
         path: 'subSectors',
         model: 'SubSector',
-        select: 'subSectorName'
+        select: 'subSectorName',
       })
       .sort({ date: -1 });
 
-    const trendingOpinions = await Post.find({ 
-      postType: "Expert Opinion",
-      isTrending: true 
+    const trendingOpinions = await Post.find({
+      postType: 'Expert Opinion',
+      isTrending: true,
     })
-    .populate({
-      path: 'source',
-      model: 'Source',
-      select: 'sourceName'
+      .populate({
+        path: 'source',
+        model: 'Source',
+        select: 'sourceName',
+      })
+      .sort({ date: -1 })
+      .limit(5);
+
+    const marketStatistics = await Post.find({
+      postType: 'Infographic',
+      isTrending: true,
     })
-    .sort({ date: -1 })
-    .limit(5);
-    const marketStatistics = await Post.find({ 
-      postType: "Infographic",
-      isTrending: true 
-    })
-    .populate({
-      path: 'source',
-      model: 'Source',
-      select: 'sourceName'
-    })
-    .sort({ date: -1 })
-    .limit(5);
+      .populate({
+        path: 'source',
+        model: 'Source',
+        select: 'sourceName',
+      })
+      .sort({ date: -1 })
+      .limit(5);
 
     const trendingThemes = await Theme.find({})
       .populate({
         path: 'sectors',
         model: 'Sector',
-        select: 'sectorName'
+        select: 'sectorName',
       })
       .populate({
         path: 'subSectors',
         model: 'SubSector',
-        select: 'subSectorName'
+        select: 'subSectorName',
       })
       .sort({ overallScore: -1 })
       .limit(5);
 
-    console.log('Trending Events:', trendingEvents.length);
-    console.log('Trending Opinions:', trendingOpinions.length);
-    console.log('Market Statistics:', marketStatistics.length);
-    console.log('Trending Themes:', trendingThemes.length);
+    const featuredTheme = await Theme.findOne({})
+      .sort({ overallScore: -1 });
 
-    return new Response(JSON.stringify({
-      trendingEvents,
-      trendingOpinions,
-      marketStatistics,
-      trendingThemes
-    }), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-store',
+    const featuredEvent = await Context.findOne({ displayOrder: 1 })
+      .sort({ date: -1 });
+
+    const featuredOpinion = await Post.findOne({
+      postType: 'Expert Opinion',
+      homePageShow: true,
+    })
+      .sort({ date: -1 });
+
+    const featuredInfographic = await Post.findOne({
+      postType: 'Infographic',
+      homePageShow: true,
+    })
+      .sort({ date: -1 });
+
+      const slides = {
+      slide1: {
+        title: 'Featured Theme',
+        themeTitle: featuredTheme ? featuredTheme.themeTitle : 'N/A',
+        themeDescription: featuredTheme ? featuredTheme.themeDescription : 'N/A',
+        redirectUrl:'/analyzer/trend'
       },
-    });
+      slide2: {
+        title: 'Featured Event',
+        contextTitle: featuredEvent ? featuredEvent.contextTitle : 'N/A',
+        summary: featuredEvent ? featuredEvent.summary : 'N/A',
+        redirectUrl:'/pulse-today'
+      },
+      slide3: {
+        title: 'Featured Opinion',
+        postTitle: featuredOpinion ? featuredOpinion.postTitle : 'N/A',
+        postSummary: featuredOpinion ? featuredOpinion.summary : 'N/A',
+        redirectUrl:'/influencer-comment/Expert Opinion'
+      },
+      slide4: {
+        title: 'Featured Infographic',
+        postTitle: featuredInfographic ? featuredInfographic.postTitle : 'N/A',
+        postSummary: featuredInfographic ? featuredInfographic.summary : 'N/A',
+        redirectUrl:'/influencer-comment/Infographic'
+      },
+    };
+
+    return new Response(
+      JSON.stringify({
+        trendingEvents,
+        trendingOpinions,
+        marketStatistics,
+        trendingThemes,
+        slides,
+      }),
+      {
+        status: 200,
+        headers: {
+          'Content-Type': 'application/json',
+          'Cache-Control': 'no-store',
+        },
+      }
+    );
   } catch (error) {
     console.error('Error in API:', error);
-    return new Response(JSON.stringify({ 
-      error: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined 
-    }), {
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    return new Response(
+      JSON.stringify({
+        error: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+      }),
+      {
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
   }
-} 
+}

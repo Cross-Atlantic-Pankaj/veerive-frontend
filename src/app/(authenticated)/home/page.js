@@ -23,10 +23,13 @@ export default function HomePage() {
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [currentPage, setCurrentPage] = useState(0);
-
 	const [trendingOpinions, setTrendingOpinions] = useState([]);
 	const [marketStatistics, setMarketStatistics] = useState([]);
 	const [trendingThemes, setTrendingThemes] = useState([]);
+	const [slides, setSlides] = useState([]);
+	const [currentSlide, setCurrentSlide] = useState(0);
+
+	const router = useRouter();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -39,8 +42,13 @@ export default function HomePage() {
 				setContexts(data.trendingEvents || []);
 				setTrendingOpinions(data.trendingOpinions || []);
 				setMarketStatistics(data.marketStatistics || []);
-				console.log('Frontend - Received themes:', data.trendingThemes?.length);
 				setTrendingThemes(data.trendingThemes || []);
+				setSlides([
+					data.slides?.slide1,
+					data.slides?.slide2,
+					data.slides?.slide3,
+					data.slides?.slide4,
+				]);
 			} catch (err) {
 				console.error('Error fetching data:', err);
 				setError(err.message);
@@ -51,6 +59,18 @@ export default function HomePage() {
 
 		fetchData();
 	}, []);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setCurrentSlide((prev) => (prev + 1) % 4);
+		}, 5000);
+
+		return () => clearInterval(interval);
+	}, []);
+
+	const handleSlideChange = (index) => {
+		setCurrentSlide(index);
+	};
 
 	const ITEMS_PER_PAGE = 3;
 	const totalPages = Math.ceil(contexts.length / ITEMS_PER_PAGE);
@@ -63,11 +83,9 @@ export default function HomePage() {
 		setCurrentPage((prev) => (prev === 0 ? totalPages - 1 : prev - 1));
 	};
 
-  const router = useRouter();
-
-  const handleSubscribe = () => {
-    router.push('/signup');
-  };
+	const handleSubscribe = () => {
+		router.push('/signup');
+	};
 
 	if (loading) {
 		return (
@@ -115,14 +133,75 @@ export default function HomePage() {
 								</div>
 							</div>
 							<div className="w-full min-[531px]:w-3/5 mt-6 max-[530px]:mt-4 min-[531px]:mt-0 flex justify-end">
-								<Image
-									src="/assets/Home_Page_section_1.png"
-									alt="Illustration of fintech analytics with news, events, analyzer, and insights"
-									width={500}
-									height={500}
-									className="w-full h-auto max-w-[300px] max-[530px]:max-w-[300px] sm:max-w-[350px] lg:max-w-[450px]"
-									priority
-								/>
+								{/* Slider Component */}
+								<div className="relative w-full max-w-[450px]">
+									{slides.length > 0 ? (
+										<div className="flex flex-col">
+											{/* Slides Container */}
+											<div className="h-fit">
+												{slides.map((slide, index) => (
+													<div
+														key={index}
+														className={`transition-opacity duration-500 ${
+															currentSlide === index
+																? 'opacity-100'
+																: 'opacity-0 hidden'
+														}`}
+													>
+														<div className="bg-[#2F1A44] rounded-lg p-6 flex flex-col justify-between">
+															<div>
+																<p className="text-[#F472B6] text-sm uppercase font-semibold mb-2">
+																	Featured {slide.title.split('Featured ')[1]}
+																</p>
+																<h2 className="text-white text-xl sm:text-xl lg:text-2xl font-bold leading-tight">
+																	{slide.themeTitle ||
+																		slide.contextTitle ||
+																		slide.postTitle ||
+																		'N/A'}
+																</h2>
+																<p
+																	className="text-white/90 text-base sm:text-base mt-3 line-clamp-4"
+																	dangerouslySetInnerHTML={{
+																		__html:
+																			slide.themeDescription ||
+																			slide.summary ||
+																			slide.postSummary,
+																	}}
+																/>
+															</div>
+															<div className="flex justify-end mt-4">
+																<Link href={slide.redirectUrl}>
+																	<button className="bg-[#F472B6] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#E550A3] transition-colors">
+																		Read More
+																	</button>
+																</Link>
+															</div>
+														</div>
+													</div>
+												))}
+											</div>
+											{/* Navigation Lines*/}
+											<div className="flex space-x-2 mt-4 pl-6 z-10">
+												{slides.map((_, index) => (
+													<button
+														key={index}
+														onClick={() => handleSlideChange(index)}
+														className={`w-8 h-1 rounded-full transition-opacity duration-300 ${
+															currentSlide === index
+																? 'bg-white opacity-100'
+																: 'bg-white/30 opacity-70 hover:opacity-90'
+														}`}
+														aria-label={`Go to slide ${index + 1}`}
+													/>
+												))}
+											</div>
+										</div>
+									) : (
+										<div className="bg-gray-200 rounded-lg h-[300px] flex items-center justify-center text-gray-500">
+											No slides available
+										</div>
+									)}
+								</div>
 							</div>
 						</div>
 					</div>
@@ -507,35 +586,35 @@ export default function HomePage() {
 
 				{/* Email Subscription Section */}
 				<div className="w-full bg-[#6366F1] py-10">
-      <div className="max-w-[990px] mx-auto px-4">
-        <div className="text-center">
-          <div className="text-white/90 text-base font-medium mb-1">
-            Get Started
-          </div>
-          <h2 className="text-white text-3xl sm:text-4xl font-medium mb-6">
-            Enter your e-mail address
-            <br />
-            and get started for free
-          </h2>
-          <div className="relative max-w-[600px] mx-auto">
-            <input
-              type="email"
-              placeholder="Your Email address"
-              className="w-full px-5 h-14 rounded-full text-base border-2 border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all pr-[140px]"
-            />
-            <button
-              onClick={handleSubscribe}
-              className="absolute right-1 top-1 bg-black text-white px-8 h-12 rounded-full text-base hover:bg-gray-900 transition-colors font-medium"
-            >
-              Subscribe
-            </button>
-          </div>
-          <div className="text-white/80 text-sm mt-3">
-            (We will never share your email with anyone, anywhere. Promise.)
-          </div>
-        </div>
-      </div>
-    </div>
+					<div className="max-w-[990px] mx-auto px-4">
+						<div className="text-center">
+							<div className="text-white/90 text-base font-medium mb-1">
+								Get Started
+							</div>
+							<h2 className="text-white text-3xl sm:text-4xl font-medium mb-6">
+								Enter your e-mail address
+								<br />
+								and get started for free
+							</h2>
+							<div className="relative max-w-[600px] mx-auto">
+								<input
+									type="email"
+									placeholder="Your Email address"
+									className="w-full px-5 h-14 rounded-full text-base border-2 border-white/20 bg-white/10 text-white placeholder:text-white/50 focus:outline-none focus:border-white/40 focus:bg-white/20 transition-all pr-[140px]"
+								/>
+								<button
+									onClick={handleSubscribe}
+									className="absolute right-1 top-1 bg-black text-white px-8 h-12 rounded-full text-base hover:bg-gray-900 transition-colors font-medium"
+								>
+									Subscribe
+								</button>
+							</div>
+							<div className="text-white/80 text-sm mt-3">
+								(We will never share your email with anyone, anywhere. Promise.)
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</Suspense>
 	);
