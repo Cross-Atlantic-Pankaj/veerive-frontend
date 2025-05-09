@@ -84,7 +84,7 @@ const TypeNum = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="flex justify-end gap-2">
           <button
             onClick={onUnsave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
@@ -95,7 +95,7 @@ const TypeNum = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -115,7 +115,7 @@ const TypeNum = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

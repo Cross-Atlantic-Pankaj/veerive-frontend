@@ -21,7 +21,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
   const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 3);
+  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -149,7 +149,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
         <div className="flex flex-col sm:flex-row gap-4 mb-1">
           <div className="flex-1">
-            <div className="mb-4">
+            <div className="mb-3">
               {summaryPoints.length > 0 ? (
                 summaryPoints.map((point, i) => (
                   <div
@@ -168,14 +168,14 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           </div>
           <div className="w-full sm:w-1/3">
             {context.posts?.[0] && (
-              <div className="font-semibold text-gray-800 text-sm lg:px-3">
+              <div className="font-semibold text-gray-800 text-sm lg:px-3 mt-6">
                 {context.posts[0].postTitle}
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2 mt-5">
+        <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2">
           {context.posts?.slice(1, 4).map((post, i) => (
             <div key={i} className="flex-1 px-2">
               <div className="font-semibold text-gray-800 text-sm">
@@ -185,7 +185,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           ))}
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="flex justify-end gap-2">
           <button
             onClick={handleSave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
@@ -196,7 +196,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -216,7 +216,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

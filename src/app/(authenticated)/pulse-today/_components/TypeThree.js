@@ -21,7 +21,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
 
   const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 3);
+  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -170,7 +170,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
             {context.posts?.slice(0, 3).map((post, i) => (
               <div
                 key={i}
-                className="border-t border-gray-300 pt-0.5 mt-0.5 first:border-t-0 first:mt-0"
+                className="border-t border-gray-300 first:border-t-0 first:mt-4"
               >
                 <div className="font-semibold text-gray-800 text-sm my-2">
                   {post.postTitle}
@@ -180,7 +180,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           </div>
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="flex justify-end gap-2">
           <button
             onClick={handleSave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
@@ -191,7 +191,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -211,7 +211,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

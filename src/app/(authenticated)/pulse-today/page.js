@@ -100,44 +100,60 @@ export default function PulseToday() {
     fetchData(page);
   }, [page]);
 
-  const formatSummary = (summary) => {
-    if (!summary || summary.trim() === '') return ['Summary will be available soon'];
-  
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(summary, 'text/html');
-  
-    const pointTags = ['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'];
-  
-    const collectPoints = (node, points = []) => {
-      if (node.nodeType === Node.ELEMENT_NODE) {
-        const tagName = node.tagName.toLowerCase();
-        if (pointTags.includes(tagName)) {
-          const innerHTML = node.innerHTML.trim();
-          if (innerHTML.length > 0) {
-            points.push(innerHTML);
-          }
-        } else {
-          Array.from(node.childNodes).forEach((child) => collectPoints(child, points));
-        }
+const formatSummary = (summary) => {
+  if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(summary, 'text/html');
+
+  const extractText = (node, points = []) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent.trim();
+      if (text) points.push(text);
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      const tagName = node.tagName.toLowerCase();
+      if (tagName === 'br') {
+        points.push(''); 
+      } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
+        const childText = Array.from(node.childNodes)
+          .map((child) => child.textContent.trim())
+          .filter((text) => text)
+          .join(' ');
+        if (childText) points.push(childText);
+      } else {
+        Array.from(node.childNodes).forEach((child) => extractText(child, points));
       }
-      return points;
-    };
-  
-    let formattedPoints = collectPoints(doc.body);
-  
-    formattedPoints = formattedPoints
-      .map((point) =>
-        point
-          .replace(/&/g, '&')
-          .replace(/\s+/g, ' ') 
-          .trim()
-      )
-      .filter((point) => point.length > 0);
-  
-    formattedPoints = formattedPoints.map((point) => `• ${point}`);
-  
-    return formattedPoints.length > 0 ? formattedPoints : ['Summary will be available soon'];
+    }
+    return points;
   };
+
+  let textPoints = extractText(doc.body);
+
+  const decodeEntities = (text) => {
+    const entities = {
+      ' ': ' ',
+      '&': '&',
+      '<': '<',
+      '>': '>',
+      '"': '"',
+      '&apos;': "'",
+      '&quot;': '"',
+    };
+    return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
+  };
+
+  textPoints = textPoints
+    .map((point) => decodeEntities(point)) 
+    .map((point) => point.replace(/\s+/g, ' ').trim()) 
+    .filter((point) => point.length > 0)
+    .map((point) => {
+      return point.replace(/^\d+\.\s*/, '').trim();
+    });
+
+  textPoints = textPoints.map((point) => `• ${point}`);
+
+  return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
+};
 
   const processInitialContexts = (allContexts) => {
     const uniqueContexts = Array.from(new Map(allContexts.map((c) => [c.id, c])).values());

@@ -24,7 +24,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
     .map((item) => item.sectorName || item.subSectorName || 'Unknown')
     .join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 3);
+  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -175,7 +175,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
           ))}
         </div>
 
-        <div className="mt-4 flex justify-end gap-2">
+        <div className="mt-2 flex justify-end gap-2">
           <button
             onClick={handleSave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
@@ -186,7 +186,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -206,7 +206,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
