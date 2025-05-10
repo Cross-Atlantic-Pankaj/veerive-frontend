@@ -108,7 +108,7 @@ export default function HomePage() {
 	return (
 		<Suspense fallback={<div>Loading...</div>}>
 			<div className="w-full">
-				<div className="w-full bg-[#6366F1] min-h-[500px] flex items-center">
+				<div className="w-full bg-[#5F32D6] min-h-[500px] flex items-center">
 					<div className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 lg:px-6">
 						<div className="flex flex-col max-[530px]:flex-col min-[531px]:flex-row items-center min-[531px]:items-start py-8 max-[530px]:py-6 min-[531px]:py-12">
 							<div className="w-full min-[531px]:w-2/5 min-[531px]:pr-4 text-center min-[531px]:text-left">
@@ -148,19 +148,19 @@ export default function HomePage() {
 																: 'opacity-0 hidden'
 														}`}
 													>
-														<div className="bg-[#2F1A44] rounded-lg p-6 flex flex-col justify-between">
+														<div className="bg-white rounded-lg p-6 flex flex-col justify-between">
 															<div>
-																<p className="text-[#F472B6] text-sm uppercase font-semibold mb-2">
+																<p className="text-[#A084E8] text-sm uppercase font-semibold mb-2">
 																	Featured {slide.title.split('Featured ')[1]}
 																</p>
-																<h2 className="text-white text-xl sm:text-xl lg:text-2xl font-bold leading-tight">
+																<h2 className="text-[#5F32D6] text-xl sm:text-xl lg:text-2xl font-bold leading-tight">
 																	{slide.themeTitle ||
 																		slide.contextTitle ||
 																		slide.postTitle ||
 																		'N/A'}
 																</h2>
 																<p
-																	className="text-white/90 text-base sm:text-base mt-3 line-clamp-4"
+																	className="text-balck text-base sm:text-base mt-3 line-clamp-4"
 																	dangerouslySetInnerHTML={{
 																		__html:
 																			slide.themeDescription ||
@@ -171,7 +171,7 @@ export default function HomePage() {
 															</div>
 															<div className="flex justify-end mt-4">
 																<Link href={slide.redirectUrl}>
-																	<button className="bg-[#F472B6] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#E550A3] transition-colors">
+																	<button className="bg-[#7A5AF8] text-white px-6 py-2 rounded-full text-sm font-medium hover:bg-[#E550A3] transition-colors">
 																		Read More
 																	</button>
 																</Link>
@@ -188,8 +188,8 @@ export default function HomePage() {
 														onClick={() => handleSlideChange(index)}
 														className={`w-8 h-1 rounded-full transition-opacity duration-300 ${
 															currentSlide === index
-																? 'bg-white opacity-100'
-																: 'bg-white/30 opacity-70 hover:opacity-90'
+																? 'bg-[#A084E8] opacity-100'
+																: 'bg-[#E0D4FD] opacity-70 hover:opacity-90'
 														}`}
 														aria-label={`Go to slide ${index + 1}`}
 													/>
