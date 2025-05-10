@@ -69,8 +69,8 @@ export async function GET(request) {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    console.log('Request query params:', Object.fromEntries(searchParams.entries()));
-    console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId, 'SignalId:', signalId, 'SubsignalId:', subsignalId);
+    // console.log('Request query params:', Object.fromEntries(searchParams.entries()));
+    // console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId, 'SignalId:', signalId, 'SubsignalId:', subsignalId);
 
     const validPostTypes = [
       'Expert Opinion',
@@ -137,7 +137,7 @@ export async function GET(request) {
     const posts = await Post.aggregate([
       { $match: query },
       { $match: contextMatch },
-      { $sort: { date: -1,id :1 } },
+      { $sort: { date: -1, _id: 1 } },
       { $skip: skip },
       { $limit: limit },
       {
@@ -159,6 +159,7 @@ export async function GET(request) {
       { $unwind: { path: '$sourceData', preserveNullAndEmptyArrays: true } },
       {
         $project: {
+          _id: 1,
           postTitle: 1,
           postType: 1,
           summary: 1,
@@ -191,6 +192,7 @@ export async function GET(request) {
       },
       {
         $project: {
+          _id: 1,
           postTitle: 1,
           postType: 1,
           summary: 1,
@@ -208,7 +210,7 @@ export async function GET(request) {
       }
     ]);
 
-    console.log('Fetched posts:', posts.map(p => p.postTitle));
+    // console.log('Fetched posts:', posts.map(p => p.postTitle));
 
     const totalPosts = await Post.countDocuments({
       ...query,

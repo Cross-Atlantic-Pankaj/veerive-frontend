@@ -78,8 +78,8 @@ export default function Home() {
     }
     setSelectedPostType(newPostType);
 
-    setPosts([]);
-    setPage(1);
+    setPosts([]); 
+    setPage(1); 
     setHasMore(true);
     fetchPosts(
       1,
@@ -127,8 +127,20 @@ export default function Home() {
       const data = await response.json();
       console.log('Fetched sectors and signals data:', data);
       if (data.success) {
-        setSectors(data.data.sectors || []);
-        setSignals(data.data.signals || []);
+        const cleanedSectors = (data.data.sectors || []).map(sector => ({
+          ...sector,
+          subsectors: (sector.subsectors || []).filter(
+            subsector => subsector._id && subsector.subSectorName
+          )
+        }));
+        const cleanedSignals = (data.data.signals || []).map(signal => ({
+          ...signal,
+          subsignals: (signal.subsignals || []).filter(
+            subsignal => subsignal._id && subsignal.subSignalName
+          )
+        }));
+        setSectors(cleanedSectors);
+        setSignals(cleanedSignals);
       }
     } catch (error) {
       console.error('Error fetching sectors and signals:', error);
@@ -161,8 +173,10 @@ export default function Home() {
       console.log('Fetched posts response:', data);
 
       if (data.success) {
-        const newPosts = page === 1 ? data.posts : [...posts, ...data.posts];
-        setPosts(newPosts);
+        setPosts((prevPosts) => {
+          if (page === 1) return data.posts;
+          return [...prevPosts, ...data.posts];
+        });
         setHasMore(data.pagination.hasMore);
         setTotalPages(data.pagination.totalPages);
 
@@ -193,7 +207,6 @@ export default function Home() {
         page,
         selectedPostType,
         selectedSectorId,
- -1,
         selectedSubsectorId,
         selectedSignalId,
         selectedSubsignalId
@@ -460,40 +473,32 @@ export default function Home() {
                   >
                     {sector.sectorName}
                   </li>
-                  {sector.subsectors && (
-                    <>
-                      {sector.subsectors
-                        .slice(
-                          0,
-                          showAllSubsectors[sector._id]
-                            ? sector.subsectors.length
-                            : 4
-                        )
-                        .map((subsector) => (
-                          <li
-                            key={subsector._id}
-                            className={`p-2 rounded-md cursor-pointer relative ${
-                              selectedSubsectorId === subsector._id
-                                ? 'bg-blue-50 text-blue-700'
-                                : 'text-gray-600 hover:bg-gray-100'
-                            } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                            onClick={() =>
-                              handleSubsectorClick(subsector._id, sector._id)
-                            }
-                          >
-                            {subsector.subSectorName}
-                          </li>
-                        ))}
-                      {sector.subsectors.length > 4 && (
-                        <li
-                          key={`${sector._id}-more`}
-                          className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-                          onClick={() => toggleShowAllSubsectors(sector._id)}
-                        >
-                          {showAllSubsectors[sector._id] ? 'Less' : 'More'}
-                        </li>
-                      )}
-                    </>
+                  {sector.subsectors && sector.subsectors.length > 0 && sector.subsectors
+                    .slice(
+                      0,
+                      showAllSubsectors[sector._id] ? sector.subsectors.length : 4
+                    )
+                    .map((subsector) => (
+                      <li
+                        key={subsector._id}
+                        className={`p-2 rounded-md cursor-pointer relative ${
+                          selectedSubsectorId === subsector._id
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                        onClick={() => handleSubsectorClick(subsector._id, sector._id)}
+                      >
+                        {subsector.subSectorName}
+                      </li>
+                    ))}
+                  {sector.subsectors && sector.subsectors.length > 4 && (
+                    <li
+                      key={`${sector._id}-more`}
+                      className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                      onClick={() => toggleShowAllSubsectors(sector._id)}
+                    >
+                      {showAllSubsectors[sector._id] ? 'Less' : 'More'}
+                    </li>
                   )}
                 </ul>
               )}
@@ -543,40 +548,32 @@ export default function Home() {
                   >
                     {signal.signalName}
                   </li>
-                  {signal.subsignals && (
-                    <>
-                      {signal.subsignals
-                        .slice(
-                          0,
-                          showAllSubsignals[signal._id]
-                            ? signal.subsignals.length
-                            : 4
-                        )
-                        .map((subsignal) => (
-                          <li
-                            key={subsignal._id}
-                            className={`p-2 rounded-md cursor-pointer relative ${
-                              selectedSubsignalId === subsignal._id
-                                ? 'bg-blue-50 text-blue-700'
-                                : 'text-gray-600 hover:bg-gray-100'
-                            } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                            onClick={() =>
-                              handleSubsignalClick(subsignal._id, signal._id)
-                            }
-                          >
-                            {subsignal.subSignalName}
-                          </li>
-                        ))}
-                      {signal.subsignals.length > 4 && (
-                        <li
-                          key={`${signal._id}-more`}
-                          className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-                          onClick={() => toggleShowAllSubsignals(signal._id)}
-                        >
-                          {showAllSubsignals[signal._id] ? 'Less' : 'More'}
-                        </li>
-                      )}
-                    </>
+                  {signal.subsignals && signal.subsignals.length > 0 && signal.subsignals
+                    .slice(
+                      0,
+                      showAllSubsignals[signal._id] ? signal.subsignals.length : 4
+                    )
+                    .map((subsignal) => (
+                      <li
+                        key={subsignal._id}
+                        className={`p-2 rounded-md cursor-pointer relative ${
+                          selectedSubsignalId === subsignal._id
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'text-gray-600 hover:bg-gray-100'
+                        } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                        onClick={() => handleSubsignalClick(subsignal._id, signal._id)}
+                      >
+                        {subsignal.subSignalName}
+                      </li>
+                    ))}
+                  {signal.subsignals && signal.subsignals.length > 4 && (
+                    <li
+                      key={`${signal._id}-more`}
+                      className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                      onClick={() => toggleShowAllSubsignals(signal._id)}
+                    >
+                      {showAllSubsignals[signal._id] ? 'Less' : 'More'}
+                    </li>
                   )}
                 </ul>
               )}
