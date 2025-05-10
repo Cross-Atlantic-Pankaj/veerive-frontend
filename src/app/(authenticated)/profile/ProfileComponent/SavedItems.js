@@ -576,9 +576,9 @@ const formatSummary = (summary) => {
   ];
 
   const categories = [
-    { name: 'Context', key: 'contexts' },
-    { name: 'Post', key: 'posts' },
-    { name: 'Theme', key: 'themes' },
+    { name: 'Events', key: 'contexts' },
+    { name: 'Think Tank', key: 'posts' },
+    { name: 'Trends', key: 'themes' },
   ];
 
   const getNoItemsMessage = () => {
@@ -970,9 +970,9 @@ const formatSummary = (summary) => {
                                   href={post.sourceUrl}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-block bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 text-sm font-medium"
+                                  className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
                                 >
-                                  read full comment <span className="ml-1">→</span>
+                                  Read More <span className="ml-1">→</span>
                                 </a>
                                 <button
                                   onClick={() => handleUnsavePost(post._id)}
