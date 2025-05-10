@@ -193,6 +193,7 @@ export default function Home() {
         page,
         selectedPostType,
         selectedSectorId,
+ -1,
         selectedSubsectorId,
         selectedSignalId,
         selectedSubsignalId
@@ -202,7 +203,7 @@ export default function Home() {
 
   const handlePostTypeClick = (postType) => {
     setSelectedPostType(postType);
-    const formattedPostType = postType ? encodeURIComponent(postType) : '';
+    const formattedPostType = postType ? encodeURIComponent(postTypeDisplayMap[postType] || postType) : '';
     router.push(`/influencer-comment${postType ? `/${formattedPostType}` : ''}`);
   };
 

@@ -54,7 +54,7 @@ const Footer = () => {
                 <a href="/influencer-comment/Expert Opinion" className="hover:underline">Expert Opinion</a>
               </li>
               <li>
-                <a href='/influencer-comment/Infographic' className="hover:underline">Market Statistics</a>
+                <a href='/influencer-comment/Market Statistics' className="hover:underline">Market Statistics</a>
               </li>
               <li>
                 <a href='/influencer-comment/Interview' className="hover:underline">Interview</a>

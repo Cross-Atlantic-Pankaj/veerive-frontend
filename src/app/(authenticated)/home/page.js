@@ -401,7 +401,7 @@ export default function HomePage() {
 										MARKET STATISTICS
 									</h2>
 									<Link
-										href="/influencer-comment/Infographic"
+										href="/influencer-comment/Market Statistics"
 										className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
 									>
 										VIEW ALL →
