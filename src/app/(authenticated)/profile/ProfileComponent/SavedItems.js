@@ -43,60 +43,60 @@ export default function SavedItems() {
     return null;
   };
 
-const formatSummary = (summary) => {
-  if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
+  const formatSummary = (summary) => {
+    if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
 
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(summary, 'text/html');
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(summary, 'text/html');
 
-  const extractText = (node, points = []) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent.trim();
-      if (text) points.push(text);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const tagName = node.tagName.toLowerCase();
-      if (tagName === 'br') {
-        points.push(''); 
-      } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-        const childText = Array.from(node.childNodes)
-          .map((child) => child.textContent.trim())
-          .filter((text) => text)
-          .join(' ');
-        if (childText) points.push(childText);
-      } else {
-        Array.from(node.childNodes).forEach((child) => extractText(child, points));
+    const extractText = (node, points = []) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent.trim();
+        if (text) points.push(text);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tagName = node.tagName.toLowerCase();
+        if (tagName === 'br') {
+          points.push('');
+        } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
+          const childText = Array.from(node.childNodes)
+            .map((child) => child.textContent.trim())
+            .filter((text) => text)
+            .join(' ');
+          if (childText) points.push(childText);
+        } else {
+          Array.from(node.childNodes).forEach((child) => extractText(child, points));
+        }
       }
-    }
-    return points;
-  };
-
-  let textPoints = extractText(doc.body);
-
-  const decodeEntities = (text) => {
-    const entities = {
-      ' ': ' ',
-      '&': '&',
-      '<': '<',
-      '>': '>',
-      '"': '"',
-      '&apos;': "'",
-      '&quot;': '"',
+      return points;
     };
-    return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
+
+    let textPoints = extractText(doc.body);
+
+    const decodeEntities = (text) => {
+      const entities = {
+        ' ': ' ',
+        '&': '&',
+        '<': '<',
+        '>': '>',
+        '"': '"',
+        '&apos;': "'",
+        '&quot;': '"',
+      };
+      return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
+    };
+
+    textPoints = textPoints
+      .map((point) => decodeEntities(point))
+      .map((point) => point.replace(/\s+/g, ' ').trim())
+      .filter((point) => point.length > 0)
+      .map((point) => {
+        return point.replace(/^\d+\.\s*/, '').trim();
+      });
+
+    textPoints = textPoints.map((point) => `• ${point}`);
+
+    return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
   };
-
-  textPoints = textPoints
-    .map((point) => decodeEntities(point)) 
-    .map((point) => point.replace(/\s+/g, ' ').trim()) 
-    .filter((point) => point.length > 0)
-    .map((point) => {
-      return point.replace(/^\d+\.\s*/, '').trim();
-    });
-
-  textPoints = textPoints.map((point) => `• ${point}`);
-
-  return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
-};
 
   const normalizeTitle = (text) => {
     return text
@@ -155,15 +155,15 @@ const formatSummary = (summary) => {
           posts: data.savedItems.posts || [],
           themes: data.savedItems.themes || [],
         };
-        const hasNewItems = 
+        const hasNewItems =
           newSavedItems.contexts.length > 0 ||
           newSavedItems.posts.length > 0 ||
           newSavedItems.themes.length > 0;
-        
+
         if (hasNewItems) {
           setPreviousSavedItems(newSavedItems);
         } else {
-          const hasPrevItems = 
+          const hasPrevItems =
             previousSavedItems.contexts.length > 0 ||
             previousSavedItems.posts.length > 0 ||
             previousSavedItems.themes.length > 0;
@@ -198,8 +198,15 @@ const formatSummary = (summary) => {
 
   useEffect(() => {
     const fetchSectorSignalData = async () => {
+      const email = getUserEmail();
+      if (!email) {
+        setError('User email not found');
+        setIsLoading(false);
+        return;
+      }
+
       try {
-        const response = await fetch('/api/SectorSignalApi');
+        const response = await fetch(`/api/ProfileSectorSignal?email=${encodeURIComponent(email)}`);
         const data = await response.json();
         if (data.success) {
           setSectorSignalData(data.data);
@@ -637,9 +644,9 @@ const formatSummary = (summary) => {
           No items Saved.
         </div>
       ) : (
-        <div className="flex w-full mt-4">
+        <div className="flex w-full mt-4 h-fit">
           {/* Left Sidebar */}
-          <div className="w-1/4 bg-white p-6 border-r border-gray-200 shadow-sm rounded-lg">
+          <div className="w-1/4 bg-white p-6 border-r border-gray-200 shadow-sm rounded-lg h-fit">
             {/* Categories Section */}
             <div className="mb-4">
               <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Categories</h2>
