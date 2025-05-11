@@ -93,7 +93,7 @@ export default function SavedItems() {
         return point.replace(/^\d+\.\s*/, '').trim();
       });
 
-    textPoints = textPoints.map((point) => `• ${point}`);
+    textPoints = textPoints.map((point) => `${point}`);
 
     return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
   };
