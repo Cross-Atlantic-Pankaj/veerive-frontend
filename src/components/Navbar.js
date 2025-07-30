@@ -146,6 +146,9 @@ export default function Navbar({ user, onLogout }) {
               <NavLink href="/analyzer/trend" isActive={pathname === '/analyzer/trend'}>
               TREND ANALYZER
               </NavLink>
+              <NavLink href="/profile" isActive={pathname === '/profile'}>
+              Dashboard
+              </NavLink>
             </div>
 
             <div className="flex items-center space-x-4">
@@ -213,6 +216,14 @@ export default function Navbar({ user, onLogout }) {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Trend Analyzer
+                </MobileNavLink>
+
+                <MobileNavLink
+                  href="/profile"
+                  isActive={pathname === '/profile'}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Dashboard
                 </MobileNavLink>
 
                 <div className="mt-4 pt-4 border-t border-gray-200">

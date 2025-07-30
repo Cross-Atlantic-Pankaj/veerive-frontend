@@ -520,7 +520,7 @@ export default function HomePage() {
 											<h3 className="text-base font-medium mb-2">
 												{trendingThemes[0].themeTitle}
 											</h3>
-											<p className="text-sm text-gray-600 mb-3">
+											<p className="text-sm text-gray-600 mb-3 line-clamp-3">
 												{trendingThemes[0].themeDescription?.replace(
 													/<[^>]*>/g,
 													''
