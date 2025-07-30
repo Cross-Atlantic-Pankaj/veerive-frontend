@@ -42,7 +42,7 @@ const Footer = () => {
                 <a href='/pulse-today' className="hover:underline">Pulse Today</a>
               </li>
               <li>
-                <a href='/analyzer/trend' className="hover:underline">Trend Analyzer</a>
+                <a href='/analyzer/trend-analyzer' className="hover:underline">Trend Analyzer</a>
               </li>
             </ul>
           </div>

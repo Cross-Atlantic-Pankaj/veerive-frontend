@@ -143,7 +143,7 @@ export default function Navbar({ user, onLogout }) {
               <NavLink href="/influencer-comment" isActive={pathname === '/influencer-comment'}>
               THINK TANK
               </NavLink>
-              <NavLink href="/analyzer/trend" isActive={pathname === '/analyzer/trend'}>
+              <NavLink href="/analyzer/trend-analyzer" isActive={pathname === '/analyzer/trend-analyzer'}>
               TREND ANALYZER
               </NavLink>
               <NavLink href="/profile" isActive={pathname === '/profile'}>
@@ -211,8 +211,8 @@ export default function Navbar({ user, onLogout }) {
                 </MobileNavLink>
 
                 <MobileNavLink
-                  href="/analyzer/trend"
-                  isActive={pathname === '/analyzer/trend'}
+                  href="/analyzer/trend-analyzer"
+                  isActive={pathname === '/analyzer/trend-analyzer'}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Trend Analyzer

@@ -465,10 +465,10 @@ export default function HomePage() {
 						<div className="relative pb-4 mb-6">
 							<div className="flex justify-between items-center">
 								<h2 className="text-xl font-medium text-gray-900">
-									TRENDS YOU MAYBE INTERESTED
+									HOT Trend
 								</h2>
 								<Link
-									href="/analyzer/trend"
+									href="/analyzer/trend-analyzer"
 									className="text-[#6366F1] text-sm"
 								>
 									VIEW ALL →
