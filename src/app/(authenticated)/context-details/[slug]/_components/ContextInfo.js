@@ -23,47 +23,49 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 				{context.contextTitle}
 			</h1>
 
-			{(context.originalContextSector?.length > 0 || context.originalContextSubSector?.length > 0) && (
-        <div className="flex flex-wrap gap-2 mt-2 mb-3">
-          {context.originalContextSector?.map((sector) => (
-            <span
-              key={sector._id}
-              className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-            >
-              {sector}
-            </span>
-          ))}
-          {context.originalContextSubSector?.map((subSector) => (
-            <span
-              key={subSector._id}
-              className="p-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
-            >
-              {subSector}
-            </span>
-          ))}
-        </div>
-      )}
+			{(context.originalContextSector?.length > 0 ||
+				context.originalContextSubSector?.length > 0) && (
+				<div className="flex flex-wrap gap-2 mt-2 mb-3">
+					{context.originalContextSector?.map((sector) => (
+						<span
+							key={sector._id}
+							className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+						>
+							{sector}
+						</span>
+					))}
+					{context.originalContextSubSector?.map((subSector) => (
+						<span
+							key={subSector._id}
+							className="p-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
+						>
+							{subSector}
+						</span>
+					))}
+				</div>
+			)}
 
-{(context.originalContextSignalCategory?.length > 0 || context.originalContextSignalSubCategory?.length > 0) && (
-        <div className="flex flex-wrap gap-2 mt-2 mb-3">
-          {context.originalContextSignalCategory?.map((signal) => (
-            <span
-              key={signal._id}
-              className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
-            >
-              {signal}
-            </span>
-          ))}
-          {context.originalContextSignalSubCategory?.map((subSignal) => (
-            <span
-              key={subSignal._id}
-              className="p-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
-            >
-              {subSignal}
-            </span>
-          ))}
-        </div>
-      )}
+			{(context.originalContextSignalCategory?.length > 0 ||
+				context.originalContextSignalSubCategory?.length > 0) && (
+				<div className="flex flex-wrap gap-2 mt-2 mb-3">
+					{context.originalContextSignalCategory?.map((signal) => (
+						<span
+							key={signal._id}
+							className="p-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium"
+						>
+							{signal}
+						</span>
+					))}
+					{context.originalContextSignalSubCategory?.map((subSignal) => (
+						<span
+							key={subSignal._id}
+							className="p-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium"
+						>
+							{subSignal}
+						</span>
+					))}
+				</div>
+			)}
 			{context.originalTheme && (
 				<div className="bg-[#f1f8ff] p-3 mb-2 flex items-center justify-between flex-wrap gap-4">
 					<span className="text-base text-[#174c77] font-medium">
@@ -98,12 +100,14 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 				</div>
 			)}
 
-			<div className="mb-6 ml-2">
-				<h2 className="text-lg font-bold text-gray-800 mb-2">Summary:</h2>
-				<ul className="text-gray-700 list-disc list-inside">
-					<div dangerouslySetInnerHTML={{ __html: context.summary }} />
-				</ul>
-			</div>
+			{context.summary && context.summary.length > 0 && (
+				<div className="mb-6 ml-2">
+					<h2 className="text-lg font-bold text-gray-800 mb-2">Summary:</h2>
+					<ul className="text-gray-700 list-disc list-inside">
+						<div dangerouslySetInnerHTML={{ __html: context.summary }} />
+					</ul>
+				</div>
+			)}
 
 			{context.hasSlider && context.slides && context.slides.length > 0 && (
 				<div

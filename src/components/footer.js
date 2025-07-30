@@ -10,13 +10,9 @@ const Footer = () => {
     "Interviews",
     "Infographics & Statistics"
   ];
-  const infoLinks = ["Privacy Policy", "Terms of Service", "Grievance Redressal"];
+  const infoLinks = ["Privacy Policy", "Terms of Service"];
 
   const socialIcons = [
-    {
-      href: "https://facebook.com",
-      icon: "M22 12a10 10 0 10-11.6 9.9v-7h-2v-2.9h2V9.2c0-2 1.2-3.1 3-3.1.9 0 1.8.2 1.8.2v2h-1c-1 0-1.3.6-1.3 1.2v1.4h2.3l-.4 2.9h-1.9v7A10 10 0 0022 12z"
-    },
     {
       href: "https://x.com",
       icon: "M20.5 3h-3l-4.5 6-4-6H3l6.5 9-6.5 9h3l4.5-6 4 6h3l-6.5-9L20.5 3z"
@@ -24,10 +20,6 @@ const Footer = () => {
     {
       href: "https://linkedin.com",
       icon: "M20.5 2h-17A1.5 1.5 0 002 3.5v17A1.5 1.5 0 003.5 22h17a1.5 1.5 0 001.5-1.5v-17A1.5 1.5 0 0020.5 2zM8 19H5v-9h3zM6.5 8.25A1.75 1.75 0 118.25 6.5 1.75 1.75 0 016.5 8.25zM19 19h-3v-4.74c0-1.42-.6-2.73-2.23-2.73a2.57 2.57 0 00-2.43 2.74V19h-3v-9h3v1.37a3.94 3.94 0 013.53-2.08C17.87 9.29 19 11 19 12.76z"
-    },
-    {
-      href: "https://youtube.com",
-      icon: "M19.6 3H4.4C3 3 2 4 2 5.4v13.2C2 20 3 21 4.4 21h15.2c1.4 0 2.4-1 2.4-2.4V5.4C22 4 21 3 19.6 3zM10 16V8l6 4-6 4z"
     }
   ];
 
