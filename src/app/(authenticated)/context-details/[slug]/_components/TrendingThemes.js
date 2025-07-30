@@ -39,7 +39,7 @@ const TrendingThemes = ({ trendingThemes }) => {
             >
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
-                  {theme.overallScore}
+                   {theme.overallScore.toString().slice(0, 3)}
                 </div>
                 <div className="break-words">
                   <h3 className="font-medium text-gray-800 text-sm">{theme.themeTitle}</h3>
