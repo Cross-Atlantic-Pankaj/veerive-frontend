@@ -12,7 +12,7 @@ export default function PrivacyPolicyPage() {
             <div className="lg:w-full p-2 md:p-6 lg:p-6">
               {/* Header */}
               <div className="text-center mb-4">
-                <p className="text-gray-600 text-lg">
+                <p className="text-gray-600 text-base p-2 md:text-lg">
                   Your privacy is important to us. This policy explains how we collect, use, and protect your information.
                 </p>
               </div>
@@ -41,7 +41,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 1 */}
                 <section id="section1" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Short Overview
+                    1. Short Overview
                   </h2>
                   <div className="space-y-4">
                     <div className="grid md:grid-cols-2 gap-4">
@@ -79,7 +79,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 2 */}
                 <section id="section2" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Information We Collect
+                    2. Information We Collect
                   </h2>
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
@@ -132,7 +132,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 3 */}
                 <section id="section3" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Mode and Place of Processing Personal Information
+                    3. Mode and Place of Processing Personal Information
                   </h2>
                   <div className="space-y-6">
                     <div>
@@ -186,7 +186,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 4 */}
                 <section id="section4" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    The Purposes of Processing
+                    4. The Purposes of Processing
                   </h2>
                   <p className="mb-6">
                     The Personal Information concerning the User is collected to allow Veerive to provide its Services, as well as for the following purposes:
@@ -217,7 +217,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 5 */}
                 <section id="section5" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Your Rights Regarding Personal Information
+                    5. Your Rights Regarding Personal Information
                   </h2>
                   <p className="mb-6">You may exercise certain rights regarding your Personal Information processed by Veerive:</p>
                   <div className="space-y-4">
@@ -285,7 +285,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 6 */}
                 <section id="section6" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Processing of Your Personal Information
+                    6. Processing of Your Personal Information
                   </h2>
                   <p className="mb-6">Detailed information on the processing of Personal Information is collected for the following purposes and using the following services:</p>
                   <div className="grid md:grid-cols-2 gap-6">
@@ -335,7 +335,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 7 */}
                 <section id="section7" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Additional Information about Data Collection and Processing
+                    7. Additional Information about Data Collection and Processing
                   </h2>
                   <div className="space-y-6">
                     <div className="bg-red-50 border border-red-200 rounded-lg p-4">
@@ -390,7 +390,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 8 */}
                 <section id="section8" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Data Security
+                    8. Data Security
                   </h2>
                   <div className="space-y-4">
                     <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -417,7 +417,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 9 */}
                 <section id="section9" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Questions and Contact Information
+                    9. Questions and Contact Information
                   </h2>
                   <div className="bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-lg p-6 text-center">
                     <h3 className="text-xl font-semibold text-gray-900 mb-4">Need Help with Your Privacy?</h3>
@@ -440,7 +440,7 @@ export default function PrivacyPolicyPage() {
                 {/* Section 10 */}
                 <section id="section10" className="bg-gray-50 rounded-xl p-6">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4 flex items-center">
-                    Definitions
+                    10. Definitions
                   </h2>
                   <div className="space-y-4">
                     {[

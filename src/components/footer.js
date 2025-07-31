@@ -88,7 +88,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="text-center text-sm text-gray-500 mt-12 border-t border-gray-700 pt-6">
+        <div className="text-center text-sm text-gray-500 mt-4 border-t border-gray-700 pt-6">
           © Copyright 2025 Veerive, All Rights Reserved.
         </div>
       </div>
