@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+import { Tile, parseJsxCode } from '../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text
@@ -56,6 +57,11 @@ const TypeThree = ({ context, formatSummary, handleUnsave, isLastItem, lastConte
     setIsSaved(false);
   };
 
+      const tileProps =
+        context.tileTemplates && context.tileTemplates.length > 0
+          ? parseJsxCode(context.tileTemplates[0].jsxCode)
+          : null;
+
   return (
     <Link href={`/context-details/${slug}`}>
       <div
@@ -66,18 +72,16 @@ const TypeThree = ({ context, formatSummary, handleUnsave, isLastItem, lastConte
           <div className="flex-1 flex flex-col">
             <div className="flex flex-row items-start gap-3 sm:gap-4">
               <div className="w-full sm:w-1/3">
-                {context.bannerImage ? (
-                  <img
-                    src={context.bannerImage}
-                    alt="Banner"
-                    className="w-full h-16 sm:h-20 md:h-24 lg:h-28 object-cover rounded-lg"
-                  />
-                ) : (
-                  <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                    1000 × 630
-                  </div>
-                )}
-              </div>
+                              {tileProps ? (
+                                <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
+                                  <Tile {...tileProps} />
+                                </div>
+                              ) : (
+                                <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                                  1000 × 630
+                                </div>
+                              )}
+                            </div>
               <div className="flex-1">
                 <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
                   {sectorsLabel}

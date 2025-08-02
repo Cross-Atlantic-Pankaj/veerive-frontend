@@ -132,12 +132,15 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">
-            {context.bannerImage ? (
-              <img
-                src={context.bannerImage}
-                alt="Banner"
-                className="w-full h-16 sm:h-20 md:h-24 lg:h-28 object-cover rounded-lg"
-              />
+            {tileTemplate ? (
+              <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
+                <Tile
+                  bg={tileTemplate.bg}
+                  icon={tileTemplate.icon}
+                  color={tileTemplate.color}
+                  size={tileTemplate.size}
+                />
+              </div>
             ) : (
               <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                 1000 × 630

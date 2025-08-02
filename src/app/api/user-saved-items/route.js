@@ -8,6 +8,7 @@ import Theme from '@/models/Theme';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
 import Source from '@/models/Source';
+import tileTemplate from '@/models/TileTemplate';
 
 export async function POST(request) {
   try {
@@ -128,7 +129,15 @@ export async function POST(request) {
             model: 'Post',
             select: 'postTitle postType summary sourceUrl',
           })
+          .populate({
+				path: 'tileTemplates',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
+			})
           .lean();
+          console.log('Context Saved:',context);
+
         if (context) {
           savedItems.contexts.push({
             _id: context._id,
@@ -146,6 +155,7 @@ export async function POST(request) {
             })),
             date: context.date,
             savedAt: savedPost.savedAt,
+            tileTemplates: context.tileTemplates,
           });
         }
       } else if (savedPost.SavedpostType === 'Post') {
