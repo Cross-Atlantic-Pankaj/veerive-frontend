@@ -6,6 +6,7 @@ import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
 import Source from '@/models/Source';
 import Theme from '@/models/Theme';
+import tileTemplate from '@/models/TileTemplate';
 
 export async function GET(request) {
 	try {
@@ -23,6 +24,9 @@ export async function GET(request) {
 		if (!mongoose.models.Theme) {
 			mongoose.model('Theme', Theme.schema);
 		}
+		if (!mongoose.models.TileTemplate) {
+			mongoose.model('TileTemplate', tileTemplate.schema);
+		}
 
 		const trendingEvents = await Context.find({ isTrending: true })
 			.populate({
@@ -35,6 +39,12 @@ export async function GET(request) {
 				model: 'SubSector',
 				select: 'subSectorName',
 			})
+			.populate({
+				path: 'tileTemplates',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
+			})
 			.sort({ date: -1 });
 
 		const trendingOpinions = await Post.find({
@@ -45,6 +55,12 @@ export async function GET(request) {
 				path: 'source',
 				model: 'Source',
 				select: 'sourceName',
+			})
+			.populate({
+				path: 'tileTemplateId',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
 			})
 			.sort({ date: -1 })
 			.limit(5);
@@ -57,6 +73,12 @@ export async function GET(request) {
 				path: 'source',
 				model: 'Source',
 				select: 'sourceName',
+			})
+			.populate({
+				path: 'tileTemplateId',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
 			})
 			.sort({ date: -1 })
 			.limit(5);
@@ -71,6 +93,13 @@ export async function GET(request) {
 				path: 'subSectors',
 				model: 'SubSector',
 				select: 'subSectorName',
+			})
+			
+			.populate({
+				path: 'tileTemplateId',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
 			})
 			.sort({ overallScore: -1 })
 			.limit(5);
@@ -130,7 +159,11 @@ export async function GET(request) {
 			if (post && post.sourceUrl) {
 				return post.sourceUrl;
 			}
-			if (post && Array.isArray(post.sourceUrls) && post.sourceUrls.length > 0) {
+			if (
+				post &&
+				Array.isArray(post.sourceUrls) &&
+				post.sourceUrls.length > 0
+			) {
 				return post.sourceUrls[0];
 			}
 			return `/influencer-comment/${post?.postType || 'Unknown'}`;

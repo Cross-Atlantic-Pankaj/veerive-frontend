@@ -13,6 +13,7 @@ const ContextSchema = new mongoose.Schema({
     postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post' },
     includeInContainer: { type: Boolean, default: false }
   }],
+  tileTemplates: [{ type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' }],
   containerType: { type: String, required: true },
   bannerShow: { type: Boolean, default: false },
   homePageShow: { type: Boolean, default: false },

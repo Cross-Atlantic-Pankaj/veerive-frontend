@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const PostSchema = new mongoose.Schema({
   postTitle: { type: String, required: true },
   postType: { type: String, required: true },
-  // postImage: { type: String },
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
   date: { type: Date, required: true },
   isTrending: { type: Boolean, default: false },
   includeInContainer: { type: Boolean, default: false },

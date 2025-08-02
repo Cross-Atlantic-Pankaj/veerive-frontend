@@ -9,6 +9,7 @@ const ThemeSchema = new mongoose.Schema({
   overallScore: { type: Number },
   trendingScore: { type: Number },
   impactScore: { type: Number },
+  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
   predictiveMomentumScore: { type: Number },
   trendingScoreImage: { type: String, default: '' },
   impactScoreImage: { type: String, default: '' },
