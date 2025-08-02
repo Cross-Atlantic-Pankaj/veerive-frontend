@@ -275,8 +275,8 @@ export default function TrendAnalyzer() {
   ]);
 
   return (
-    <div className="py-8 bg-gray-50 min-h-screen px-12">
-      <div className="mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-100">
+    <div className="p-3 md:py-8 bg-gray-50 min-h-screen md:px-12">
+      <div className="mb-8 bg-white p-2 md:p-6 rounded-xl shadow-md border border-gray-100">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-bold text-gray-800">
             Filter Trends by Sector
@@ -380,8 +380,8 @@ export default function TrendAnalyzer() {
                     {theme.themeTitle}
                   </h2>
 
-                  <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
-                    <div className="p-3 text-center border-r border-white">
+                  <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden pr-3">
+                    <div className="p-1 md:p-3 text-center border-r border-white">
                       <div className="text-sm font-medium text-gray-500 mb-1">
                         Trending <br /> Pulse
                       </div>
@@ -390,7 +390,7 @@ export default function TrendAnalyzer() {
                       </div>
                     </div>
 
-                    <div className="p-3 text-center border-r border-white">
+                    <div className="p-1 md:p-3 text-center border-r border-white">
                       <div className="text-sm font-medium text-gray-500 mb-1">
                         Disruption Potential
                       </div>
@@ -399,7 +399,7 @@ export default function TrendAnalyzer() {
                       </div>
                     </div>
 
-                    <div className="p-3 text-center">
+                    <div className="p-1 md:p-3 text-center">
                       <div className="text-sm font-medium text-gray-500 mb-1">
                         Predictive Momentum
                       </div>
