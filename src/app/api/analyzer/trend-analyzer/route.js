@@ -4,6 +4,7 @@ import connectDB from '@/lib/db';
 import Theme from '@/models/Theme';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
+import tileTemplate from '@/models/TileTemplate';
 
 let cachedSectors = null;
 let cachedSubsectors = null;
@@ -21,6 +22,9 @@ export async function GET(request) {
     if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
     if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
+    if (!mongoose.models.TileTemplate) {
+          mongoose.model('TileTemplate', tileTemplate.schema);
+        }
 
     const filter = {};
 
@@ -56,6 +60,7 @@ export async function GET(request) {
     const populatedThemes = await Theme.populate(uniqueThemes, [
       { path: 'sectors', select: 'sectorName' },
       { path: 'subSectors', select: 'subSectorName' },
+      { path: 'tileTemplateId', select: 'name type jsxCode', options: { strictPopulate: false }, },
     ]);
 
     let sectors, subsectors;

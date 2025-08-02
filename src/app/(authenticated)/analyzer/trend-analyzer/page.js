@@ -1,9 +1,9 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
+import { Tile, parseJsxCode } from '../../../utils/Tile';
 
 export default function TrendAnalyzer() {
   const [themes, setThemes] = useState([]);
@@ -350,7 +350,12 @@ export default function TrendAnalyzer() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-10">
           {themes.map((theme, index) => {
-            const isLastElement = themes.length === index + 1;
+                      const isLastElement = themes.length === index + 1;
+
+                      const tileProps = theme.tileTemplateId
+                        ? parseJsxCode(theme.tileTemplateId.jsxCode)
+                        : null;
+
             return (
               <div
                 key={theme._id.toString()}
@@ -359,14 +364,11 @@ export default function TrendAnalyzer() {
                 onClick={() => handleThemeClick(theme)}
               >
                 <div className="relative w-full h-[160px]">
-                  {theme.trendingScoreImage ? (
-                    <Image
-                      src={theme.trendingScoreImage}
-                      alt={theme.themeTitle || 'Trend Image'}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
+                  {tileProps ? (
+                  <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
+                  <Tile {...tileProps} />
+                  </div>
+                ) : (
                     <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center text-gray-400">
                       1000 x 180
                     </div>

@@ -102,8 +102,6 @@ export async function POST(request) {
 				.exec(),
 		]);
 
-    console.log('Contexts Result:', contextsResult[0]);
-
 		const seenIds = new Set();
 		const uniqueContexts = contextsResult.filter((context) => {
 			const idString = context._id.toString();
