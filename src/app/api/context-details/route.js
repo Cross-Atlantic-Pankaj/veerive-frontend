@@ -83,7 +83,13 @@ export async function GET(request) {
         })
         .populate({
           path: 'posts.postId',
-          select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
+          select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls tileTemplateId',
+          populate: {
+            path: 'tileTemplateId',
+            select: 'name type jsxCode backgroundColor previewBackgroundColor iconName iconColor iconSize',
+            model: 'TileTemplate',
+            options: { strictPopulate: false },
+          },
         })
         .lean();
     }
@@ -299,6 +305,7 @@ export async function GET(request) {
             post.postId.sourceUrl ||
             (post.postId.sourceUrls && post.postId.sourceUrls[0]) ||
             '',
+			tileTemplateId: post.postId.tileTemplateId,
         }));
     }
 
