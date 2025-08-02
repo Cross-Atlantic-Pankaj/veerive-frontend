@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { Tile, parseJsxCode } from '../../../../../utils/Tile';
+import { Tile, parseJsxCode } from './utils/Tile'; // Adjust path as needed
 
 const normalizeTitle = (text) => {
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\$/g, 'dollar') 
-    .replace(/[^\w\s-]/g, '') 
-    .replace(/\s+/g, '-') 
-    .replace(/--+/g, '-') 
+    .replace(/\$/g, 'dollar')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-')
     .replace(/^-+|-+$/g, '');
 };
 
@@ -117,9 +117,9 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
     }
   };
 
-    const tileProps = context.tileTemplates && context.tileTemplates.length > 0
-      ? parseJsxCode(context.tileTemplates[0].jsxCode)
-      : null;
+  const tileProps = context.tileTemplates && context.tileTemplates.length > 0
+    ? parseJsxCode(context.tileTemplates[0].jsxCode)
+    : null;
 
   return (
     <Link href={`/context-details/${slug}`}>
@@ -133,16 +133,22 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
-  {tileProps ? (
-                <div className="w-full h-full rounded-lg overflow-hidden">
-                  <Tile {...tileProps} />
-                </div>
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                  1000 × 630
-                </div>
-              )}
-            </div>
+            {context.bannerImage ? (
+              <img
+                src={context.bannerImage}
+                alt="Banner"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            ) : tileProps ? (
+              <div className="w-full h-full">
+                <Tile {...tileProps} />
+              </div>
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                1000 × 630
+              </div>
+            )}
+          </div>
 
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-2">

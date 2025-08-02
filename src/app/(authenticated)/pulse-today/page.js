@@ -12,18 +12,6 @@ import {
   TypeNum,
 } from './_components';
 
-const Tile = ({ bg, icon, color, size }) => {
-  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
-  return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: bg, color }}
-    >
-      <IconComponent size={size} />
-    </div>
-  );
-};
-
 const parseJsxCode = (jsxCode) => {
   if (!jsxCode) return null;
   const regex = /bg="([^"]+)"\s+icon="([^"]+)"\s+color="([^"]+)"\s+size=\{(\d+)\}/;

@@ -8,6 +8,7 @@ import Theme from '@/models/Theme';
 import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import connectDB from '@/lib/db';
+import tileTemplate from '@/models/TileTemplate';
 
 function normalizeTitle(text) {
   return text
@@ -42,6 +43,9 @@ export async function GET(request) {
     if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
     if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
+	if (!mongoose.models.TileTemplate) {
+				mongoose.model('TileTemplate', tileTemplate.schema);
+			}
 
     const normalizedSlug = normalizeTitle(slug);
     const altNormalizedSlug = normalizedSlug.replace(/dollar/g, '');
@@ -230,6 +234,12 @@ export async function GET(request) {
           path: 'posts.postId',
           select: 'postTitle postType date isTrending includeInContainer _id sourceUrl sourceUrls',
         })
+		.populate({
+				path: 'tileTemplates',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
+			})
         .lean();
 
       const uniqueMatchingContexts = Array.from(
@@ -257,6 +267,7 @@ export async function GET(request) {
 
       matchingContexts = uniqueMatchingContexts;
     }
+	console.log('Matching contexts:', matchingContexts[0]);
 
     let processedPosts = [];
     if (targetContext.posts && targetContext.posts.length > 0) {
