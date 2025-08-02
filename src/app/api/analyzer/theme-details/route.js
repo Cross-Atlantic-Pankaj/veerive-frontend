@@ -8,6 +8,7 @@ import Context from '@/models/Context';
 import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import Post from '@/models/Post';
+import tileTemplate from '@/models/TileTemplate';
 
 function normalizeTitle(text) {
   return text
@@ -41,7 +42,9 @@ export async function GET(request) {
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
     if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
-
+    if (!mongoose.models.TileTemplate) {
+          mongoose.model('TileTemplate', tileTemplate.schema);
+        }
     const normalizedSlug = normalizeTitle(slug);
 
     const themes = await Theme.find()
@@ -84,6 +87,12 @@ export async function GET(request) {
         path: 'posts.postId',
         model: 'Post'
       })
+      .populate({
+				path: 'tileTemplates',
+				model: 'TileTemplate',
+				select: 'name type jsxCode',
+				options: { strictPopulate: false },
+			})
       .sort({ date: -1 })
       .lean();
 

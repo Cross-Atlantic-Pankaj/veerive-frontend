@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { Tile, parseJsxCode } from '../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text
@@ -120,6 +121,10 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
     }
   };
 
+      const tileProps = context.tileTemplates && context.tileTemplates.length > 0
+      ? parseJsxCode(context.tileTemplates[0].jsxCode)
+      : null;
+      
   return (
     <Link href={`/context-details/${slug}`}>
       <div

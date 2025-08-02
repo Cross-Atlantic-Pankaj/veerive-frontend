@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ThemeInfo from '../../_Components/ThemeInfo';
-import RelatedEvents from '../../_Components/RelatedEvents';
+import OtherKeyTrend from '../../_Components/RelatedEvents';
 import RelatedContexts from '../../_Components/RelatedContexts';
 import TrendingExpertOpinions from '../../_Components/TrendingExpertOpinions';
 
@@ -71,7 +71,7 @@ export default function ThemeDetails() {
   return (
     <div className="bg-gray-50 min-h-screen p-4">
       <ThemeInfo theme={theme} />
-      <RelatedEvents relatedThemes={relatedThemes} />
+      <OtherKeyTrend relatedThemes={relatedThemes} />
       <div className="flex flex-col lg:flex-row mx-auto">
         <div
           className={`${

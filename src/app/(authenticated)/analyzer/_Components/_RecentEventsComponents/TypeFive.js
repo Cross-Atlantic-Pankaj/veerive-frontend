@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { Tile, parseJsxCode } from '../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text
@@ -117,6 +118,10 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
     }
   };
 
+      const tileProps = context.tileTemplates && context.tileTemplates.length > 0
+      ? parseJsxCode(context.tileTemplates[0].jsxCode)
+      : null;
+
   return (
     <Link href={`/context-details/${slug}`}>
       <div
@@ -127,20 +132,18 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           {context.contextTitle}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
-            {context.bannerImage ? (
-              <img
-                src={context.bannerImage}
-                alt="Banner"
-                className="w-full h-full object-cover rounded-lg"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                1000 × 630
-              </div>
-            )}
-          </div>
+  {tileProps ? (
+                <div className="w-full h-full rounded-lg overflow-hidden">
+                  <Tile {...tileProps} />
+                </div>
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                  1000 × 630
+                </div>
+              )}
+            </div>
 
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-2">

@@ -267,7 +267,6 @@ export async function GET(request) {
 
       matchingContexts = uniqueMatchingContexts;
     }
-	console.log('Matching contexts:', matchingContexts[0]);
 
     let processedPosts = [];
     if (targetContext.posts && targetContext.posts.length > 0) {

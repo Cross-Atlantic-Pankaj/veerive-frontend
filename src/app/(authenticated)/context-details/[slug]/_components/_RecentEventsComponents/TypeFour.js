@@ -132,16 +132,18 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">
-            {tileProps ? (
-                          <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
-                            <Tile {...tileProps} />
-                          </div>
-                        ) : (
-                          <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                            1000 × 630
-                          </div>
-                        )}
-                      </div>
+            {context.bannerImage ? (
+              <img
+                src={context.bannerImage}
+                alt="Banner"
+                className="w-full h-16 sm:h-20 md:h-24 lg:h-28 object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                1000 × 630
+              </div>
+            )}
+          </div>
           <div className="flex-1 flex flex-col">
             <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
               {sectorsLabel}
