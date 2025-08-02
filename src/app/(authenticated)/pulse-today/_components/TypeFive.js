@@ -2,20 +2,33 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import * as LucideIcons from 'lucide-react';
+
+const Tile = ({ bg, icon, color, size }) => {
+  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ backgroundColor: bg, color }}
+    >
+      <IconComponent size={size} />
+    </div>
+  );
+};
 
 const normalizeTitle = (text) => {
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\$/g, 'dollar') 
-    .replace(/[^\w\s-]/g, '') 
-    .replace(/\s+/g, '-') 
-    .replace(/--+/g, '-') 
-    .replace(/^-+|-+$/g, ''); 
+    .replace(/\$/g, 'dollar')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-')
+    .replace(/^-+|-+$/g, '');
 };
 
-const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, tileTemplate }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
@@ -39,9 +52,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
   useEffect(() => {
     const checkSavedStatus = async () => {
       const email = getUserEmail();
-      if (!email) {
-        return;
-      }
+      if (!email) return;
 
       try {
         const response = await fetch(
@@ -76,8 +87,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
-        await navigator.clipboard.writeText(shareText);
+        await navigator.clipboard.writeText(shareData.url);
         toast.success('Link copied to clipboard!');
       }
     } catch (error) {
@@ -128,12 +138,15 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
 
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
-            {context.bannerImage ? (
-              <img
-                src={context.bannerImage}
-                alt="Banner"
-                className="w-full h-full object-cover rounded-lg"
-              />
+            {tileTemplate ? (
+              <div className="w-full h-full rounded-lg overflow-hidden">
+                <Tile
+                  bg={tileTemplate.bg}
+                  icon={tileTemplate.icon}
+                  color={tileTemplate.color}
+                  size={tileTemplate.size}
+                />
+              </div>
             ) : (
               <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
                 1000 × 630
@@ -212,7 +225,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 w-4 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -232,7 +245,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 w-4 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

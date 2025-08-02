@@ -2,22 +2,33 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import * as LucideIcons from 'lucide-react';
+
+const Tile = ({ bg, icon, color, size }) => {
+  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ backgroundColor: bg, color }}
+    >
+      <IconComponent size={size} />
+    </div>
+  );
+};
 
 const normalizeTitle = (text) => {
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\$/g, 'dollar') 
-    .replace(/[^\w\s-]/g, '') 
-    .replace(/\s+/g, '-') 
-    .replace(/--+/g, '-') 
+    .replace(/\$/g, 'dollar')
+    .replace(/[^\w\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/--+/g, '-')
     .replace(/^-+|-+$/g, '');
 };
 
-
-
-const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
+const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
@@ -38,9 +49,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
   useEffect(() => {
     const checkSavedStatus = async () => {
       const email = getUserEmail();
-      if (!email) {
-        return;
-      }
+      if (!email) return;
 
       try {
         const response = await fetch(
@@ -75,8 +84,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        const shareText = `${context.contextTitle}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
-        await navigator.clipboard.writeText(shareText);
+        await navigator.clipboard.writeText(shareData.url);
         toast.success('Link copied to clipboard!');
       }
     } catch (error) {
@@ -121,23 +129,26 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200"
       >
-        {context.bannerImage ? (
-          <img
-            src={context.bannerImage}
-            alt="banner"
-            className="w-full h-[120px] sm:h-[140px] md:h-[160px] object-cover"
-          />
+        {tileTemplate ? (
+          <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
+            <Tile
+              bg={tileTemplate.bg}
+              icon={tileTemplate.icon}
+              color={tileTemplate.color}
+              size={tileTemplate.size}
+            />
+          </div>
         ) : (
           <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
             1000 × 630
           </div>
         )}
         <div className="px-3 py-2 sm:px-4 sm:py-3">
-        <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
-            {[...context.sectors, ...context.subSectors].slice(0,3).map((name, idx) => (
+          <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
+            {[...context.sectors, ...context.subSectors].slice(0, 3).map((name, idx) => (
               <span
                 key={idx}
-                className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
+                className="text-[10px] sm:text-xs text-gray-600 relative inline-block font-medium border-b-2 border-green-500"
               >
                 {name}
               </span>

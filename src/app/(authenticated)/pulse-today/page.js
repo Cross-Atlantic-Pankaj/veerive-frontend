@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import * as LucideIcons from 'lucide-react';
 import {
   TypeOne,
   TypeTwo,
@@ -10,6 +11,34 @@ import {
   TypeFive,
   TypeNum,
 } from './_components';
+
+const Tile = ({ bg, icon, color, size }) => {
+  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
+  return (
+    <div
+      className="w-full h-full flex items-center justify-center"
+      style={{ backgroundColor: bg, color }}
+    >
+      <IconComponent size={size} />
+    </div>
+  );
+};
+
+const parseJsxCode = (jsxCode) => {
+  if (!jsxCode) return null;
+  const regex = /bg="([^"]+)"\s+icon="([^"]+)"\s+color="([^"]+)"\s+size=\{(\d+)\}/;
+  const match = jsxCode.match(regex);
+  if (match) {
+    return {
+      bg: match[1],
+      icon: match[2],
+      color: match[3],
+      size: parseInt(match[4], 10),
+    };
+  }
+  console.warn(`Invalid jsxCode format: ${jsxCode}`);
+  return null;
+};
 
 export default function PulseToday() {
   const [contexts, setContexts] = useState([]);
@@ -54,11 +83,12 @@ export default function PulseToday() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page: pageNum }),
       });
+      if (!res.ok) throw new Error('Failed to fetch data');
       const data = await res.json();
       console.log('Raw API Response:', data);
       console.log('Fetched Contexts:', data.contexts);
 
-      setExpertPosts(data.expertPosts);
+      setExpertPosts(data.expertPosts || []);
 
       const newContexts = data.contexts.filter(
         (newContext) => !contexts.some((prev) => prev.id === newContext.id)
@@ -100,60 +130,58 @@ export default function PulseToday() {
     fetchData(page);
   }, [page]);
 
-const formatSummary = (summary) => {
-  if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
+  const formatSummary = (summary) => {
+    if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
 
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(summary, 'text/html');
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(summary, 'text/html');
 
-  const extractText = (node, points = []) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent.trim();
-      if (text) points.push(text);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const tagName = node.tagName.toLowerCase();
-      if (tagName === 'br') {
-        points.push(''); 
-      } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-        const childText = Array.from(node.childNodes)
-          .map((child) => child.textContent.trim())
-          .filter((text) => text)
-          .join(' ');
-        if (childText) points.push(childText);
-      } else {
-        Array.from(node.childNodes).forEach((child) => extractText(child, points));
+    const extractText = (node, points = []) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent.trim();
+        if (text) points.push(text);
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const tagName = node.tagName.toLowerCase();
+        if (tagName === 'br') {
+          points.push('');
+        } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
+          const childText = Array.from(node.childNodes)
+            .map((child) => child.textContent.trim())
+            .filter((text) => text)
+            .join(' ');
+          if (childText) points.push(childText);
+        } else {
+          Array.from(node.childNodes).forEach((child) => extractText(child, points));
+        }
       }
-    }
-    return points;
-  };
-
-  let textPoints = extractText(doc.body);
-
-  const decodeEntities = (text) => {
-    const entities = {
-      ' ': ' ',
-      '&': '&',
-      '<': '<',
-      '>': '>',
-      '"': '"',
-      '&apos;': "'",
-      '&quot;': '"',
+      return points;
     };
-    return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
+
+    let textPoints = extractText(doc.body);
+
+    const decodeEntities = (text) => {
+      const entities = {
+        ' ': ' ',
+        '&': '&',
+        '<': '<',
+        '>': '>',
+        '"': '"',
+        '&apos;': "'",
+        '&quot;': '"',
+      };
+      return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
+    };
+
+    textPoints = textPoints
+      .map((point) => decodeEntities(point))
+      .map((point) => point.replace(/\s+/g, ' ').trim())
+      .filter((point) => point.length > 0)
+      .map((point) => point.replace(/^\d+\.\s*/, '').trim());
+
+    textPoints = textPoints.map((point) => `${point}`);
+
+    return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
   };
-
-  textPoints = textPoints
-    .map((point) => decodeEntities(point)) 
-    .map((point) => point.replace(/\s+/g, ' ').trim()) 
-    .filter((point) => point.length > 0)
-    .map((point) => {
-      return point.replace(/^\d+\.\s*/, '').trim();
-    });
-
-  textPoints = textPoints.map((point) => `${point}`);
-
-  return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
-};
 
   const processInitialContexts = (allContexts) => {
     const uniqueContexts = Array.from(new Map(allContexts.map((c) => [c.id, c])).values());
@@ -282,11 +310,13 @@ const formatSummary = (summary) => {
   };
 
   const renderContextBox = (context, isLastItem, key) => {
+    const tileTemplate = context.tileTemplates?.length > 0 ? parseJsxCode(context.tileTemplates[0].jsxCode) : null;
     const props = {
       context,
       isLastItem,
       lastContextCallback,
       formatSummary,
+      tileTemplate,
     };
 
     switch (context.containerType) {
@@ -384,34 +414,33 @@ const formatSummary = (summary) => {
             <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
-                <Link href="/analyzer/trend" className="text-indigo-600 text-sm flex items-center hover:text-indigo-700">
+                <Link
+                  href="/analyzer/trend"
+                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                >
                   VIEW MORE →
                 </Link>
               </div>
 
               <div className="space-y-3">
-                {trendingThemes.map((theme,index) => (
-                  <div key={index} className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0">
-                  <Link href={`/analyzer/theme-details/${slugify(
-                    theme.title
-                  )}`}>
+                {trendingThemes.map((theme, index) => (
                   <div
-                    key={theme.id}
+                    key={index}
                     className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
                   >
-                    <div className="flex items-start gap-3">
-                      <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
-                        {theme.score.toFixed(1)}
-                      </div>
-                      <div className="break-words">
-                        <h3 className="font-medium text-gray-800 text-sm">{theme.title}</h3>
-                        <div className="mt-1 text-xs text-gray-500">
-                          {theme.sectors.length > 0 && theme.sectors[0]}
+                    <Link href={`/analyzer/theme-details/${slugify(theme.title)}`}>
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
+                          {theme.score.toFixed(1)}
+                        </div>
+                        <div className="break-words">
+                          <h3 className="font-medium text-gray-800 text-sm">{theme.title}</h3>
+                          <div className="mt-1 text-xs text-gray-500">
+                            {theme.sectors.length > 0 && theme.sectors[0]}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
-                  </Link>
+                    </Link>
                   </div>
                 ))}
               </div>
@@ -424,7 +453,7 @@ const formatSummary = (summary) => {
                 </h2>
               </div>
               <div className="space-y-4">
-                {expertPosts.map((post, index) => (
+                {expertPosts.map((post) => (
                   <a
                     key={post._id}
                     href={post.SourceUrl}
