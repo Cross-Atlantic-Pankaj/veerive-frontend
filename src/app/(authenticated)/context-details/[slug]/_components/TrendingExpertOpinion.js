@@ -11,7 +11,7 @@ const TrendingThemes = ({ trendingExpertOpinions }) => {
 					Trending Expert Opinion
 				</h2>
         <Link
-					href="/influencer-comment/Expert Opinion"
+					href="/influencer-comment/expert-opinion"
 					className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
 				>
 					VIEW MORE →

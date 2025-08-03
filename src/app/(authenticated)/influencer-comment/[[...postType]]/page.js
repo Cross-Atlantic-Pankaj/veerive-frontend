@@ -50,16 +50,23 @@ export default function Home() {
     'Research Report',
   ];
 
-  const postTypeDisplayMap = {
-    'Expert Opinion': 'Expert Opinion',
-    'Infographic': 'Market Statistics',
-    'Interview': 'Interview',
-    'News': 'News',
-    'Research Report': 'Research Report',
+  // Mapping for display names and URL slugs
+  const postTypeMap = {
+    'Expert Opinion': { display: 'Expert Opinion', slug: 'expert-opinion' },
+    'Infographic': { display: 'Market Statistics', slug: 'market-statistics' },
+    'Interview': { display: 'Interview', slug: 'interview' },
+    'News': { display: 'News', slug: 'news' },
+    'Research Report': { display: 'Research Report', slug: 'research-report' },
   };
 
-  const postTypeReverseMap = Object.fromEntries(
-    Object.entries(postTypeDisplayMap).map(([key, value]) => [value, key])
+  // Reverse mapping from slug to postType
+  const postTypeSlugReverseMap = Object.fromEntries(
+    Object.entries(postTypeMap).map(([key, { slug }]) => [slug, key])
+  );
+
+  // Reverse mapping from display name to postType
+  const postTypeDisplayReverseMap = Object.fromEntries(
+    Object.entries(postTypeMap).map(([key, { display }]) => [display, key])
   );
 
   useEffect(() => {
@@ -69,7 +76,7 @@ export default function Home() {
     if (urlPostType) {
       const decodedPostType = decodeURIComponent(urlPostType);
       console.log('decodedPostType:', decodedPostType);
-      const backendPostType = postTypeReverseMap[decodedPostType] || decodedPostType;
+      const backendPostType = postTypeSlugReverseMap[decodedPostType];
       console.log('backendPostType:', backendPostType);
       console.log('postTypes includes backendPostType:', postTypes.includes(backendPostType));
       if (postTypes.includes(backendPostType)) {
@@ -78,8 +85,8 @@ export default function Home() {
     }
     setSelectedPostType(newPostType);
 
-    setPosts([]); 
-    setPage(1); 
+    setPosts([]);
+    setPage(1);
     setHasMore(true);
     fetchPosts(
       1,
@@ -216,7 +223,7 @@ export default function Home() {
 
   const handlePostTypeClick = (postType) => {
     setSelectedPostType(postType);
-    const formattedPostType = postType ? encodeURIComponent(postTypeDisplayMap[postType] || postType) : '';
+    const formattedPostType = postType ? postTypeMap[postType].slug : '';
     router.push(`/influencer-comment${postType ? `/${formattedPostType}` : ''}`);
   };
 
@@ -435,7 +442,7 @@ export default function Home() {
               }`}
               onClick={() => handlePostTypeClick(type)}
             >
-              <span>{postTypeDisplayMap[type]}</span>
+              <span>{postTypeMap[type].display}</span>
             </li>
           ))}
         </ul>
@@ -595,7 +602,7 @@ export default function Home() {
         <div className="flex flex-wrap gap-2 mb-6">
           {selectedPostType && (
             <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{postTypeDisplayMap[selectedPostType]}</span>
+              <span>{postTypeMap[selectedPostType].display}</span>
               <button
                 onClick={() => handleRemoveFilter('postType')}
                 className="ml-2 text-blue-800 hover:text-blue-600"
@@ -678,7 +685,7 @@ export default function Home() {
                   {post.postTitle}
                 </h2>
                 <p className="text-gray-600 text-sm mb-2">
-                  {post.source} | {post.postType}
+                  {post.source} | {postTypeMap[post.postType]?.display || post.postType}
                 </p>
                 <div className="text-gray-700 mb-4">
                   <p dangerouslySetInnerHTML={{ __html: post.summary }} />

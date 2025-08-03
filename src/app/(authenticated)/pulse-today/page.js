@@ -459,7 +459,7 @@ export default function PulseToday() {
               {hasMore && (
                 <div className="mt-4 text-right">
                   <Link
-                    href="/influencer-comment/Expert Opinion"
+                    href="/influencer-comment/expert-opinion"
                     className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
                   >
                     VIEW MORE →

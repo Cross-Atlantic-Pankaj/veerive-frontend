@@ -3,13 +3,6 @@
 import React from 'react';
 
 const Footer = () => {
-  const analyzerLinks = ["Sector Analyzer", "Company Analyzer", "Trend Analyzer"];
-  const thinkTankLinks = [
-    "Influencer Comment",
-    "Reports",
-    "Interviews",
-    "Infographics & Statistics"
-  ];
   const infoLinks = ["Privacy Policy", "Terms of Service"];
 
   const socialIcons = [
@@ -43,19 +36,19 @@ const Footer = () => {
             <h3 className="text-cyan-400 font-semibold mb-4">THINK TANK</h3>
             <ul className="space-y-2 text-sm text-gray-300">
               <li>
-                <a href="/influencer-comment/Expert Opinion" className="hover:underline">Expert Opinion</a>
+                <a href="/influencer-comment/expert-opinion" className="hover:underline">Expert Opinion</a>
               </li>
               <li>
-                <a href='/influencer-comment/Market Statistics' className="hover:underline">Market Statistics</a>
+                <a href='/influencer-comment/market-statistics' className="hover:underline">Market Statistics</a>
               </li>
               <li>
-                <a href='/influencer-comment/Interview' className="hover:underline">Interview</a>
+                <a href='/influencer-comment/interview' className="hover:underline">Interview</a>
               </li>
               <li>
-                <a href='/influencer-comment/News' className="hover:underline">News</a>
+                <a href='/influencer-comment/news' className="hover:underline">News</a>
               </li>
               <li>
-                <a href='/influencer-comment/Research Report' className="hover:underline">Research Report</a>
+                <a href='/influencer-comment/research-report' className="hover:underline">Research Report</a>
               </li>
             </ul>
           </div>
