@@ -117,13 +117,18 @@ export async function POST(request) {
 		const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
 
 		for (const savedPost of savedPosts) {
+			if (!savedPost || !savedPost.SavedpostId) {
+				console.warn('Invalid savedPost object:', savedPost);
+				continue;
+			}
+			
 			const savedPostId = savedPost.SavedpostId;
 			if (!mongoose.Types.ObjectId.isValid(savedPostId)) {
 				console.warn(`Invalid SavedpostId: ${savedPostId}`);
 				continue;
 			}
 
-			if (savedPost.SavedpostType === 'Context') {
+			if (savedPost.SavedpostType && savedPost.SavedpostType === 'Context') {
 				let query = { _id: savedPostId };
 				if (sectorObjectId) query.sectors = sectorObjectId;
 				if (subsectorObjectId) query.subSectors = subsectorObjectId;
@@ -161,23 +166,23 @@ export async function POST(request) {
 						contextTitle: context.contextTitle,
 						summary: context.summary,
 						containerType: context.containerType,
-						sectorNames: context.sectors.map((sector) => sector.sectorName),
-						subSectorNames: context.subSectors.map(
-							(subSector) => subSector.subSectorName
+						sectorNames: (context.sectors || []).map((sector) => sector?.sectorName || 'Unknown Sector'),
+						subSectorNames: (context.subSectors || []).map(
+							(subSector) => subSector?.subSectorName || 'Unknown SubSector'
 						),
-						posts: context.posts.map((post) => ({
-							postId: post.postId._id,
-							postTitle: post.postId.postTitle,
-							postType: post.postId.postType,
-							summary: post.postId.summary,
-							sourceUrl: post.postId.sourceUrl || '',
-						})),
+						posts: (context.posts || []).map((post) => ({
+							postId: post.postId?._id,
+							postTitle: post.postId?.postTitle || 'Unknown Post',
+							postType: post.postId?.postType || 'Unknown',
+							summary: post.postId?.summary || '',
+							sourceUrl: post.postId?.sourceUrl || '',
+						})).filter(post => post.postId), // Filter out posts with null postId
 						date: context.date,
 						savedAt: savedPost.savedAt,
-						tileTemplates: context.tileTemplates,
+						tileTemplates: context.tileTemplates || null,
 					});
 				}
-			} else if (savedPost.SavedpostType === 'Post') {
+			} else if (savedPost.SavedpostType && savedPost.SavedpostType === 'Post') {
 				let postQuery = { _id: savedPostId };
 				if (Object.keys(contextMatch).length > 0) {
 					postQuery.contexts = contextMatch;
@@ -210,9 +215,9 @@ export async function POST(request) {
 						'';
 					const sectorNames = Array.from(
 						new Set(
-							post.contexts
-								.flatMap((context) => context.sectors)
-								.map((sector) => sector.sectorName)
+							(post.contexts || [])
+								.flatMap((context) => context?.sectors || [])
+								.map((sector) => sector?.sectorName || 'Unknown Sector')
 						)
 					);
 					savedItems.posts.push({
@@ -227,7 +232,7 @@ export async function POST(request) {
 						savedAt: savedPost.savedAt,
 					});
 				}
-			} else if (savedPost.SavedpostType === 'Theme') {
+			} else if (savedPost.SavedpostType && savedPost.SavedpostType === 'Theme') {
 				if (signalObjectId || subsignalObjectId) {
 					continue;
 				}
@@ -266,13 +271,13 @@ export async function POST(request) {
 						trendingScore: theme.trendingScore || 0,
 						impactScore: theme.impactScore || 0,
 						predictiveMomentumScore: theme.predictiveMomentumScore || 0,
-						sectorNames: theme.sectors.map((sector) => sector.sectorName),
-						subSectorNames: theme.subSectors.map(
-							(subSector) => subSector.subSectorName
+						sectorNames: (theme.sectors || []).map((sector) => sector?.sectorName || 'Unknown Sector'),
+						subSectorNames: (theme.subSectors || []).map(
+							(subSector) => subSector?.subSectorName || 'Unknown SubSector'
 						),
-						date: theme.createdAt,
+						date: theme.date || theme.createdAt,
 						savedAt: savedPost.savedAt,
-            tileTemplates: theme.tileTemplateId,
+						tileTemplates: theme.tileTemplateId || null,
 					});
 				}
 			}
