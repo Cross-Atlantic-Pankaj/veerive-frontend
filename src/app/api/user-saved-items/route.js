@@ -277,8 +277,6 @@ export async function POST(request) {
 				}
 			}
 		}
-    console.log('SavedData of Theme in saved:', savedItems.themes);
-
 
 		return NextResponse.json({ savedItems }, { status: 200 });
 	} catch (error) {
