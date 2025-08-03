@@ -31,7 +31,7 @@ export async function GET(request) {
       );
     }
 
-    const savedPosts = user.savedPosts || [];
+    const savedPosts = Array.isArray(user.savedPosts) ? user.savedPosts : [];
 
     const sectorIds = new Set();
     const subSectorIds = new Set();
@@ -39,7 +39,7 @@ export async function GET(request) {
     const subSignalIds = new Set();
 
     const contextIds = savedPosts
-      .filter((item) => item.SavedpostType === 'Context')
+      .filter((item) => item && item.SavedpostType && item.SavedpostType === 'Context' && item.SavedpostId)
       .map((item) => item.SavedpostId);
 
     if (contextIds.length > 0) {
@@ -48,15 +48,31 @@ export async function GET(request) {
       }).lean();
 
       contexts.forEach((context) => {
-        (context.sectors || []).forEach((id) => sectorIds.add(id.toString()));
-        (context.subSectors || []).forEach((id) => subSectorIds.add(id.toString()));
-        (context.signalCategories || []).forEach((id) => signalIds.add(id.toString()));
-        (context.signalSubCategories || []).forEach((id) => subSignalIds.add(id.toString()));
+        if (context && context.sectors) {
+          context.sectors.forEach((id) => {
+            if (id) sectorIds.add(id.toString());
+          });
+        }
+        if (context && context.subSectors) {
+          context.subSectors.forEach((id) => {
+            if (id) subSectorIds.add(id.toString());
+          });
+        }
+        if (context && context.signalCategories) {
+          context.signalCategories.forEach((id) => {
+            if (id) signalIds.add(id.toString());
+          });
+        }
+        if (context && context.signalSubCategories) {
+          context.signalSubCategories.forEach((id) => {
+            if (id) subSignalIds.add(id.toString());
+          });
+        }
       });
     }
 
     const postIds = savedPosts
-      .filter((item) => item.SavedpostType === 'Post')
+      .filter((item) => item && item.SavedpostType && item.SavedpostType === 'Post' && item.SavedpostId)
       .map((item) => item.SavedpostId);
 
     if (postIds.length > 0) {
@@ -74,16 +90,32 @@ export async function GET(request) {
         }).lean();
 
         postContexts.forEach((context) => {
-          (context.sectors || []).forEach((id) => sectorIds.add(id.toString()));
-          (context.subSectors || []).forEach((id) => subSectorIds.add(id.toString()));
-          (context.signalCategories || []).forEach((id) => signalIds.add(id.toString()));
-          (context.signalSubCategories || []).forEach((id) => subSignalIds.add(id.toString()));
+          if (context && context.sectors) {
+            context.sectors.forEach((id) => {
+              if (id) sectorIds.add(id.toString());
+            });
+          }
+          if (context && context.subSectors) {
+            context.subSectors.forEach((id) => {
+              if (id) subSectorIds.add(id.toString());
+            });
+          }
+          if (context && context.signalCategories) {
+            context.signalCategories.forEach((id) => {
+              if (id) signalIds.add(id.toString());
+            });
+          }
+          if (context && context.signalSubCategories) {
+            context.signalSubCategories.forEach((id) => {
+              if (id) subSignalIds.add(id.toString());
+            });
+          }
         });
       }
     }
 
     const themeIds = savedPosts
-      .filter((item) => item.SavedpostType === 'Theme')
+      .filter((item) => item && item.SavedpostType && item.SavedpostType === 'Theme' && item.SavedpostId)
       .map((item) => item.SavedpostId);
 
     if (themeIds.length > 0) {
@@ -92,8 +124,16 @@ export async function GET(request) {
       }).lean();
 
       themes.forEach((theme) => {
-        (theme.sectors || []).forEach((id) => sectorIds.add(id.toString()));
-        (theme.subSectors || []).forEach((id) => subSectorIds.add(id.toString()));
+        if (theme && theme.sectors) {
+          theme.sectors.forEach((id) => {
+            if (id) sectorIds.add(id.toString());
+          });
+        }
+        if (theme && theme.subSectors) {
+          theme.subSectors.forEach((id) => {
+            if (id) subSectorIds.add(id.toString());
+          });
+        }
       });
     }
 
