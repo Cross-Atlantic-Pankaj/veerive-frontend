@@ -166,7 +166,7 @@ export async function GET(request) {
 			) {
 				return post.sourceUrls[0];
 			}
-			return `/influencer-comment/${post?.postType || 'Unknown'}`;
+			return `/influencer-comment/${post?.postType==='Expert Opinion' ? 'expert-opinion' : '' || post?.postType==='Infographic' ? 'market-statistics' : ''}`;
 		};
 
 		const slides = {
