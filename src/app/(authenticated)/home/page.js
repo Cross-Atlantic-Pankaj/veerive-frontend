@@ -234,7 +234,7 @@ export default function HomePage() {
 
         {/* Trending Events Section */}
         <div className="w-full bg-white border-t border-gray-200">
-          <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-8">
+          <div className="max-w-[1200px] mx-auto p-2 mt-6 md:mt-0 md:px-6 md:py-8">
             <div className="relative mb-8">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl md:text-2xl font-bold text-gray-900">
@@ -358,24 +358,24 @@ export default function HomePage() {
         </div>
 
         {/* Trending Opinions and Market Statistics Section */}
-        <div className="w-full bg-gray-50 py-8">
-          <div className="max-w-[1400px] mx-auto px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="w-full bg-gray-50 py-4 sm:py-6 md:py-8">
+          <div className="max-w-[1400px] mx-auto px-2 sm:px-4 md:px-8">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
               <div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                     TRENDING OPINIONS
                   </h2>
                   <Link
                     href="/influencer-comment/Expert Opinion"
-                    className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                    className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700"
                   >
                     VIEW ALL →
                   </Link>
                 </div>
-                <div className="h-[1px] bg-gray-200 w-full mt-4 mb-6"></div>
+                <div className="h-[1px] bg-gray-200 w-full mt-2 sm:mt-4 mb-3 sm:mb-6"></div>
 
-                <div className="space-y-6">
+                <div className="space-y-3 sm:space-y-4">
                   {trendingOpinions.map((post) => {
                     const tileTemplate = post.tileTemplateId
                       ? parseJsxCode(post.tileTemplateId.jsxCode)
@@ -387,9 +387,9 @@ export default function HomePage() {
                         href={post.sourceUrl || post.sourceUrls[0]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex gap-6 group"
+                        className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
                       >
-                        <div className="w-[120px] h-[75px] bg-gray-100 relative flex-shrink-0">
+                        <div className="w-full sm:w-[80px] md:w-[120px] h-[150px] sm:h-[50px] md:h-[75px] bg-gray-100 relative flex-shrink-0">
                           {tileTemplate ? (
                             <Tile
                               bg={tileTemplate.bg}
@@ -398,16 +398,16 @@ export default function HomePage() {
                               size={tileTemplate.size}
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                               1000 × 630
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-base text-gray-900 group-hover:text-indigo-600 mb-2 line-clamp-2 font-medium">
+                        <div className="flex-1 min-w-0 mt-2 sm:mt-0">
+                          <h3 className="text-sm sm:text-base text-gray-900 group-hover:text-indigo-600 mb-1 sm:mb-2 line-clamp-2 font-medium">
                             {post.postTitle}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500">
                             {new Date(post.date).toLocaleDateString('en-US', {
                               month: 'short',
                               day: '2-digit',
@@ -415,7 +415,7 @@ export default function HomePage() {
                             })}
                             {post.source?.sourceName && (
                               <>
-                                <span className="mx-2">|</span>
+                                <span className="mx-1 sm:mx-2">|</span>
                                 {post.source.sourceName}
                               </>
                             )}
@@ -429,19 +429,19 @@ export default function HomePage() {
 
               <div>
                 <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold text-gray-900">
+                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                     MARKET STATISTICS
                   </h2>
                   <Link
                     href="/influencer-comment/Market Statistics"
-                    className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                    className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700"
                   >
                     VIEW ALL →
                   </Link>
                 </div>
-                <div className="h-[1px] bg-gray-200 w-full mt-4 mb-6"></div>
+                <div className="h-[1px] bg-gray-200 w-full mt-2 sm:mt-4 mb-3 sm:mb-6"></div>
 
-                <div className="space-y-6">
+                <div className="space-y-3 sm:space-y-4">
                   {marketStatistics.map((post) => {
                     const tileTemplate = post.tileTemplateId
                       ? parseJsxCode(post.tileTemplateId.jsxCode)
@@ -452,9 +452,9 @@ export default function HomePage() {
                         href={post.sourceUrl || post.sourceUrls[0]}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex gap-6 group"
+                        className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
                       >
-                        <div className="w-[120px] h-[75px] bg-gray-100 relative flex-shrink-0">
+                        <div className="w-full sm:w-[80px] md:w-[120px] h-[150px] sm:h-[50px] md:h-[75px] bg-gray-100 relative flex-shrink-0">
                           {tileTemplate ? (
                             <Tile
                               bg={tileTemplate.bg}
@@ -463,16 +463,16 @@ export default function HomePage() {
                               size={tileTemplate.size}
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                               1000 × 630
                             </div>
                           )}
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-base text-gray-900 group-hover:text-indigo-600 mb-2 line-clamp-2 font-medium">
+                        <div className="flex-1 min-w-0 mt-2 sm:mt-0">
+                          <h3 className="text-sm sm:text-base text-gray-900 group-hover:text-indigo-600 mb-1 sm:mb-2 line-clamp-2 font-medium">
                             {post.postTitle}
                           </h3>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-xs sm:text-sm text-gray-500">
                             {new Date(post.date).toLocaleDateString('en-US', {
                               month: 'short',
                               day: '2-digit',
@@ -480,7 +480,7 @@ export default function HomePage() {
                             })}
                             {post.source?.sourceName && (
                               <>
-                                <span className="mx-2">| </span>
+                                <span className="mx-1 sm:mx-2">| </span>
                                 {post.source.sourceName}
                               </>
                             )}
@@ -497,7 +497,7 @@ export default function HomePage() {
 
         {/* HOT Trends Section */}
         <div className="w-full bg-white py-8">
-          <div className="max-w-[1400px] mx-auto px-8">
+          <div className="max-w-[1400px] mx-auto px-4 md:px-8">
             <div className="relative pb-4 mb-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-medium text-gray-900">
