@@ -134,11 +134,11 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">
                       {tileProps ? (
-                                                <div className="w-full h-full rounded-lg overflow-hidden">
+                                                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
                                                   <Tile {...tileProps} />
                                                 </div>
                                               ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                                                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
                                                   1000 × 630
                                                 </div>
                                               )}
@@ -175,23 +175,23 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
           <div className="w-full sm:w-1/3">
             {context.posts?.[0] && (
               <div className="font-semibold text-gray-800 text-sm lg:px-3">
-                {context.posts[0].postId?.postTitle || 'Untitled Post'}
+                {context.posts[0].postId?.postTitle}
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2 mt-5">
+        <div className="flex flex-col md:flex-row md:divide-y md:divide-y-0 md:divide-x divide-gray-300 gap-2 mt-5">
           {context.posts?.slice(1, 4).map((post, i) => (
             <div key={i} className="flex-1 px-2">
               <div className="font-semibold text-gray-800 text-sm">
-                {post.postId?.postTitle || 'Untitled Post'}
+                {post.postId?.postTitle}
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-2 mt-4">
           <button
             onClick={handleSave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${

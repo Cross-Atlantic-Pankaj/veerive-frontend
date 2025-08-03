@@ -375,12 +375,12 @@ export default function TrendAnalyzer() {
                   )}
                 </div>
 
-                <div className="p-5">
+                <div className="p-2 md:p-5">
                   <h2 className="text-lg font-bold text-gray-800 mb-4">
                     {theme.themeTitle}
                   </h2>
 
-                  <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden pr-3">
+                  <div className="grid grid-cols-3 gap-2 mb-4 bg-gray-50 rounded-lg overflow-hidden">
                     <div className="p-1 md:p-3 text-center border-r border-white">
                       <div className="text-sm font-medium text-gray-500 mb-1">
                         Trending <br /> Pulse

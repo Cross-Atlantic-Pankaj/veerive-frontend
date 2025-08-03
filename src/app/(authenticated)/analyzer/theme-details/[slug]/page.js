@@ -69,7 +69,7 @@ export default function ThemeDetails() {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen p-4">
+    <div className="bg-gray-50 min-h-screen p-2 md:p-4">
       <ThemeInfo theme={theme} />
       <OtherKeyTrend relatedThemes={relatedThemes} />
       <div className="flex flex-col lg:flex-row mx-auto">

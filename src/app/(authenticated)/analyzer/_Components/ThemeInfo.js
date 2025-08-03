@@ -1,8 +1,6 @@
-import Image from 'next/image';
-
 export default function ThemeInfo({ theme }) {
   return (
-    <div className="max-full mx-auto py-6 px-8">
+    <div className="max-full mx-auto md:py-6 p-3 md:px-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">{theme.themeTitle}</h1>
       
       <div className="space-y-4">

@@ -7,7 +7,7 @@ const TrendingExpertOpinions = ({ trendingExpertOpinions }) => {
   }
 
   return (
-    <div className="bg-white mt-16 p-4 rounded-xl shadow-md mr-4">
+    <div className="bg-white md:mt-16 p-4 rounded-xl shadow-md md:mr-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-base text-gray-900">
           Trending Expert Opinions

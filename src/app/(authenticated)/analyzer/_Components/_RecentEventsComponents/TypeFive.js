@@ -128,18 +128,18 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary }) =
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
       >
-        <div className="text-black-600 text-lg font-semibold mb-2">
+        <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
           {context.contextTitle}
         </div>
 
          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
   {tileProps ? (
-                <div className="w-full h-full rounded-lg overflow-hidden">
+                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
                   <Tile {...tileProps} />
                 </div>
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
                   1000 × 630
                 </div>
               )}

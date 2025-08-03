@@ -135,20 +135,20 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <div className="w-full sm:w-1/3">
                     {tileProps ? (
-                      <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
+                      <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
                         <Tile {...tileProps} />
                       </div>
                     ) : (
-                      <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                      <div className="w-full h-20 lg:h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                         1000 × 630
                       </div>
                     )}
                   </div>
                   <div className="flex-1 flex flex-col">
-                    <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
+                    <div className="text-red-600 text-xs font-semibold mb-1">
                       {sectorsLabel}
                     </div>
-                    <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
+                    <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 leading-tight">
                       {context.contextTitle}
                     </h2>
                   </div>
@@ -173,8 +173,8 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
 
         <div className="flex flex-col sm:flex-row gap-2">
           {context.posts?.slice(0, 2).map((post, i) => (
-            <div key={i} className="font-semibold text-gray-800 text-sm lg:pr-6">
-              {post.postId?.postTitle || 'Untitled Post'}
+            <div key={i} className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base lg:pr-6">
+              {post.postId?.postTitle}
             </div>
           ))}
         </div>
