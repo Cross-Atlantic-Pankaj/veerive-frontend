@@ -373,8 +373,8 @@ export default function Profile() {
         </div>
       )}
 
-      <div className="px-4 sm:px-8">
-        {/* <SavedItems /> */}
+      <div className="sm:px-8">
+        <SavedItems />
       </div>
     </div>
   );
