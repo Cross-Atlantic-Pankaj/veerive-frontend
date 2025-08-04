@@ -339,11 +339,11 @@ export default function PulseToday() {
         </div>
       }
     >
-      <main className="px-4 py-6 sm:px-6 sm:py-8 lg:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-        <div ref={containerRef} className="flex flex-col lg:flex-row gap-6 lg:gap-8 relative">
+      <main className="px-3 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-16 xl:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
+        <div ref={containerRef} className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 relative max-w-7xl mx-auto">
           <div
             ref={mainContentRef}
-            className="w-full transition-all duration-300 ease-in-out lg:w-[72%]"
+            className="w-full transition-all duration-300 ease-in-out lg:w-[72%] order-2 lg:order-1"
           >
             {displayItems.map((displayItem, index) => {
               const isLastItem = index === displayItems.length - 1 && hasMore;
@@ -351,10 +351,18 @@ export default function PulseToday() {
                 const groupKey = `group-${displayItem.items
                   .map((item) => item.id)
                   .join('-')}-${index}`;
+                
+                // Determine grid classes based on number of items
+                const getGridClasses = (itemCount) => {
+                  if (itemCount === 1) return 'grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                  if (itemCount === 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                  return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                };
+                
                 return (
                   <div
                     key={groupKey}
-                    className={`grid grid-cols-${Math.min(displayItem.items.length, 3)} sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-0.5 sm:mb-6`}
+                    className={getGridClasses(displayItem.items.length)}
                   >
                     {displayItem.items.map((context, itemIndex) =>
                       renderContextBox(
@@ -368,7 +376,7 @@ export default function PulseToday() {
               } else {
                 const singleKey = `${displayItem.item.id}-${index}`;
                 return (
-                  <div key={singleKey} className="mb-0.5 sm:mb-6">
+                  <div key={singleKey} className="mb-4 sm:mb-6">
                     {renderContextBox(displayItem.item, isLastItem, singleKey)}
                   </div>
                 );
@@ -376,20 +384,21 @@ export default function PulseToday() {
             })}
 
             {hasMore && (
-              <div ref={loaderRef} className="text-center py-6">
+              <div ref={loaderRef} className="text-center py-4 sm:py-6">
                 {loading && (
-                  <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-500 border-r-transparent" />
+                  <div className="inline-block h-6 w-6 sm:h-8 sm:w-8 animate-spin rounded-full border-2 sm:border-4 border-solid border-indigo-500 border-r-transparent" />
                 )}
               </div>
             )}
           </div>
 
-          <div className="w-full lg:w-[28%]">
+          {/* Sidebar - Mobile first, then desktop positioning */}
+          <div className="w-full lg:w-[28%] order-1 lg:order-2">
             {sidebarMessage && (
-              <div className="bg-white p-4 sm:p-5 rounded-xl shadow-md mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-teal-500 text-base sm:text-lg">✦</span>
-                  <span className="font-semibold text-gray-900 text-base sm:text-lg">
+              <div className="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md mb-4 sm:mb-6">
+                <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                  <span className="text-teal-500 text-sm sm:text-base lg:text-lg flex-shrink-0">✦</span>
+                  <span className="font-semibold text-gray-900 text-sm sm:text-base lg:text-lg leading-tight">
                     {sidebarMessage.title}
                   </span>
                 </div>
@@ -399,30 +408,30 @@ export default function PulseToday() {
               </div>
             )}
 
-            <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
+            <div className="bg-gray-100 p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
+                <h2 className="font-semibold text-base sm:text-lg text-gray-800">Trending Themes</h2>
                 <Link
                   href="/analyzer/trend"
-                  className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+                  className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700 self-start sm:self-auto"
                 >
                   VIEW MORE →
                 </Link>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {trendingThemes.map((theme, index) => (
                   <div
                     key={index}
-                    className="border-b border-dashed border-gray-300 pb-3 last:border-0 last:pb-0"
+                    className="border-b border-dashed border-gray-300 pb-2 sm:pb-3 last:border-0 last:pb-0"
                   >
                     <Link href={`/analyzer/theme-details/${slugify(theme.title)}`}>
-                      <div className="flex items-start gap-3">
-                        <div className="flex-shrink-0 flex items-center justify-center w-7 h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-sm">
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-xs sm:text-sm">
                           {theme.score.toFixed(1)}
                         </div>
-                        <div className="break-words">
-                          <h3 className="font-medium text-gray-800 text-sm">{theme.title}</h3>
+                        <div className="break-words min-w-0 flex-1">
+                          <h3 className="font-medium text-gray-800 text-xs sm:text-sm leading-tight">{theme.title}</h3>
                           <div className="mt-1 text-xs text-gray-500">
                             {theme.sectors.length > 0 && theme.sectors[0]}
                           </div>
@@ -434,22 +443,22 @@ export default function PulseToday() {
               </div>
             </div>
 
-            <div className="bg-white mt-6 p-4 sm:p-5 rounded-xl shadow-md">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-semibold text-base sm:text-lg text-gray-900">
+            <div className="bg-white mt-4 sm:mt-6 p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
+                <h2 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900">
                   Trending Expert Opinion
                 </h2>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3 sm:space-y-4">
                 {expertPosts.map((post) => (
                   <a
                     key={post._id}
                     href={post.SourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block border-b border-dashed border-gray-300 pb-3 last:border-none hover:text-indigo-600 transition-colors"
+                    className="block border-b border-dashed border-gray-300 pb-2 sm:pb-3 last:border-none hover:text-indigo-600 transition-colors"
                   >
-                    <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors">
+                    <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors leading-tight">
                       {post.postTitle}
                     </h3>
                   </a>
@@ -457,7 +466,7 @@ export default function PulseToday() {
               </div>
 
               {hasMore && (
-                <div className="mt-4 text-right">
+                <div className="mt-3 sm:mt-4 text-right">
                   <Link
                     href="/influencer-comment/expert-opinion"
                     className="text-indigo-600 text-xs sm:text-sm font-medium hover:underline"
