@@ -425,10 +425,10 @@ export default function Home() {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Mobile Filter Button */}
-      <div className="lg:hidden sticky top-0 bg-white shadow-sm z-40 px-4 py-3">
+      <div className="lg:hidden sticky top-0 z-40 px-4 py-3 flex justify-center items-center">
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+          className="flex items-center gap-2 bg-gray-200 p-2 rounded-lg text-black"
         >
           <svg
             className="w-5 h-5"
