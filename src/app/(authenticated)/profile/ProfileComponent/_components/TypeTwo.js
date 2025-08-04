@@ -75,7 +75,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer mb-4"
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <div className="w-full sm:w-1/3">

@@ -65,7 +65,7 @@ const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4"
       >
         <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
           {context.contextTitle}

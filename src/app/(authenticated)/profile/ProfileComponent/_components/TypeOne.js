@@ -62,7 +62,7 @@ const TypeOne = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200"
+        className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200 mb-4"
       >
         {tileProps ? (
                   <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">

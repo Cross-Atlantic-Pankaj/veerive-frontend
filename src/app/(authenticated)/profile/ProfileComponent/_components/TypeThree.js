@@ -15,8 +15,8 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
-  const [isSaved, setIsSaved] = useState(false);
+const TypeThree = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+  const [isSaved, setIsSaved] = useState(true);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
@@ -27,7 +27,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
     : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
- const handleShare = async (e) => {
+  const handleShare = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
@@ -66,32 +66,32 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-2"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-2 sm:p-4 md:p-6 w-full cursor-pointer mb-4"
       >
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 md:gap-4">
           <div className="flex-1 flex flex-col">
-            <div className="flex flex-row items-start gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-start gap-2 sm:gap-3 md:gap-4">
               <div className="w-full sm:w-1/3">
-                              {tileProps ? (
-                                <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
-                                  <Tile {...tileProps} />
-                                </div>
-                              ) : (
-                                <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                                  1000 × 630
-                                </div>
-                              )}
-                            </div>
+                {tileProps ? (
+                  <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
+                    <Tile {...tileProps} />
+                  </div>
+                ) : (
+                  <div className="w-full h-20 lg:h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                    1000 × 630
+                  </div>
+                )}
+              </div>
               <div className="flex-1">
-                <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
+                <div className="text-red-600 text-xs font-semibold mb-1">
                   {sectorsLabel}
                 </div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
+                <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 leading-tight">
                   {context.contextTitle}
                 </h2>
               </div>
             </div>
-            <div className="mt-3">
+            <div className="mt-2 sm:mt-3">
               {summaryPoints.length > 0 ? (
                 summaryPoints.map((point, i) => (
                   <div
@@ -109,13 +109,13 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
             </div>
           </div>
 
-          <div className="w-full sm:w-1/3 flex flex-col justify-between">
+          <div className="w-full sm:w-1/3 flex flex-col justify-between mt-2 sm:mt-0">
             {context.posts?.slice(0, 3).map((post, i) => (
               <div
                 key={i}
                 className="border-t border-gray-300 pt-0.5 mt-0.5 first:border-t-0 first:mt-0"
               >
-                <div className="font-semibold text-gray-800 text-sm my-2">
+                <div className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base my-1 sm:my-2">
                   {post.postTitle}
                 </div>
               </div>
@@ -123,10 +123,10 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           </div>
         </div>
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-1 sm:gap-2 mt-2 sm:mt-4 md:mt-2">
           <button
             onClick={onUnsave}
-            className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
+            className={`inline-flex items-center px-2 sm:px-3 py-1 rounded-md text-xs font-medium ${
               isSaved
                 ? 'bg-green-100 text-green-700'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -134,7 +134,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 sm:h-5 w-4 sm:w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -150,11 +150,11 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
           </button>
           <button
             onClick={handleShare}
-            className="inline-flex items-center bg-gray-100 text-gray-700 px-3 py-1 rounded-md hover:bg-gray-200 text-xs font-medium"
+            className="inline-flex items-center bg-gray-100 text-gray-700 px-2 sm:px-3 py-1 rounded-md hover:bg-gray-200 text-xs font-medium"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 sm:h-5 w-4 sm:w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
