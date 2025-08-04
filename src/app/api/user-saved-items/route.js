@@ -176,7 +176,7 @@ export async function POST(request) {
 							postType: post.postId?.postType || 'Unknown',
 							summary: post.postId?.summary || '',
 							sourceUrl: post.postId?.sourceUrl || '',
-						})).filter(post => post.postId), // Filter out posts with null postId
+						})).filter(post => post.postId),
 						date: context.date,
 						savedAt: savedPost.savedAt,
 						tileTemplates: context.tileTemplates || null,

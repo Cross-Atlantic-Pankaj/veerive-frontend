@@ -89,7 +89,6 @@ export async function GET(request) {
     let contextMatch = {};
     if (subsectorId) {
       const matchingContexts = await Context.find({ subSectors: subsectorId }).select('_id');
-      console.log('Contexts found for subsectorId:', subsectorId, matchingContexts);
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
