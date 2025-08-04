@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Tile, parseJsxCode } from '../../../../utils/Tile';
@@ -12,11 +12,11 @@ const normalizeTitle = (text) => {
     .replace(/[^\w\s-]/g, '') 
     .replace(/\s+/g, '-') 
     .replace(/--+/g, '-') 
-    .replace(/^-+|-+$/g, ''); 
+    .replace(/^-+|-+$/g, '');
 };
 
-const TypeThree = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
-  const [isSaved, setIsSaved] = useState(true);
+const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+  const [isSaved, setIsSaved] = useState(false);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
@@ -27,7 +27,7 @@ const TypeThree = ({ context, formatSummary, handleUnsave, isLastItem, lastConte
     : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
-  const handleShare = async (e) => {
+ const handleShare = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Tile, parseJsxCode } from '../../../../utils/Tile';
@@ -12,11 +12,11 @@ const normalizeTitle = (text) => {
     .replace(/[^\w\s-]/g, '') 
     .replace(/\s+/g, '-') 
     .replace(/--+/g, '-') 
-    .replace(/^-+|-+$/g, '');
+    .replace(/^-+|-+$/g, ''); 
 };
 
-const TypeTwo = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
-  const [isSaved, setIsSaved] = useState(true);
+const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+  const [isSaved, setIsSaved] = useState(false);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
@@ -27,7 +27,7 @@ const TypeTwo = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
     : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
-  const handleShare = async (e) => {
+    const handleShare = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
@@ -50,23 +50,32 @@ const TypeTwo = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
     }
   };
 
-  const onUnsave = async (e) => {
+    const onUnsave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     await handleUnsave(context._id);
     setIsSaved(false);
   };
 
-    const tileProps =
+  const getUserEmail = () => {
+    const userDataStr = localStorage.getItem('user');
+    if (userDataStr) {
+      const user = JSON.parse(userDataStr);
+      return user.email;
+    }
+    return null;
+  };
+
+      const tileProps =
       context.tileTemplates && context.tileTemplates.length > 0
         ? parseJsxCode(context.tileTemplates[0].jsxCode)
         : null;
-
+  
   return (
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer mb-4"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer"
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <div className="w-full sm:w-1/3">
@@ -75,7 +84,7 @@ const TypeTwo = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
                         <Tile {...tileProps} />
                       </div>
                     ) : (
-                      <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                      <div className="w-full h-20 lg:h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
                         1000 × 630
                       </div>
                     )}
@@ -122,7 +131,7 @@ const TypeTwo = ({ context, formatSummary, handleUnsave, isLastItem, lastContext
               isSaved
                 ? 'bg-green-100 text-green-700'
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
+            }`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

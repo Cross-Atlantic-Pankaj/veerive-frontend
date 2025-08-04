@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import { Tile, parseJsxCode } from '../../../../utils/Tile';
@@ -12,7 +12,7 @@ const normalizeTitle = (text) => {
     .replace(/[^\w\s-]/g, '') 
     .replace(/\s+/g, '-') 
     .replace(/--+/g, '-') 
-    .replace(/^-+|-+$/g, ''); 
+    .replace(/^-+|-+$/g, '');
 };
 
 const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
@@ -65,24 +65,24 @@ const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
     <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
       >
-        <div className="text-black-600 text-lg font-semibold mb-2">
+        <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
           {context.contextTitle}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
-            {tileProps ? (
-                          <div className="w-full h-full rounded-lg overflow-hidden">
-                            <Tile {...tileProps} />
-                          </div>
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                            1000 × 630
-                          </div>
-                        )}
-                      </div>
+  {tileProps ? (
+                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
+                  <Tile {...tileProps} />
+                </div>
+              ) : (
+                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                  1000 × 630
+                </div>
+              )}
+            </div>
 
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-2">
@@ -96,7 +96,7 @@ const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
               <div className="flex-1">
                 {context.posts?.[1] && (
                   <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[1].postTitle}
+                   {context.posts[1].postTitle}
                   </div>
                 )}
               </div>
@@ -111,8 +111,8 @@ const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
 
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
-                {summaryPoint.length > 0 ? (
-                  summaryPoint.map((point, i) => (
+                {summaryPoints.length > 0 ? (
+                  summaryPoints.map((point, i) => (
                     <div
                       key={i}
                       className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
