@@ -189,43 +189,43 @@ export default function Profile() {
   };
 
   return (
-    <div className="p-6 relative mb-64">
+    <div className="p-3 sm:p-6 relative mb-64">
       <Toaster position="top-right" />
-      <div className="flex items-start gap-6 bg-white rounded-xl shadow-base px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-6">
-        <div className="text-purple-600 bg-purple-50 p-3 rounded-full">
+      <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 bg-white rounded-xl shadow-base px-3 sm:px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-0 sm:ml-6">
+        <div className="text-purple-600 bg-purple-50 p-3 rounded-full flex-shrink-0 mx-auto sm:mx-0">
           <FaUserCircle size={48} />
         </div>
-        <div className="flex flex-col flex-grow">
-          <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-semibold text-gray-800">
+        <div className="flex flex-col flex-grow w-full">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
+            <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 text-center sm:text-left">
               {userData.name}
             </h2>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <button
                 onClick={handleForgotPassword}
                 disabled={isPasswordLoading}
-                className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 w-full sm:w-auto whitespace-nowrap"
               >
                 {isPasswordLoading ? 'Sending OTP...' : 'Change Password'}
               </button>
               <button
                 onClick={handleChangeEmail}
                 disabled={isEmailLoading}
-                className="px-4 py-2 text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2"
+                className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 w-full sm:w-auto whitespace-nowrap"
               >
                 {isEmailLoading ? 'Sending OTP...' : 'Change Email'}
               </button>
             </div>
           </div>
-          <p className="text-gray-600">{userData.email}</p>
+          <p className="text-gray-600 text-center sm:text-left mt-2 sm:mt-0 break-all sm:break-normal">{userData.email}</p>
         </div>
       </div>
 
       {showPasswordModal && (
-        <div className="fixed inset-0 flex justify-center z-50 h-fit mt-22">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all">
-            <div className="flex justify-between items-center px-5 py-2 border-b">
-              <h3 className="text-xl font-semibold text-gray-800">
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center px-4 sm:px-5 py-3 sm:py-2 border-b sticky top-0 bg-white">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
                 Reset Password
               </h3>
               <button
@@ -236,10 +236,10 @@ export default function Profile() {
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <form
                 onSubmit={handleResetPassword}
-                className="space-y-5"
+                className="space-y-4 sm:space-y-5"
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -249,13 +249,13 @@ export default function Profile() {
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200 text-base"
                     placeholder="Enter 6-digit OTP"
                     maxLength={6}
                   />
-                  <div className="mt-2 flex items-center text-sm text-gray-500">
+                  <div className="mt-2 flex items-center text-xs sm:text-sm text-gray-500">
                     <svg
-                      className="w-4 h-4 mr-1.5"
+                      className="w-4 h-4 mr-1.5 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -279,7 +279,7 @@ export default function Profile() {
                     type="password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200 text-base"
                     placeholder="Enter new password"
                   />
                 </div>
@@ -298,10 +298,10 @@ export default function Profile() {
       )}
 
       {showEmailModal && (
-        <div className="fixed inset-0 flex justify-center z-50 h-fit mt-22">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all">
-            <div className="flex justify-between items-center px-5 py-2 border-b">
-              <h3 className="text-xl font-semibold text-gray-800">
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-opacity-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-2 transform transition-all max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center px-4 sm:px-5 py-3 sm:py-2 border-b sticky top-0 bg-white">
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-800">
                 Change Email
               </h3>
               <button
@@ -312,10 +312,10 @@ export default function Profile() {
               </button>
             </div>
 
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <form
                 onSubmit={handleUpdateEmail}
-                className="space-y-5"
+                className="space-y-4 sm:space-y-5"
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -325,13 +325,13 @@ export default function Profile() {
                     type="text"
                     value={otp}
                     onChange={(e) => setOtp(e.target.value)}
-                    className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200 text-base"
                     placeholder="Enter 6-digit OTP"
                     maxLength={6}
                   />
-                  <div className="mt-2 flex items-center text-sm text-gray-500">
+                  <div className="mt-2 flex items-center text-xs sm:text-sm text-gray-500">
                     <svg
-                      className="w-4 h-4 mr-1.5"
+                      className="w-4 h-4 mr-1.5 flex-shrink-0"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -355,7 +355,7 @@ export default function Profile() {
                     type="email"
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
-                    className="w-full px-4 py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200"
+                    className="w-full px-3 sm:px-4 py-2 sm:py-2 border-2 border-purple-200 rounded-lg focus:outline-none focus:border-purple-500 transition-colors duration-200 text-base"
                     placeholder="Enter new email"
                   />
                 </div>
@@ -373,8 +373,8 @@ export default function Profile() {
         </div>
       )}
 
-      <div className="px-8">
-        <SavedItems />
+      <div className="px-4 sm:px-8">
+        {/* <SavedItems /> */}
       </div>
     </div>
   );
