@@ -127,38 +127,38 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
     }
   };
 
-  return (
-    <Link href={`/context-details/${slug}`}>
+	return (
+		<Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 flex flex-col p-4 sm:p-5 w-full cursor-pointer"
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
-          <div className="w-full sm:w-1/3">
-            {tileTemplate ? (
-              <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 rounded-lg overflow-hidden">
-                <Tile
+                  <div className="w-full sm:w-1/3">
+                    {tileTemplate ? (
+                      <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
+                        <Tile
                   bg={tileTemplate.bg}
                   icon={tileTemplate.icon}
                   color={tileTemplate.color}
                   size={tileTemplate.size}
                 />
-              </div>
-            ) : (
-              <div className="w-full h-16 sm:h-20 md:h-24 lg:h-28 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                1000 × 630
-              </div>
-            )}
-          </div>
-          <div className="flex-1 flex flex-col">
-            <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
-              {sectorsLabel}
-            </div>
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
-              {context.contextTitle}
-            </h2>
-          </div>
-        </div>
+                      </div>
+                    ) : (
+                      <div className="w-full h-20 lg:h-24 bg-gray-200 rounded-lg flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                        1000 × 630
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1 flex flex-col">
+                    <div className="text-red-600 text-xs font-semibold mb-1">
+                      {sectorsLabel}
+                    </div>
+                    <h2 className="text-base sm:text-lg md:text-xl font-bold text-gray-900 leading-tight">
+                      {context.contextTitle}
+                    </h2>
+                  </div>
+                </div>
 
         <div className="mb-4">
           {summaryPoints.length > 0 ? (
@@ -179,7 +179,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
 
         <div className="flex flex-col sm:flex-row gap-2">
           {context.posts?.slice(0, 2).map((post, i) => (
-            <div key={i} className="font-semibold text-gray-800 text-sm lg:pr-6">
+            <div key={i} className="font-semibold text-gray-800 text-xs sm:text-sm md:text-base lg:pr-6">
               {post.postTitle}
             </div>
           ))}
@@ -196,7 +196,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -216,7 +216,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -233,7 +233,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
         </div>
       </div>
     </Link>
-  );
+	);
 };
 
 export default TypeTwo;

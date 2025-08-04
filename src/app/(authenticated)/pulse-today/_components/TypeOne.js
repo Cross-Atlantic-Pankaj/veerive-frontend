@@ -123,32 +123,33 @@ const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
     }
   };
 
-  return (
-    <Link href={`/context-details/${slug}`}>
+    return (
+        <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200"
+        className="bg-white rounded-lg overflow-hidden w-full shadow-md cursor-pointer hover:shadow-md transition-all duration-200"
       >
+
         {tileTemplate ? (
-          <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
-            <Tile
+                    <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
+                    <Tile
               bg={tileTemplate.bg}
               icon={tileTemplate.icon}
               color={tileTemplate.color}
               size={tileTemplate.size}
             />
-          </div>
-        ) : (
-          <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-            1000 × 630
-          </div>
-        )}
+                    </div>
+                ) : (
+                    <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
+                        1000 × 630
+                    </div>
+                )}
         <div className="px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
-            {[...context.sectors, ...context.subSectors].slice(0, 3).map((name, idx) => (
+            {[...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).map((name, idx) => (
               <span
                 key={idx}
-                className="text-[10px] sm:text-xs text-gray-600 relative inline-block font-medium border-b-2 border-green-500"
+                className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
               >
                 {name}
               </span>
@@ -206,7 +207,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
         </div>
       </div>
     </Link>
-  );
+    );
 };
 
 export default TypeOne;

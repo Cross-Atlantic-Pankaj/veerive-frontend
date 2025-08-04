@@ -127,32 +127,32 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
   };
 
   return (
-    <Link href={`/context-details/${slug}`}>
+   <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
       >
-        <div className="text-black-600 text-lg font-semibold mb-2">
+        <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
           {context.contextTitle}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="w-full sm:w-1/3 flex items-stretch">
-            {tileTemplate ? (
-              <div className="w-full h-full rounded-lg overflow-hidden">
-                <Tile
+  {tileTemplate ? (
+                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
+                  <Tile
                   bg={tileTemplate.bg}
                   icon={tileTemplate.icon}
                   color={tileTemplate.color}
                   size={tileTemplate.size}
                 />
-              </div>
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                1000 × 630
-              </div>
-            )}
-          </div>
+                </div>
+              ) : (
+                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                  1000 × 630
+                </div>
+              )}
+            </div>
 
           <div className="flex-1 flex flex-col gap-3">
             <div className="flex flex-col sm:flex-row gap-2">
@@ -181,8 +181,8 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
 
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
-                {summaryPoint.length > 0 ? (
-                  summaryPoint.map((point, i) => (
+                {summaryPoints.length > 0 ? (
+                  summaryPoints.map((point, i) => (
                     <div
                       key={i}
                       className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
@@ -225,7 +225,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-5 w-5 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -245,7 +245,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 mr-1"
+              className="h-5 w-5 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
