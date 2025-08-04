@@ -94,18 +94,18 @@ export default function ContextDetails() {
 
   if (error) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-        <p className="text-gray-800">{error}</p>
+      <div className="flex flex-col justify-center items-center min-h-screen px-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-red-600 mb-4 text-center">Error</h1>
+        <p className="text-gray-800 text-center">{error}</p>
       </div>
     );
   }
 
   if (!context) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Context Not Found</h1>
-        <p className="text-gray-600">The requested context could not be found.</p>
+      <div className="flex flex-col justify-center items-center min-h-screen px-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4 text-center">Context Not Found</h1>
+        <p className="text-gray-600 text-center">The requested context could not be found.</p>
       </div>
     );
   }
@@ -123,20 +123,20 @@ export default function ContextDetails() {
           }
         />
       </Head>
-      <div className="min-h-screen bg-white py-4">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-[#f0f0f0] py-4 flex justify-center mb-4">
-            <form onSubmit={handleSearch} className="flex w-1/2">
+      <div className="min-h-screen bg-white py-2 sm:py-4">
+        <div className="container mx-auto px-2 sm:px-4 lg:px-8">
+          <div className="bg-[#f0f0f0] py-4 flex justify-center mb-4 px-2 sm:px-4">
+            <form onSubmit={handleSearch} className="flex w-full max-w-md sm:max-w-lg lg:w-1/2">
               <input
                 type="text"
-                className="flex-grow px-2 py-3 text-sm text-gray-800 bg-white border border-gray-300 rounded-l-md focus:outline-none"
+                className="flex-grow px-2 sm:px-3 py-3 text-sm text-gray-800 bg-white border border-gray-300 rounded-l-md focus:outline-none"
                 placeholder="Search here..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <button
                 type="submit"
-                className="bg-[#5d4be6] w-10 flex items-center justify-center rounded-r-md"
+                className="bg-[#5d4be6] w-10 sm:w-12 flex items-center justify-center rounded-r-md"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -163,14 +163,14 @@ export default function ContextDetails() {
             sliderRef={sliderRef}
           />
 
-          <div className="flex flex-col lg:flex-row px-8">
-            <div className="lg:w-[68%]">
+          <div className="flex flex-col lg:flex-row sm:px-4 lg:px-8">
+            <div className="w-full lg:w-[68%] md:mb-6 lg:mb-0">
               {context.contextPosts?.length > 0 && (
                 <div className="mb-6">
-                  <h2 className="text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-blue-700 mb-4 bg-yellow-200 w-fit px-2">
                     Explore Event
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                     {context.contextPosts.map((post) => (
                       <PostCard key={post.postId} post={post} />
                     ))}
@@ -181,8 +181,8 @@ export default function ContextDetails() {
               <RelatedEvents matchingContexts={context.matchingContexts} />
             </div>
 
-            <div className="lg:w-[32%]">
-              <div className="px-10">
+            <div className="w-full lg:w-[32%]">
+              <div className="px-2 sm:px-4 lg:px-10">
                 <TrendingThemes trendingThemes={context.trendingThemes} />
                 <TrendingExpertOpinion
                   trendingExpertOpinions={context.trendingExpertOpinions}

@@ -18,7 +18,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 	};
 
 	return (
-		<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden p-6 mb-6">
+		<div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden p-3 md:p-6 mb-6">
 			<h1 className="text-2xl font-bold text-gray-900 mb-4 ml-2">
 				{context.contextTitle}
 			</h1>
