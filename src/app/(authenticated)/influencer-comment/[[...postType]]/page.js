@@ -24,6 +24,7 @@ export default function Home() {
   const [showAllSubsectors, setShowAllSubsectors] = useState({});
   const [showAllSubsignals, setShowAllSubsignals] = useState({});
   const [savedPosts, setSavedPosts] = useState({});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
   const params = useParams();
 
@@ -225,6 +226,7 @@ export default function Home() {
     setSelectedPostType(postType);
     const formattedPostType = postType ? postTypeMap[postType].slug : '';
     router.push(`/influencer-comment${postType ? `/${formattedPostType}` : ''}`);
+    setIsSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleSectorClick = (sectorId) => {
@@ -236,6 +238,7 @@ export default function Home() {
     }
     setSelectedSignalId(null);
     setSelectedSubsignalId(null);
+    setIsSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleSubsectorClick = (subsectorId, parentSectorId) => {
@@ -247,6 +250,7 @@ export default function Home() {
     }
     setSelectedSignalId(null);
     setSelectedSubsignalId(null);
+    setIsSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleSignalClick = (signalId) => {
@@ -258,6 +262,7 @@ export default function Home() {
     }
     setSelectedSectorId(null);
     setSelectedSubsectorId(null);
+    setIsSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const handleSubsignalClick = (subsignalId, parentSignalId) => {
@@ -269,6 +274,7 @@ export default function Home() {
     }
     setSelectedSectorId(null);
     setSelectedSubsectorId(null);
+    setIsSidebarOpen(false); // Close sidebar on mobile after selection
   };
 
   const toggleSectorExpand = (sectorId) => {
@@ -417,342 +423,404 @@ export default function Home() {
     : null;
 
   return (
-    <div className="bg-gray-50 flex px-12">
-      <div className="w-1/4 bg-white shadow-md p-6 h-fit my-5 rounded-lg">
-        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Insights Modules</h2>
-        <ul className="mb-4 space-y-2">
-          <li
-            key="all-posts"
-            className={`p-2 rounded-md cursor-pointer flex items-center justify-between ${
-              selectedPostType === null
-                ? 'bg-blue-50 text-blue-700'
-                : 'text-gray-600 hover:bg-gray-100'
-            }`}
-            onClick={() => handlePostTypeClick(null)}
+    <div className="bg-gray-50 min-h-screen">
+      {/* Mobile Filter Button */}
+      <div className="lg:hidden sticky top-0 bg-white shadow-sm z-40 px-4 py-3">
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="flex items-center gap-2 text-gray-700 hover:text-gray-900"
+        >
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
           >
-            <span>All Posts</span>
-          </li>
-          {postTypes.map((type) => (
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+            />
+          </svg>
+          <span className="font-medium">Filters</span>
+        </button>
+      </div>
+
+      <div className="flex flex-col lg:flex-row px-4 sm:px-6 lg:px-12 relative">
+        {/* Mobile Sidebar Overlay */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* Sidebar */}
+        <div
+          className={`
+            fixed lg:static top-0 left-0 h-full lg:h-auto
+            w-80 sm:w-96 lg:w-1/4 
+            bg-white shadow-md lg:shadow-md 
+            p-6 lg:p-6 
+            my-0 lg:my-5 
+            rounded-none lg:rounded-lg
+            transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            transition-transform duration-300 ease-in-out
+            z-50 lg:z-auto
+            overflow-y-auto lg:overflow-visible
+            lg:h-fit
+          `}
+        >
+          {/* Mobile Close Button */}
+          <div className="lg:hidden flex justify-between items-center mb-4 pb-4 border-b">
+            <h2 className="text-lg font-bold text-gray-700">Filters</h2>
+            <button
+              onClick={() => setIsSidebarOpen(false)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Insights Modules</h2>
+          <ul className="mb-4 space-y-2">
             <li
-              key={type}
+              key="all-posts"
               className={`p-2 rounded-md cursor-pointer flex items-center justify-between ${
-                selectedPostType === type
+                selectedPostType === null
                   ? 'bg-blue-50 text-blue-700'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
-              onClick={() => handlePostTypeClick(type)}
+              onClick={() => handlePostTypeClick(null)}
             >
-              <span>{postTypeMap[type].display}</span>
+              <span>All Posts</span>
             </li>
-          ))}
-        </ul>
-
-        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Sectors</h2>
-        <ul className="mb-4 space-y-2">
-          {visibleSectors.map((sector) => (
-            <div key={sector._id}>
+            {postTypes.map((type) => (
               <li
-                className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
-                  expandedSectors[sector._id] ? 'bg-gray-100' : ''
+                key={type}
+                className={`p-2 rounded-md cursor-pointer flex items-center justify-between ${
+                  selectedPostType === type
+                    ? 'bg-blue-50 text-blue-700'
+                    : 'text-gray-600 hover:bg-gray-100'
                 }`}
-                onClick={() => toggleSectorExpand(sector._id)}
+                onClick={() => handlePostTypeClick(type)}
               >
-                <span>{sector.sectorName}</span>
-                <span
-                  className="cursor-pointer text-gray-400"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSectorExpand(sector._id);
-                  }}
-                >
-                  {expandedSectors[sector._id] ? '−' : '+'}
-                </span>
+                <span>{postTypeMap[type].display}</span>
               </li>
-              {expandedSectors[sector._id] && (
-                <ul className="ml-4 mt-1 space-y-1">
-                  <li
-                    className={`p-2 rounded-md cursor-pointer relative ${
-                      selectedSectorId === sector._id && !selectedSubsectorId
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                    onClick={() => handleSectorClick(sector._id)}
-                  >
-                    {sector.sectorName}
-                  </li>
-                  {sector.subsectors && sector.subsectors.length > 0 && sector.subsectors
-                    .slice(
-                      0,
-                      showAllSubsectors[sector._id] ? sector.subsectors.length : 4
-                    )
-                    .map((subsector) => (
-                      <li
-                        key={subsector._id}
-                        className={`p-2 rounded-md cursor-pointer relative ${
-                          selectedSubsectorId === subsector._id
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                        onClick={() => handleSubsectorClick(subsector._id, sector._id)}
-                      >
-                        {subsector.subSectorName}
-                      </li>
-                    ))}
-                  {sector.subsectors && sector.subsectors.length > 4 && (
-                    <li
-                      key={`${sector._id}-more`}
-                      className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-                      onClick={() => toggleShowAllSubsectors(sector._id)}
-                    >
-                      {showAllSubsectors[sector._id] ? 'Less' : 'More'}
-                    </li>
-                  )}
-                </ul>
-              )}
-            </div>
-          ))}
-          {sectors.length > 5 && (
-            <li
-              key="more-less-sectors"
-              className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-              onClick={() => setShowMoreSectors(!showMoreSectors)}
-            >
-              {showMoreSectors ? 'Less' : 'More'}
-            </li>
-          )}
-        </ul>
+            ))}
+          </ul>
 
-        <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-1 py-1 rounded-sm">Signals</h2>
-        <ul className="space-y-2">
-          {visibleSignals.map((signal) => (
-            <div key={signal._id}>
+          <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">Sectors</h2>
+          <ul className="mb-4 space-y-2">
+            {visibleSectors.map((sector) => (
+              <div key={sector._id}>
+                <li
+                  className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
+                    expandedSectors[sector._id] ? 'bg-gray-100' : ''
+                  }`}
+                  onClick={() => toggleSectorExpand(sector._id)}
+                >
+                  <span>{sector.sectorName}</span>
+                  <span
+                    className="cursor-pointer text-gray-400"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSectorExpand(sector._id);
+                    }}
+                  >
+                    {expandedSectors[sector._id] ? '−' : '+'}
+                  </span>
+                </li>
+                {expandedSectors[sector._id] && (
+                  <ul className="ml-4 mt-1 space-y-1">
+                    <li
+                      className={`p-2 rounded-md cursor-pointer relative ${
+                        selectedSectorId === sector._id && !selectedSubsectorId
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                      onClick={() => handleSectorClick(sector._id)}
+                    >
+                      {sector.sectorName}
+                    </li>
+                    {sector.subsectors && sector.subsectors.length > 0 && sector.subsectors
+                      .slice(
+                        0,
+                        showAllSubsectors[sector._id] ? sector.subsectors.length : 4
+                      )
+                      .map((subsector) => (
+                        <li
+                          key={subsector._id}
+                          className={`p-2 rounded-md cursor-pointer relative ${
+                            selectedSubsectorId === subsector._id
+                              ? 'bg-blue-50 text-blue-700'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                          onClick={() => handleSubsectorClick(subsector._id, sector._id)}
+                        >
+                          {subsector.subSectorName}
+                        </li>
+                      ))}
+                    {sector.subsectors && sector.subsectors.length > 4 && (
+                      <li
+                        key={`${sector._id}-more`}
+                        className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                        onClick={() => toggleShowAllSubsectors(sector._id)}
+                      >
+                        {showAllSubsectors[sector._id] ? 'Less' : 'More'}
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </div>
+            ))}
+            {sectors.length > 5 && (
               <li
-                className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
-                  expandedSignals[signal._id] ? 'bg-gray-100' : ''
-                }`}
-                onClick={() => toggleSignalExpand(signal._id)}
+                key="more-less-sectors"
+                className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                onClick={() => setShowMoreSectors(!showMoreSectors)}
               >
-                <span>{signal.signalName}</span>
-                <span
-                  className="cursor-pointer text-gray-400"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    toggleSignalExpand(signal._id);
-                  }}
-                >
-                  {expandedSignals[signal._id] ? '−' : '+'}
-                </span>
+                {showMoreSectors ? 'Less' : 'More'}
               </li>
-              {expandedSignals[signal._id] && (
-                <ul className="ml-4 mt-1 space-y-1">
-                  <li
-                    className={`p-2 rounded-md cursor-pointer relative ${
-                      selectedSignalId === signal._id && !selectedSubsignalId
-                        ? 'bg-blue-50 text-blue-700'
-                        : 'text-gray-600 hover:bg-gray-100'
-                    } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                    onClick={() => handleSignalClick(signal._id)}
-                  >
-                    {signal.signalName}
-                  </li>
-                  {signal.subsignals && signal.subsignals.length > 0 && signal.subsignals
-                    .slice(
-                      0,
-                      showAllSubsignals[signal._id] ? signal.subsignals.length : 4
-                    )
-                    .map((subsignal) => (
-                      <li
-                        key={subsignal._id}
-                        className={`p-2 rounded-md cursor-pointer relative ${
-                          selectedSubsignalId === subsignal._id
-                            ? 'bg-blue-50 text-blue-700'
-                            : 'text-gray-600 hover:bg-gray-100'
-                        } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
-                        onClick={() => handleSubsignalClick(subsignal._id, signal._id)}
-                      >
-                        {subsignal.subSignalName}
-                      </li>
-                    ))}
-                  {signal.subsignals && signal.subsignals.length > 4 && (
-                    <li
-                      key={`${signal._id}-more`}
-                      className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-                      onClick={() => toggleShowAllSubsignals(signal._id)}
-                    >
-                      {showAllSubsignals[signal._id] ? 'Less' : 'More'}
-                    </li>
-                  )}
-                </ul>
-              )}
-            </div>
-          ))}
-          {signals.length > 5 && (
-            <li
-              key="more-less-signals"
-              className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
-              onClick={() => setShowMoreSignals(!showMoreSignals)}
-            >
-              {showMoreSignals ? 'Less' : 'More'}
-            </li>
-          )}
-        </ul>
-      </div>
+            )}
+          </ul>
 
-      <div className="w-3/4 p-6">
-        <div className="flex flex-wrap gap-2 mb-6">
-          {selectedPostType && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{postTypeMap[selectedPostType].display}</span>
-              <button
-                onClick={() => handleRemoveFilter('postType')}
-                className="ml-2 text-blue-800 hover:text-blue-600"
+          <h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-1 py-1 rounded-sm">Signals</h2>
+          <ul className="space-y-2">
+            {visibleSignals.map((signal) => (
+              <div key={signal._id}>
+                <li
+                  className={`p-2 rounded-md flex items-center justify-between text-gray-600 hover:bg-gray-100 ${
+                    expandedSignals[signal._id] ? 'bg-gray-100' : ''
+                  }`}
+                  onClick={() => toggleSignalExpand(signal._id)}
+                >
+                  <span>{signal.signalName}</span>
+                  <span
+                    className="cursor-pointer text-gray-400"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleSignalExpand(signal._id);
+                    }}
+                  >
+                    {expandedSignals[signal._id] ? '−' : '+'}
+                  </span>
+                </li>
+                {expandedSignals[signal._id] && (
+                  <ul className="ml-4 mt-1 space-y-1">
+                    <li
+                      className={`p-2 rounded-md cursor-pointer relative ${
+                        selectedSignalId === signal._id && !selectedSubsignalId
+                          ? 'bg-blue-50 text-blue-700'
+                          : 'text-gray-600 hover:bg-gray-100'
+                      } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                      onClick={() => handleSignalClick(signal._id)}
+                    >
+                      {signal.signalName}
+                    </li>
+                    {signal.subsignals && signal.subsignals.length > 0 && signal.subsignals
+                      .slice(
+                        0,
+                        showAllSubsignals[signal._id] ? signal.subsignals.length : 4
+                      )
+                      .map((subsignal) => (
+                        <li
+                          key={subsignal._id}
+                          className={`p-2 rounded-md cursor-pointer relative ${
+                            selectedSubsignalId === subsignal._id
+                              ? 'bg-blue-50 text-blue-700'
+                              : 'text-gray-600 hover:bg-gray-100'
+                          } before:content-['|'] before:absolute before:left-0 before:text-gray-400 before:leading-none before:pr-2`}
+                          onClick={() => handleSubsignalClick(subsignal._id, signal._id)}
+                        >
+                          {subsignal.subSignalName}
+                        </li>
+                      ))}
+                    {signal.subsignals && signal.subsignals.length > 4 && (
+                      <li
+                        key={`${signal._id}-more`}
+                        className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                        onClick={() => toggleShowAllSubsignals(signal._id)}
+                      >
+                        {showAllSubsignals[signal._id] ? 'Less' : 'More'}
+                      </li>
+                    )}
+                  </ul>
+                )}
+              </div>
+            ))}
+            {signals.length > 5 && (
+              <li
+                key="more-less-signals"
+                className="p-2 rounded-md cursor-pointer text-blue-600 hover:bg-gray-100"
+                onClick={() => setShowMoreSignals(!showMoreSignals)}
               >
-                ×
-              </button>
+                {showMoreSignals ? 'Less' : 'More'}
+              </li>
+            )}
+          </ul>
+        </div>
+
+        {/* Main Content */}
+        <div className="w-full lg:w-3/4 p-2">
+          <div className="flex flex-wrap gap-2 mb-6">
+            {selectedPostType && (
+              <div className="flex items-center bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                <span>{postTypeMap[selectedPostType].display}</span>
+                <button
+                  onClick={() => handleRemoveFilter('postType')}
+                  className="ml-2 text-blue-800 hover:text-blue-600"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedSectorId && !selectedSubsectorId && (
+              <div className="flex items-center bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                <span>{selectedSector}</span>
+                <button
+                  onClick={() => handleRemoveFilter('sector')}
+                  className="ml-2 text-blue-800 hover:text-blue-600"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedSubsectorId && (
+              <div className="flex items-center bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                <span className="truncate max-w-[200px]">{`${selectedSector} > ${selectedSubsector}`}</span>
+                <button
+                  onClick={() => handleRemoveFilter('subsector')}
+                  className="ml-2 text-blue-800 hover:text-blue-600 flex-shrink-0"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedSignalId && !selectedSubsignalId && (
+              <div className="flex items-center bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                <span>{selectedSignal}</span>
+                <button
+                  onClick={() => handleRemoveFilter('signal')}
+                  className="ml-2 text-blue-800 hover:text-blue-600"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+            {selectedSubsignalId && (
+              <div className="flex items-center bg-blue-100 text-blue-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
+                <span className="truncate max-w-[200px]">{`${selectedSignal} > ${selectedSubsignal}`}</span>
+                <button
+                  onClick={() => handleRemoveFilter('subsignal')}
+                  className="ml-2 text-blue-800 hover:text-blue-600 flex-shrink-0"
+                >
+                  ×
+                </button>
+              </div>
+            )}
+          </div>
+          {posts.length === 0 && !isLoading ? (
+            <p className="text-gray-600">No posts found.</p>
+          ) : (
+            <div className="space-y-4 sm:space-y-6">
+              {posts.map((post, index) => (
+                <div
+                  key={`${post._id}-${index}`}
+                  ref={index === posts.length - 1 ? lastPostElementRef : null}
+                  className="bg-white p-4 sm:p-6 rounded-lg shadow-md border border-gray-200"
+                >
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-2">
+                    <div className="flex flex-wrap gap-1 sm:gap-2">
+                      {post.sectors.slice(0, 3).map((sector, i) => (
+                        <span
+                          key={`${sector}-${i}`}
+                          className="bg-blue-100 text-blue-700 text-xs sm:text-sm px-2 py-1 rounded-full"
+                        >
+                          {sector}
+                        </span>
+                      ))}
+                    </div>
+                    <span className="text-gray-500 text-xs sm:text-sm flex-shrink-0">
+                      {formatDate(post.date || new Date())}
+                    </span>
+                  </div>
+                  <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-2 leading-tight">
+                    {post.postTitle}
+                  </h2>
+                  <p className="text-gray-600 text-xs sm:text-sm mb-3">
+                    {post.source} | {postTypeMap[post.postType]?.display || post.postType}
+                  </p>
+                  <div className="text-gray-700 mb-4 text-sm sm:text-base leading-relaxed">
+                    <p dangerouslySetInnerHTML={{ __html: post.summary }} />
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <a
+                      href={post.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-xs sm:text-sm font-medium text-center"
+                    >
+                      Read More <span className="ml-1">→</span>
+                    </a>
+                    <button
+                      onClick={() => handleSave(post._id)}
+                      className={`inline-flex items-center justify-center px-4 py-2 rounded-md text-xs sm:text-sm font-medium ${
+                        savedPosts[post._id]
+                          ? 'bg-green-100 text-green-700'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 sm:h-4 sm:w-4 mr-2"
+                        fill={savedPosts[post._id] ? 'currentColor' : 'none'}
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
+                        />
+                      </svg>
+                      {savedPosts[post._id] ? 'Saved' : 'Save'}
+                    </button>
+                    <button
+                      onClick={() => handleShare(post)}
+                      className="inline-flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 text-xs sm:text-sm font-medium"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-3 w-3 sm:h-4 sm:w-4 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+                        />
+                      </svg>
+                      Share
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
           )}
-          {selectedSectorId && !selectedSubsectorId && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{selectedSector}</span>
-              <button
-                onClick={() => handleRemoveFilter('sector')}
-                className="ml-2 text-blue-800 hover:text-blue-600"
-              >
-                ×
-              </button>
-            </div>
-          )}
-          {selectedSubsectorId && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{`${selectedSector} > ${selectedSubsector}`}</span>
-              <button
-                onClick={() => handleRemoveFilter('subsector')}
-                className="ml-2 text-blue-800 hover:text-blue-600"
-              >
-                ×
-              </button>
-            </div>
-          )}
-          {selectedSignalId && !selectedSubsignalId && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{selectedSignal}</span>
-              <button
-                onClick={() => handleRemoveFilter('signal')}
-                className="ml-2 text-blue-800 hover:text-blue-600"
-              >
-                ×
-              </button>
-            </div>
-          )}
-          {selectedSubsignalId && (
-            <div className="flex items-center bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">
-              <span>{`${selectedSignal} > ${selectedSubsignal}`}</span>
-              <button
-                onClick={() => handleRemoveFilter('subsignal')}
-                className="ml-2 text-blue-800 hover:text-blue-600"
-              >
-                ×
-              </button>
+          {isLoading && (
+            <div className="text-center mt-4">
+              <p className="text-gray-600">Loading...</p>
             </div>
           )}
         </div>
-        {posts.length === 0 && !isLoading ? (
-          <p className="text-gray-600">No posts found.</p>
-        ) : (
-          <div className="space-y-6">
-            {posts.map((post, index) => (
-              <div
-                key={`${post._id}-${index}`}
-                ref={index === posts.length - 1 ? lastPostElementRef : null}
-                className="bg-white p-4 rounded-lg shadow-md border border-gray-200"
-              >
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex space-x-2">
-                    {post.sectors.slice(0, 3).map((sector, i) => (
-                      <span
-                        key={`${sector}-${i}`}
-                        className="bg-blue-100 text-blue-700 text-sm px-2 py-1 rounded-full"
-                      >
-                        {sector}
-                      </span>
-                    ))}
-                  </div>
-                  <span className="text-gray-500 text-sm">
-                    {formatDate(post.date || new Date())}
-                  </span>
-                </div>
-                <h2 className="text-lg font-bold text-gray-900 mb-2">
-                  {post.postTitle}
-                </h2>
-                <p className="text-gray-600 text-sm mb-2">
-                  {post.source} | {postTypeMap[post.postType]?.display || post.postType}
-                </p>
-                <div className="text-gray-700 mb-4">
-                  <p dangerouslySetInnerHTML={{ __html: post.summary }} />
-                </div>
-                <div className="flex gap-3">
-                  <a
-                    href={post.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm font-medium"
-                  >
-                    Read More <span className="ml-1">→</span>
-                  </a>
-                  <button
-                    onClick={() => handleSave(post._id)}
-                    className={`inline-flex items-center px-4 py-2 rounded-md text-sm font-medium ${
-                      savedPosts[post._id]
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill={savedPosts[post._id] ? 'currentColor' : 'none'}
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"
-                      />
-                    </svg>
-                    {savedPosts[post._id] ? 'Saved' : 'Save'}
-                  </button>
-                  <button
-                    onClick={() => handleShare(post)}
-                    className="inline-flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-200 text-sm font-medium"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4 mr-2"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                      />
-                    </svg>
-                    Share
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-        {isLoading && (
-          <div className="text-center mt-4">
-            <p className="text-gray-600">Loading...</p>
-          </div>
-        )}
       </div>
     </div>
   );
