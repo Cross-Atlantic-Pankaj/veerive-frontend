@@ -693,7 +693,7 @@ export default function SavedItems() {
 	}
 
 	return (
-		<div className="w-full sm:px-0">
+		<div className="w-full bg-gray-50 min-h-screen sm:px-0">
 			<div className="text-center mt-4 sm:mt-6 mb-3 sm:mb-4 px-4 sm:px-0">
 				<h1 className="text-xl sm:text-2xl font-bold text-gray-800">Saved Items</h1>
 			</div>
@@ -704,19 +704,18 @@ export default function SavedItems() {
 					No items Saved.
 				</div>
 			) : (
-				<div className="flex flex-col lg:flex-row w-full mt-4 h-fit">
-					{/* Mobile Filter Toggle Button */}
-					<div className="lg:hidden mb-4">
+				<div className="relative">
+					{/* Mobile Filter Button */}
+					<div className="lg:hidden sticky top-0 z-40 px-4 mb-4 flex justify-center items-center">
 						<button
 							onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-							className="w-full bg-purple-600 text-white px-4 py-3 rounded-lg font-medium flex items-center justify-center gap-2"
+							className="flex items-center gap-2 bg-gray-200 p-2 rounded-lg text-black"
 						>
 							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								className="h-5 w-5"
+								className="w-5 h-5"
 								fill="none"
-								viewBox="0 0 24 24"
 								stroke="currentColor"
+								viewBox="0 0 24 24"
 							>
 								<path
 									strokeLinecap="round"
@@ -725,44 +724,80 @@ export default function SavedItems() {
 									d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
 								/>
 							</svg>
-							{isMobileMenuOpen ? 'Hide Filters' : 'Show Filters'}
+							<span className="font-medium">Filters</span>
 						</button>
 					</div>
 
-					{/* Left Sidebar */}
-					<div className={`${isMobileMenuOpen ? 'block' : 'hidden lg:block'} w-full lg:w-1/4 bg-white p-4 lg:p-6 border-r-0 lg:border-r border-gray-200 shadow-sm rounded-lg h-fit mb-4 lg:mb-0`}>
-						{/* Categories Section */}
-						<div className="mb-4">
-							<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
-								Categories
-							</h2>
-							<ul className="space-y-3">
-								{categories.map((category) => (
-									<li key={category.key}>
-										<button
-											onClick={() => {
-												setSelectedCategory(category.key);
-												setIsMobileMenuOpen(false); // Close mobile menu
-											}}
-											className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
-												selectedCategory === category.key
-													? 'bg-purple-100 text-purple-700'
-													: 'text-gray-700 hover:bg-gray-100'
-											}`}
-										>
-											{category.name}
-										</button>
-									</li>
-								))}
-							</ul>
-						</div>
+					<div className="flex flex-col lg:flex-row sm:px-6 lg:px-12 relative">
+						{/* Mobile Sidebar Overlay */}
+						{isMobileMenuOpen && (
+							<div
+								className="fixed inset-0 bg-opacity-50 z-40 lg:hidden"
+								onClick={() => setIsMobileMenuOpen(false)}
+							/>
+						)}
 
-						{/* Sectors Section */}
-						<div className="mb-4">
-							<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
-								Sectors
-							</h2>
-							<ul className="space-y-2">
+						{/* Left Sidebar */}
+						<div
+							className={`
+								fixed lg:static top-0 left-0 h-fit lg:h-auto
+								w-80 sm:w-96 lg:w-1/4 
+								bg-white shadow-md lg:shadow-md 
+								p-6 lg:p-6 
+								my-0 lg:my-5 
+								rounded-none lg:rounded-lg
+								transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+								transition-transform duration-300 ease-in-out
+								z-50 lg:z-auto
+								overflow-y-auto lg:overflow-visible
+								lg:h-fit
+							`}
+						>
+							{/* Mobile Close Button */}
+							<div className="lg:hidden flex justify-between items-center mb-4 pb-4 border-b">
+								<h2 className="text-lg font-bold text-gray-700">Filters</h2>
+								<button
+									onClick={() => setIsMobileMenuOpen(false)}
+									className="text-gray-500 hover:text-gray-700"
+								>
+									<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+									</svg>
+								</button>
+							</div>
+
+							{/* Categories Section */}
+							<div className="mb-4">
+								<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
+									Categories
+								</h2>
+								<ul className="space-y-3">
+									{categories.map((category) => (
+										<li key={category.key}>
+											<button
+												onClick={() => {
+													setSelectedCategory(category.key);
+													setIsMobileMenuOpen(false); // Close mobile menu
+												}}
+												className={`w-full text-left px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 ${
+													selectedCategory === category.key
+														? 'bg-purple-100 text-purple-700'
+														: 'text-gray-700 hover:bg-gray-100'
+												}`}
+											>
+												{category.name}
+											</button>
+										</li>
+									))}
+								</ul>
+							</div>
+
+							{/* Sectors Section */}
+							<div className="mb-4">
+								<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
+									Sectors
+								</h2>
+								<ul className="space-y-2">
 								{sectorSignalData.sectors
 									.slice(0, showMoreSectors ? undefined : 5)
 									.map((sector) => (
@@ -845,14 +880,14 @@ export default function SavedItems() {
 										</button>
 									</li>
 								)}
-							</ul>
-						</div>
+								</ul>
+							</div>
 
-						{/* Signals Section */}
-						<div>
-							<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
-								Signals
-							</h2>
+							{/* Signals Section */}
+							<div>
+								<h2 className="text-lg font-bold text-gray-700 mb-4 bg-gray-200 px-2 py-1 rounded-sm">
+									Signals
+								</h2>
 							<ul className="space-y-2">
 								{sectorSignalData.signals
 									.slice(0, showMoreSignals ? undefined : 5)
@@ -936,12 +971,12 @@ export default function SavedItems() {
 										</button>
 									</li>
 								)}
-							</ul>
+								</ul>
+							</div>
 						</div>
-					</div>
 
-					{/* Right Content */}
-					<div className="w-full lg:w-3/4 p-2 lg:p-4">
+						{/* Right Content */}
+						<div className="w-full lg:w-3/4 p-2 lg:p-4 lg:my-5">
 						<div className="flex flex-wrap gap-1 sm:gap-2 mb-3 sm:mb-4 items-center">
 							{selectedCategory && (
 								<div className="flex items-center bg-purple-100 text-purple-800 text-xs sm:text-sm px-2 sm:px-3 py-1 rounded-full">
@@ -1408,6 +1443,7 @@ export default function SavedItems() {
 							)}
 						</div>
 					</div>
+				</div>
 				</div>
 			)}
 		</div>
