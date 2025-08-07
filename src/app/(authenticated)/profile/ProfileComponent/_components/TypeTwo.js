@@ -15,8 +15,8 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, ''); 
 };
 
-const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
-  const [isSaved, setIsSaved] = useState(false);
+const TypeTwo = ({  context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+  const [isSaved, setIsSaved] = useState(true);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
   const formattedSummaryPoints = formatSummary(context.summary);
@@ -27,7 +27,7 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
     : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
 
-    const handleShare = async (e) => {
+  const handleShare = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     try {
@@ -50,23 +50,14 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary }) =>
     }
   };
 
-    const onUnsave = async (e) => {
+  const onUnsave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     await handleUnsave(context._id);
     setIsSaved(false);
   };
 
-  const getUserEmail = () => {
-    const userDataStr = localStorage.getItem('user');
-    if (userDataStr) {
-      const user = JSON.parse(userDataStr);
-      return user.email;
-    }
-    return null;
-  };
-
-      const tileProps =
+    const tileProps =
       context.tileTemplates && context.tileTemplates.length > 0
         ? parseJsxCode(context.tileTemplates[0].jsxCode)
         : null;

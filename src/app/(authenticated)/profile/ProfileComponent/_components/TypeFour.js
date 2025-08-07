@@ -15,7 +15,7 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+const TypeFour = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
@@ -26,7 +26,6 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
     ? normalizeTitle(context.contextTitle)
     : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
-
 
   const handleShare = async (e) => {
     e.preventDefault();
@@ -58,7 +57,6 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary }) =
     setIsSaved(false);
   };
 
-  
       const tileProps = context.tileTemplates && context.tileTemplates.length > 0
         ? parseJsxCode(context.tileTemplates[0].jsxCode)
         : null;

@@ -1,78 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import * as LucideIcons from 'lucide-react';
-
-const Tile = ({ bg, icon, color, size }) => {
-  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
-  return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: bg, color }}
-    >
-      <IconComponent size={size} />
-    </div>
-  );
-};
+import { Tile, parseJsxCode } from '../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text
     .toString()
     .toLowerCase()
     .trim()
-    .replace(/\$/g, 'dollar')
-    .replace(/[^\w\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/--+/g, '-')
+    .replace(/\$/g, 'dollar') 
+    .replace(/[^\w\s-]/g, '') 
+    .replace(/\s+/g, '-') 
+    .replace(/--+/g, '-') 
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, tileTemplate }) => {
-  const [isSaved, setIsSaved] = useState(false);
-  const router = useRouter();
+const TypeFour = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+  const [isSaved, setIsSaved] = useState(true);
 
-  const summaryPoints = formatSummary(context.summary);
-  const summaryPoint = summaryPoints.slice(0, 1);
+  const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
+  const formattedSummaryPoints = formatSummary(context.summary);
+  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
-    : 'context-unnamed';
+    : `context-${context._id}`;
   console.log(`Generated slug for context "${context.contextTitle}": ${slug}`);
-
-  const getUserEmail = () => {
-    const userDataStr = localStorage.getItem('user');
-    if (userDataStr) {
-      const user = JSON.parse(userDataStr);
-      return user.email;
-    }
-    return null;
-  };
-
-  useEffect(() => {
-    const checkSavedStatus = async () => {
-      const email = getUserEmail();
-      if (!email) return;
-
-      try {
-        const response = await fetch(
-          `/api/context-save?contextId=${context.id}&email=${encodeURIComponent(email)}`,
-          {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          }
-        );
-        const data = await response.json();
-        if (data.isSaved) {
-          setIsSaved(true);
-        }
-      } catch (error) {
-        console.error('Error checking saved status:', error);
-        toast.error('Error checking saved status');
-      }
-    };
-    checkSavedStatus();
-  }, [context.id]);
 
   const handleShare = async (e) => {
     e.preventDefault();
@@ -80,14 +33,15 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
     try {
       const shareData = {
         title: context.contextTitle,
-        text: `Check out this context: ${context.contextTitle}`,
+        text: `Check out this context: ${context.contextTitle}\nSectors: ${context.sectorNames.join(', ')}\nSub-Sectors: ${context.subSectorNames.join(', ')}`,
         url: window.location.origin + `/context-details/${slug}`,
       };
 
       if (navigator.share) {
         await navigator.share(shareData);
       } else {
-        await navigator.clipboard.writeText(shareData.url);
+        const shareText = `${context.contextTitle}\n\nSectors: ${context.sectorNames.join(', ')}\nSub-Sectors: ${context.subSectorNames.join(', ')}\n\nCheck out this context: ${window.location.origin}/context-details/${slug}`;
+        await navigator.clipboard.writeText(shareText);
         toast.success('Link copied to clipboard!');
       }
     } catch (error) {
@@ -96,127 +50,86 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
     }
   };
 
-  const handleSave = async (e) => {
+  const onUnsave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    const email = getUserEmail();
-    if (!email) {
-      router.push('/login');
-      return;
-    }
-
-    try {
-      const action = isSaved ? 'unsave' : 'save';
-      const response = await fetch('/api/context-save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ contextId: context.id, email, action }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setIsSaved(action === 'save');
-        toast.success(data.message);
-      } else {
-        toast.error(data.error || `Failed to ${action} context`);
-      }
-    } catch (error) {
-      console.error(`Error ${isSaved ? 'unsaving' : 'saving'} context:`, error);
-      toast.error(`Error ${isSaved ? 'unsaving' : 'saving'} context`);
-    }
+    await handleUnsave(context._id);
+    setIsSaved(false);
   };
 
+      const tileProps = context.tileTemplates && context.tileTemplates.length > 0
+        ? parseJsxCode(context.tileTemplates[0].jsxCode)
+        : null;
+
   return (
-   <Link href={`/context-details/${slug}`}>
+    <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
+        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer mb-4"
       >
-        <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
-          {context.contextTitle}
-        </div>
-
-         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <div className="w-full sm:w-1/3 flex items-stretch">
-  {tileTemplate ? (
-                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
-                  <Tile
-                  bg={tileTemplate.bg}
-                  icon={tileTemplate.icon}
-                  color={tileTemplate.color}
-                  size={tileTemplate.size}
-                />
-                </div>
-              ) : (
-                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                  1000 × 630
-                </div>
-              )}
+        <div className="flex flex-col sm:flex-row gap-4 mb-4">
+          <div className="w-full sm:w-1/3">
+            {tileProps ? (
+                                      <div className="w-full h-full rounded-lg overflow-hidden">
+                                        <Tile {...tileProps} />
+                                      </div>
+                                    ) : (
+                                      <div className="w-full h-full bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
+                                        1000 × 630
+                                      </div>
+                                    )}
+          </div>
+          <div className="flex-1 flex flex-col">
+            <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
+              {sectorsLabel}
             </div>
-
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1">
-                {context.posts?.[0] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[0].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[1] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[1].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[2] && (
-                  <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
-                    {context.posts[2].postTitle}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1">
-                {summaryPoints.length > 0 ? (
-                  summaryPoints.map((point, i) => (
-                    <div
-                      key={i}
-                      className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
-                    >
-                      {point}
-                    </div>
-                  ))
-                ) : (
-                  <div className="text-gray-400 text-xs sm:text-sm italic">
-                    Summary will be available soon
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[3] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[3].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[4] && (
-                  <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
-                    {context.posts[4].postTitle}
-                  </div>
-                )}
-              </div>
-            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
+              {context.contextTitle}
+            </h2>
           </div>
         </div>
 
-        <div className="mt-2 flex justify-end gap-2">
+        <div className="flex flex-col sm:flex-row gap-4 mb-1">
+          <div className="flex-1">
+            <div className="mb-4">
+              {summaryPoints.length > 0 ? (
+                summaryPoints.map((point, i) => (
+                  <div
+                    key={i}
+                    className="text-gray-600 text-xs sm:text-sm line-clamp-2 mb-1"
+                  >
+                    {point}
+                  </div>
+                ))
+              ) : (
+                <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
+                  Summary coming soon...
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="w-full sm:w-1/3">
+            {context.posts?.[0] && (
+              <div className="font-semibold text-gray-800 text-sm lg:px-3">
+                {context.posts[0].postTitle}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="flex flex-col sm:flex-row divide-y sm:divide-y-0 sm:divide-x divide-gray-300 gap-2 mt-5">
+          {context.posts?.slice(1, 4).map((post, i) => (
+            <div key={i} className="flex-1 px-2">
+              <div className="font-semibold text-gray-800 text-sm">
+                {post.postTitle}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex justify-end gap-2">
           <button
-            onClick={handleSave}
+            onClick={onUnsave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
               isSaved
                 ? 'bg-green-100 text-green-700'
@@ -265,4 +178,4 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, formatSummary, til
   );
 };
 
-export default TypeFive;
+export default TypeFour;
