@@ -192,9 +192,11 @@ export default function Profile() {
     <div className="p-3 sm:p-6 relative mb-64">
       <Toaster position="top-right" />
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 bg-white rounded-xl shadow-base px-3 sm:px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-0 sm:ml-6">
-        <div className="text-purple-600 bg-purple-50 p-3 rounded-full flex-shrink-0 mx-auto sm:mx-0">
-          <FaUserCircle size={48} />
-        </div>
+        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white flex-shrink-0 mx-auto sm:mx-0">
+                      <span className="text-2xl font-medium text-white">
+                        {userData?.name?.[0]?.toUpperCase()}
+                      </span>
+                    </div>
         <div className="flex flex-col flex-grow w-full">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 text-center sm:text-left">
