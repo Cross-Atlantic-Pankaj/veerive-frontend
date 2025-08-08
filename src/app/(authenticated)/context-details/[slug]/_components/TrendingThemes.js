@@ -18,10 +18,10 @@ const TrendingThemes = ({ trendingThemes }) => {
   return (
     <div className="bg-gray-100 p-4 rounded-lg border border-gray-200 shadow-sm lg:mt-12">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="font-semibold text-lg text-gray-800">Trending Themes</h2>
+        <h2 className="font-semibold text-base sm:text-lg text-gray-800">Trending Themes</h2>
         <Link
           href="/analyzer/trend-analyzer"
-          className="text-indigo-600 text-sm flex items-center hover:text-indigo-700"
+          className="text-indigo-600 text-sm flex items-center hover:text-indigo-700 self-start sm:self-auto"
         >
           VIEW MORE →
         </Link>

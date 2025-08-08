@@ -68,21 +68,23 @@ export default function ThemeDetails() {
     );
   }
 
+  const hasRelatedThemes = relatedThemes.length > 0;
+  const hasTrendingOpinions = trendingExpertOpinions.length > 0;
+  const hasRightContent = hasRelatedThemes || hasTrendingOpinions;
+
   return (
     <div className="bg-gray-50 min-h-screen p-2 md:p-4">
       <ThemeInfo theme={theme} />
-      <OtherKeyTrend relatedThemes={relatedThemes} />
-      <div className="flex flex-col lg:flex-row mx-auto">
-        <div
-          className={`${
-            trendingExpertOpinions.length > 0 ? 'lg:w-[72%]' : 'w-full'
-          }`}
-        >
+      <div className="flex flex-col lg:flex-row mx-auto gap-4">
+        <div className={hasRightContent ? 'lg:w-[72%]' : 'w-full'}>
           <RelatedContexts contexts={contexts} />
         </div>
-        {trendingExpertOpinions.length > 0 && (
-          <div className="lg:w-[28%]">
-            <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
+        {hasRightContent && (
+          <div className="lg:w-[28%] flex flex-col gap-4">
+            {hasRelatedThemes && <OtherKeyTrend relatedThemes={relatedThemes} />}
+            {hasTrendingOpinions && (
+              <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
+            )}
           </div>
         )}
       </div>

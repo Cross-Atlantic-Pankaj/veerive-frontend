@@ -70,7 +70,7 @@ export async function GET(request) {
     })
       .populate('sectors', 'sectorName')
       .populate('subSectors', 'subSectorName')
-      .select('themeTitle sectors subSectors impactScore predictiveMomentumScore trendingScore trendingScoreImage overallScore')
+      .select('themeTitle sectors subSectors overallScore')
       .sort({ overallScore: -1 })
       .lean();
 
