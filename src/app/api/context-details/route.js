@@ -142,7 +142,8 @@ export async function GET(request) {
       })
       .select('themeTitle overallScore sectors subSectors')
       .limit(5)
-      .lean();
+      .lean()
+      .sort({ overallScore: -1 });
 
     if (matchingThemes.length === 0) {
       matchingThemes = await Theme.find({
@@ -182,7 +183,8 @@ export async function GET(request) {
           matchedCategory: matchedCategory,
         };
       })
-      .filter((theme) => theme.matchedCategory);
+      .filter((theme) => theme.matchedCategory)
+      // .sort({ overallScore: -1 });
 
     let slides = [];
     if (targetContext.hasSlider) {
