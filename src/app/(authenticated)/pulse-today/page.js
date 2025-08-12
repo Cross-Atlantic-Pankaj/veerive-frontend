@@ -412,7 +412,7 @@ export default function PulseToday() {
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
                 <h2 className="font-semibold text-base sm:text-lg text-gray-800">Trending Themes</h2>
                 <Link
-                  href="/analyzer/trend"
+                  href="/analyzer/trend-analyzer"
                   className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700 self-start sm:self-auto"
                 >
                   VIEW MORE →

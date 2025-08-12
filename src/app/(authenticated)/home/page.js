@@ -500,8 +500,8 @@ export default function HomePage() {
           <div className="max-w-[1400px] mx-auto px-4 md:px-8">
             <div className="relative pb-4 mb-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-medium text-gray-900">
-                  HOT Trend
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">
+                  HOT TRENDS
                 </h2>
                 <Link
                   href="/analyzer/trend-analyzer"
