@@ -138,15 +138,15 @@ export default function Navbar({ user, onLogout }) {
 
             <div className="hidden md:flex md:items-center md:space-x-6">
               <NavLink href="/pulse-today" isActive={pathname === '/pulse-today'}>
-                PULSE TODAY
+                Pulse Today
               </NavLink>
               <NavLink href="/influencer-comment" isActive={pathname === '/influencer-comment'}>
-              THINK TANK
+              Think Tank
               </NavLink>
               <NavLink href="/analyzer/trend-analyzer" isActive={pathname === '/analyzer/trend-analyzer'}>
-              TREND ANALYZER
+              Trend Analyzer
               </NavLink>
-              <NavLink href="/profile" isActive={pathname === '/profile'}>
+              <NavLink href="my-dashboard" isActive={pathname === 'my-dashboard'}>
               Dashboard
               </NavLink>
             </div>
@@ -154,7 +154,7 @@ export default function Navbar({ user, onLogout }) {
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-3">
                 <Link 
-                  href="/profile" 
+                  href="my-dashboard" 
                   className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
                 >
                   <span>{user?.name}</span>
@@ -219,8 +219,8 @@ export default function Navbar({ user, onLogout }) {
                 </MobileNavLink>
 
                 <MobileNavLink
-                  href="/profile"
-                  isActive={pathname === '/profile'}
+                  href="my-dashboard"
+                  isActive={pathname === 'my-dashboard'}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Dashboard
