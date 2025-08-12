@@ -152,7 +152,7 @@ export default function HomePage() {
                       type="email"
                       placeholder="Enter your email address"
                       aria-label="Email address"
-                      className="flex-1 px-3 max-[530px]:px-2 py-2 max-[530px]:py-1.5 rounded-l-full bg-white text-gray-900 placeholder-gray-500 focus:outline-none text-xs max-[530px]:text-xs sm:text-sm"
+                      className="flex-1 px-3 max-[530px]:px-2 py-2 max-[530px]:py-1.5 rounded-l-full bg-white text-balck placeholder-black focus:outline-none text-xs max-[530px]:text-xs sm:text-sm"
                     />
                     <button className="px-4 max-[530px]:px-3 py-2 max-[530px]:py-1.5 bg-black text-white rounded-r-full font-medium text-xs max-[530px]:text-xs sm:text-sm whitespace-nowrap hover:bg-gray-800 transition-colors">
                       Join for free!
