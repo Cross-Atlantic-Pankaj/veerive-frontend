@@ -199,6 +199,11 @@ export default function TrendAnalyzer() {
   };
 
   const handleShare = async (theme) => {
+    const email = getUserEmail();
+    if (!email) {
+      toast.error('Login First to share');
+      return;
+    }
     try {
       const shareData = {
         title: theme.themeTitle,
@@ -222,7 +227,7 @@ export default function TrendAnalyzer() {
   const handleSave = async (themeId) => {
     const email = getUserEmail();
     if (!email) {
-      router.push('/login');
+      toast.error('Login First to save');
       return;
     }
 

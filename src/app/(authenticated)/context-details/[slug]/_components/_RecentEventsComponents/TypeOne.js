@@ -66,6 +66,12 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
 	const handleShare = async (e) => {
 		e.preventDefault();
 		e.stopPropagation();
+		const email = getUserEmail();
+		
+    if (!email) {
+      toast.error('Login First to share');
+      return;
+    }
 		try {
 			const shareData = {
 				title: context.contextTitle,
@@ -90,11 +96,11 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
 		e.preventDefault();
 		e.stopPropagation();
 
-		const email = getUserEmail();
-		if (!email) {
-			router.push('/login');
-			return;
-		}
+	const email = getUserEmail();
+    if (!email) {
+      toast.error('Login First to save');
+      return;
+    }
 
 		try {
 			const action = isSaved ? 'unsave' : 'save';

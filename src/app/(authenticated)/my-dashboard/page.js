@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { FaUserCircle } from 'react-icons/fa';
 import { IoClose } from 'react-icons/io5';
 import toast, { Toaster } from 'react-hot-toast';
@@ -13,19 +14,23 @@ export default function Profile() {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  const [newEmail, setNewEmail] = useState(''); // Fixed: Changed State to useState
   const [timeLeft, setTimeLeft] = useState(240);
+  const router = useRouter();
 
   useEffect(() => {
     const userDataStr = localStorage.getItem('user');
-    if (userDataStr) {
-      const user = JSON.parse(userDataStr);
-      setUserData({
-        name: user.name,
-        email: user.email,
-      });
+    if (!userDataStr) {
+      toast.error('Please login first to visit the dashboard');
+      router.push('/login');
+      return;
     }
-  }, []);
+    const user = JSON.parse(userDataStr);
+    setUserData({
+      name: user.name,
+      email: user.email,
+    });
+  }, [router]);
 
   useEffect(() => {
     if ((showPasswordModal || showEmailModal) && timeLeft > 0) {
@@ -63,7 +68,7 @@ export default function Profile() {
         return;
       }
 
-      toast.success('OTP sent to your email');
+      toast.success(`OTP sent to ${userData.email}`);
       setShowPasswordModal(true);
       setTimeLeft(240);
     } catch (error) {
@@ -91,7 +96,7 @@ export default function Profile() {
         return;
       }
 
-      toast.success('OTP sent to your email');
+      toast.success(`OTP sent to ${userData.email}`);
       setShowEmailModal(true);
       setTimeLeft(240);
     } catch (error) {
@@ -193,10 +198,10 @@ export default function Profile() {
       <Toaster position="top-right" />
       <div className="flex flex-col sm:flex-row items-start gap-4 sm:gap-6 bg-white rounded-xl shadow-base px-3 sm:px-4 py-4 max-w-2xl hover:shadow-xl transition-shadow duration-300 ml-0 sm:ml-6">
         <div className="h-12 w-12 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white flex-shrink-0 mx-auto sm:mx-0">
-                      <span className="text-2xl font-medium text-white">
-                        {userData?.name?.[0]?.toUpperCase()}
-                      </span>
-                    </div>
+          <span className="text-2xl font-medium text-white">
+            {userData?.name?.[0]?.toUpperCase()}
+          </span>
+        </div>
         <div className="flex flex-col flex-grow w-full">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 sm:gap-0">
             <h2 className="text-xl sm:text-2xl font-semibold text-gray-800 text-center sm:text-left">

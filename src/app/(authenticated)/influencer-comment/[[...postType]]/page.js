@@ -354,6 +354,11 @@ export default function Home() {
   };
 
   const handleShare = async (post) => {
+    const email = getUserEmail();
+    if (!email) {
+      toast.error('Login First to share');
+      return;
+    }
     try {
       const shareData = {
         title: post.postTitle,
@@ -377,7 +382,7 @@ export default function Home() {
   const handleSave = async (postId) => {
     const email = getUserEmail();
     if (!email) {
-      router.push('/login');
+      toast.error('Login First to save');
       return;
     }
 

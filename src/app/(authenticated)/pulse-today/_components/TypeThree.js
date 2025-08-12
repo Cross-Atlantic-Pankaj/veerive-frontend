@@ -78,6 +78,13 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary, ti
   const handleShare = async (e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const email = getUserEmail();
+    if (!email) {
+      toast.error('Login First to share');
+      return;
+    }
+    
     try {
       const shareData = {
         title: context.contextTitle,
@@ -103,7 +110,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary, ti
 
     const email = getUserEmail();
     if (!email) {
-      router.push('/login');
+      toast.error('Login First to save');
       return;
     }
 
