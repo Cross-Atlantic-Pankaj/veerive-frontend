@@ -23,12 +23,13 @@ export default function AuthenticatedLayout({ children }) {
     const token = localStorage.getItem('token');
     const userData = localStorage.getItem('user');
 
-    if (!token || !userData) {
-      router.push('/login');
-      return;
-    }
-
+    // if (!token || !userData) {
+    //   router.push('/login');
+    //   return;
+    // }
+    if(userData){
     setUser(JSON.parse(userData));
+    }
   }, [router, searchParams]);
 
   const handleLogout = () => {
@@ -38,7 +39,7 @@ export default function AuthenticatedLayout({ children }) {
     router.push('/login');
   };
 
-  if (!user) return null;
+  // if (!user) return null;
 
   return (
   

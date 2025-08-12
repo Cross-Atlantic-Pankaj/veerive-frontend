@@ -141,37 +141,48 @@ export default function Navbar({ user, onLogout }) {
                 Pulse Today
               </NavLink>
               <NavLink href="/influencer-comment" isActive={pathname === '/influencer-comment'}>
-              Think Tank
+                Think Tank
               </NavLink>
               <NavLink href="/analyzer/trend-analyzer" isActive={pathname === '/analyzer/trend-analyzer'}>
-              Trend Analyzer
+                Trend Analyzer
               </NavLink>
-              <NavLink href="my-dashboard" isActive={pathname === 'my-dashboard'}>
-              Dashboard
+              <NavLink href="/my-dashboard" isActive={pathname === '/my-dashboard'}>
+                Dashboard
               </NavLink>
             </div>
 
             <div className="flex items-center space-x-4">
               <div className="hidden md:flex items-center space-x-3">
-                <Link 
-                  href="my-dashboard" 
-                  className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
-                >
-                  <span>{user?.name}</span>
-                  <div className="relative">
-                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white">
-                      <span className="text-sm font-medium text-white">
-                        {user?.name?.[0]?.toUpperCase()}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-                <button
-                  onClick={onLogout}
-                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg"
-                >
-                  Logout
-                </button>
+                {user ? (
+                  <>
+                    <Link 
+                      href="/my-dashboard" 
+                      className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-indigo-600"
+                    >
+                      <span>{user.name}</span>
+                      <div className="relative">
+                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white">
+                          <span className="text-sm font-medium text-white">
+                            {user.name?.[0]?.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                    <button
+                      onClick={onLogout}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg"
+                    >
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 ease-in-out transform hover:scale-105 shadow-md hover:shadow-lg"
+                  >
+                    Login
+                  </Link>
+                )}
               </div>
 
               <button
@@ -219,34 +230,49 @@ export default function Navbar({ user, onLogout }) {
                 </MobileNavLink>
 
                 <MobileNavLink
-                  href="my-dashboard"
-                  isActive={pathname === 'my-dashboard'}
+                  href="/my-dashboard"
+                  isActive={pathname === '/my-dashboard'}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Dashboard
                 </MobileNavLink>
 
                 <div className="mt-4 pt-4 border-t border-gray-200">
-                  <div className="flex items-center px-3 py-2">
-                    <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white mr-3">
-                      <span className="text-xs font-medium text-white">
-                        {user?.name?.[0]?.toUpperCase()}
-                      </span>
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">{user?.name}</span>
-                  </div>
-                  <button
-                    onClick={() => {
-                      onLogout();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="w-full mx-2 mt-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-600 rounded-lg shadow-md hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
-                  >
-                    <span>Logout</span>
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                    </svg>
-                  </button>
+                  {user ? (
+                    <>
+                      <div className="flex items-center px-3 py-2">
+                        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center ring-2 ring-white mr-3">
+                          <span className="text-xs font-medium text-white">
+                            {user.name?.[0]?.toUpperCase()}
+                          </span>
+                        </div>
+                        <span className="text-sm font-medium text-gray-700">{user.name}</span>
+                      </div>
+                      <button
+                        onClick={() => {
+                          onLogout();
+                          setIsMobileMenuOpen(false);
+                        }}
+                        className="w-full mx-2 mt-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-600 rounded-lg shadow-md hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
+                      >
+                        <span>Logout</span>
+                        <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                      </button>
+                    </>
+                  ) : (
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full mx-2 mt-2 px-3 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-600 to-blue-600 rounded-lg shadow-md hover:from-indigo-700 hover:to-blue-700 transition-all duration-200 flex items-center justify-center space-x-2"
+                    >
+                      <span>Login</span>
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                      </svg>
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>
