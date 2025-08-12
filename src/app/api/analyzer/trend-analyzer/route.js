@@ -61,7 +61,7 @@ export async function GET(request) {
       { path: 'sectors', select: 'sectorName' },
       { path: 'subSectors', select: 'subSectorName' },
       { path: 'tileTemplateId', select: 'name type jsxCode', options: { strictPopulate: false }, },
-    ]);
+    ])
 
     let sectors, subsectors;
     if (cachedSectors && cachedSubsectors) {

@@ -248,6 +248,7 @@ export async function GET(request) {
 				select: 'name type jsxCode',
 				options: { strictPopulate: false },
 			})
+      .sort({ date: -1 })
         .lean();
 
       const uniqueMatchingContexts = Array.from(
