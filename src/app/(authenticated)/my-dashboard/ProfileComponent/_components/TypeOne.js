@@ -15,7 +15,7 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, ''); 
 };
 
-const TypeOne = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+const TypeOne = ({ context, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
 
   const slug = context.contextTitle

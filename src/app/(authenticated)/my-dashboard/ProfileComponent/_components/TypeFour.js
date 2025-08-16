@@ -15,12 +15,10 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeFour = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+const TypeFour = ({ context, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
 
   const sectorsLabel = [...context.sectorNames, ...context.subSectorNames].join(' • ');
-  const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -92,15 +90,13 @@ const TypeFour = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
         <div className="flex flex-col sm:flex-row gap-4 mb-1">
           <div className="flex-1">
             <div className="mb-4">
-              {summaryPoints.length > 0 ? (
-                summaryPoints.map((point, i) => (
-                  <div
-                    key={i}
-                    className="text-gray-600 text-xs sm:text-sm line-clamp-1 mb-1"
-                  >
-                    {point}
-                  </div>
-                ))
+              {context.summary.length > 0 ? (
+                 <p
+                                  className="text-black text-base sm:text-base mt-1 line-clamp-4"
+                                  dangerouslySetInnerHTML={{
+                                    __html:context.summary
+                                  }}
+                                />
               ) : (
                 <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
                   Summary coming soon...

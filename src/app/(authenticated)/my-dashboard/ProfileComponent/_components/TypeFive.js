@@ -15,11 +15,8 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContextCallback }) => {
+const TypeFive = ({ context, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
-
-  const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoint = formattedSummaryPoints.slice(0, 1);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -111,15 +108,13 @@ const TypeFive = ({ context, formatSummary, handleUnsave, isLastItem, lastContex
 
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
-                {summaryPoints.length > 0 ? (
-                  summaryPoints.map((point, i) => (
-                    <div
-                      key={i}
-                      className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-3"
-                    >
-                      {point}
-                    </div>
-                  ))
+                {context.summary.length > 0 ? (
+            <p
+                                  className="text-black text-base sm:text-base mt-3 line-clamp-4"
+                                  dangerouslySetInnerHTML={{
+                                    __html:context.summary
+                                  }}
+                                />
                 ) : (
                   <div className="text-gray-400 text-xs sm:text-sm italic">
                     Summary will be available soon
