@@ -16,7 +16,7 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+const TypeThree = ({ context, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
@@ -24,8 +24,6 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
   const sectorsLabel = [...(context.sectors || []), ...(context.subSectors || [])]
     .map((item) => item.sectorName || item.subSectorName || 'Unknown')
     .join(' • ');
-  const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -160,16 +158,14 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, formatSummary }) 
                 </h2>
               </div>
             </div>
-            <div className="mt-2 sm:mt-3">
-              {summaryPoints.length > 0 ? (
-                summaryPoints.map((point, i) => (
-                  <div
-                    key={i}
-                    className="text-gray-600 text-xs sm:text-sm mb-1 line-clamp-1"
-                  >
-                    {point}
-                  </div>
-                ))
+            <div className="sm:mt-3">
+              {context.summary.length > 0 ? (
+                <p
+                                  className="text-black text-base sm:text-base line-clamp-4"
+                                  dangerouslySetInnerHTML={{
+                                    __html:context.summary
+                                  }}
+                                />
               ) : (
                 <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
                   Summary will be available soon

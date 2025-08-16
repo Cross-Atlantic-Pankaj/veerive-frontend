@@ -7,65 +7,9 @@ import {
   TypeNum,
 } from './_RecentEventsComponents';
 
-const formatSummary = (summary) => {
-  if (!summary || summary.trim() === '') return ['• Summary will be available soon'];
-
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(summary, 'text/html');
-
-  const extractText = (node, points = []) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent.trim();
-      if (text) points.push(text);
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const tagName = node.tagName.toLowerCase();
-      if (tagName === 'br') {
-        points.push(''); 
-      } else if (['li', 'p', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(tagName)) {
-        const childText = Array.from(node.childNodes)
-          .map((child) => child.textContent.trim())
-          .filter((text) => text)
-          .join(' ');
-        if (childText) points.push(childText);
-      } else {
-        Array.from(node.childNodes).forEach((child) => extractText(child, points));
-      }
-    }
-    return points;
-  };
-
-  let textPoints = extractText(doc.body);
-
-  const decodeEntities = (text) => {
-    const entities = {
-      ' ': ' ',
-      '&': '&',
-      '<': '<',
-      '>': '>',
-      '"': '"',
-      '&apos;': "'",
-      '&quot;': '"',
-    };
-    return text.replace(/&[a-zA-Z0-9#]+;/g, (match) => entities[match] || match);
-  };
-
-  textPoints = textPoints
-    .map((point) => decodeEntities(point)) 
-    .map((point) => point.replace(/\s+/g, ' ').trim()) 
-    .filter((point) => point.length > 0)
-    .map((point) => {
-      return point.replace(/^\d+\.\s*/, '').trim();
-    });
-
-  textPoints = textPoints.map((point) => `${point}`);
-
-  return textPoints.length > 0 ? textPoints : ['• Summary will be available soon'];
-};
-
 const renderContainerType = (context, key) => {
   const props = {
     context,
-    formatSummary,
   };
 
   switch (context.containerType) {
