@@ -33,8 +33,6 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
   const router = useRouter();
 
   const sectorsLabel = [...context.sectors, ...context.subSectors].join(' • ');
-  const formattedSummaryPoints = formatSummary(context.summary);
-  const summaryPoints = formattedSummaryPoints.slice(0, 4);
 
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
@@ -166,15 +164,13 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, formatSummary, tile
                 </div>
 
         <div className="mb-4">
-          {summaryPoints.length > 0 ? (
-            summaryPoints.map((point, i) => (
-              <div
-                key={i}
-                className="text-gray-600 text-xs sm:text-sm line-clamp-1 mb-1 lg:pr-16"
-              >
-                {point}
-              </div>
-            ))
+          {context.summary.length > 0 ? (
+            <p
+                                  className="text-black text-base sm:text-base mt-1 line-clamp-4"
+                                  dangerouslySetInnerHTML={{
+                                    __html:context.summary
+                                  }}
+                                />
           ) : (
             <div className="text-gray-400 text-xs sm:text-sm italic line-clamp-1">
               Summary will be available soon
