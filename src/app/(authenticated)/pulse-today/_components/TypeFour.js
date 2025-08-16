@@ -28,7 +28,7 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeFour = ({ context, isLastItem, lastContextCallback, formatSummary, tileTemplate }) => {
+const TypeFour = ({ context, isLastItem, lastContextCallback, tileTemplate }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 

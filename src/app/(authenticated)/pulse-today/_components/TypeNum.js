@@ -15,7 +15,7 @@ const normalizeTitle = (text) => {
     .replace(/^-+|-+$/g, '');
 };
 
-const TypeNum = ({ context, isLastItem, lastContextCallback, formatSummary }) => {
+const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
