@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
 import { Tile, parseJsxCode } from '../../../utils/Tile';
@@ -20,6 +20,7 @@ export default function TrendAnalyzer() {
   const isInitialMount = useRef(true);
   const lastFetchFilter = useRef('');
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const observer = useRef(null);
   const lastThemeElementRef = useCallback(
@@ -166,6 +167,17 @@ export default function TrendAnalyzer() {
     },
     [selectedFilter, sectors, loading]
   );
+
+  // Handle URL parameters on page load
+  useEffect(() => {
+    const subSectorId = searchParams.get('subSectorId');
+    const sectorId = searchParams.get('sectorId');
+    
+    if (subSectorId || sectorId) {
+      const filterValue = subSectorId || sectorId;
+      setSelectedFilter(filterValue);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     if (isInitialMount.current) {

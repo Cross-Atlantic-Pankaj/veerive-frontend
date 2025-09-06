@@ -27,6 +27,7 @@ const PostSchema = new mongoose.Schema({
     default: [],
   },
   generalComment: { type: String, default: '' },
+  imageUrl: { type: String, default: '' }, // AWS S3 image URL for post
   seoData: {
     metaDescription: { type: Boolean, default: false }
   },

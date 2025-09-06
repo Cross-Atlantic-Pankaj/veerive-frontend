@@ -1,8 +1,19 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
 
 const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
+	const slugify = (text) => {
+		return text
+			.toString()
+			.toLowerCase()
+			.trim()
+			.replace(/\s+/g, '-')
+			.replace(/[^\w-]+/g, '')
+			.replace(/--+/g, '-')
+			.replace(/^-+|-+$/g, '');
+	};
 	const nextSlide = () => {
 		if (!context || !context.slides || !context.slides.length) return;
 		setCurrentSlide((prev) =>
@@ -26,21 +37,23 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 			{(context.originalContextSector?.length > 0 ||
 				context.originalContextSubSector?.length > 0) && (
 				<div className="flex flex-wrap gap-1 sm:gap-2 mt-2 mb-2 sm:mb-3">
-					{context.originalContextSector?.map((sector) => (
-						<span
-							key={sector._id}
-							className="p-2 sm:p-2 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-medium"
+					{context.originalContextSector?.map((sector, index) => (
+						<Link
+							key={`sector-${sector._id || index}`}
+							href={`/pulse-today?sector=${encodeURIComponent(sector)}`}
+							className="p-2 sm:p-2 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-100 transition-colors cursor-pointer"
 						>
 							{sector}
-						</span>
+						</Link>
 					))}
-					{context.originalContextSubSector?.map((subSector) => (
-						<span
-							key={subSector._id}
-							className="p-2 sm:p-2 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-medium"
+					{context.originalContextSubSector?.map((subSector, index) => (
+						<Link
+							key={`subsector-${subSector._id || index}`}
+							href={`/pulse-today?subSector=${encodeURIComponent(subSector)}`}
+							className="p-2 sm:p-2 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-100 transition-colors cursor-pointer"
 						>
 							{subSector}
-						</span>
+						</Link>
 					))}
 				</div>
 			)}
@@ -48,30 +61,35 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 			{(context.originalContextSignalCategory?.length > 0 ||
 				context.originalContextSignalSubCategory?.length > 0) && (
 				<div className="flex flex-wrap gap-1 sm:gap-2 mt-2 mb-2 sm:mb-3">
-					{context.originalContextSignalCategory?.map((signal) => (
-						<span
-							key={signal._id}
-							className="p-2 sm:p-2 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-medium"
+					{context.originalContextSignalCategory?.map((signal, index) => (
+						<Link
+							key={`signal-${signal._id || index}`}
+							href={`/pulse-today?signalCategory=${encodeURIComponent(signal)}`}
+							className="p-2 sm:p-2 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-100 transition-colors cursor-pointer"
 						>
 							{signal}
-						</span>
+						</Link>
 					))}
-					{context.originalContextSignalSubCategory?.map((subSignal) => (
-						<span
-							key={subSignal._id}
-							className="p-2 sm:p-2 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-medium"
+					{context.originalContextSignalSubCategory?.map((subSignal, index) => (
+						<Link
+							key={`subsignal-${subSignal._id || index}`}
+							href={`/pulse-today?signalSubCategory=${encodeURIComponent(subSignal)}`}
+							className="p-2 sm:p-2 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-100 transition-colors cursor-pointer"
 						>
 							{subSignal}
-						</span>
+						</Link>
 					))}
 				</div>
 			)}
 
 			{context.originalTheme && (
 				<div className="bg-[#f1f8ff] p-2 sm:p-3 mb-2 flex flex-col sm:flex-row items-start sm:items-center justify-between flex-wrap gap-2 sm:gap-4">
-					<span className="text-sm sm:text-base text-[#174c77] font-medium">
+					<Link 
+						href={`/analyzer/theme-details/${slugify(context.originalTheme.themeTitle)}`}
+						className="text-sm sm:text-base text-[#174c77] font-medium hover:text-[#0f3a5c] transition-colors cursor-pointer"
+					>
 						Theme: {context.originalTheme.themeTitle}
-					</span>
+					</Link>
 					<div className="flex flex-wrap gap-2 sm:gap-4">
 						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-1 sm:px-2 py-1 gap-1 sm:gap-2">
 							<div className="text-xs sm:text-sm text-[#174c77] leading-tight text-center">
@@ -176,7 +194,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 								context.slides.length > 1 &&(
 							context.slides.map((_, idx) => (
 								<button
-									key={idx}
+									key={`slide-${idx}`}
 									onClick={() => setCurrentSlide(idx)}
 									className={`w-2 h-2 rounded-full ${
 										currentSlide === idx ? 'bg-white' : 'bg-gray-400'

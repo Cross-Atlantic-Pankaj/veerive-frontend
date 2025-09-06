@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback, Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import * as LucideIcons from 'lucide-react';
 import {
   TypeOne,
@@ -29,6 +30,7 @@ const parseJsxCode = (jsxCode) => {
 };
 
 export default function PulseToday() {
+  const searchParams = useSearchParams();
   const [contexts, setContexts] = useState([]);
   const [displayItems, setDisplayItems] = useState([]);
   const [sidebarMessage, setSidebarMessage] = useState(null);
@@ -38,6 +40,7 @@ export default function PulseToday() {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [expertPosts, setExpertPosts] = useState([]);
+  const [activeFilter, setActiveFilter] = useState(null);
   const mainContentRef = useRef(null);
   const containerRef = useRef(null);
   const loaderRef = useRef(null);
@@ -66,10 +69,32 @@ export default function PulseToday() {
   const fetchData = async (pageNum) => {
     try {
       setLoading(true);
+      
+      // Get filter parameters from URL
+      const sector = searchParams.get('sector');
+      const subSector = searchParams.get('subSector');
+      const signalCategory = searchParams.get('signalCategory');
+      const signalSubCategory = searchParams.get('signalSubCategory');
+      
+      const requestBody = { page: pageNum };
+      
+      // Add filters to request body if they exist
+      if (sector) requestBody.sector = sector;
+      if (subSector) requestBody.subSector = subSector;
+      if (signalCategory) requestBody.signalCategory = signalCategory;
+      if (signalSubCategory) requestBody.signalSubCategory = signalSubCategory;
+      
+      // Set active filter for display
+      if (sector) setActiveFilter({ type: 'sector', value: sector });
+      else if (subSector) setActiveFilter({ type: 'subSector', value: subSector });
+      else if (signalCategory) setActiveFilter({ type: 'signalCategory', value: signalCategory });
+      else if (signalSubCategory) setActiveFilter({ type: 'signalSubCategory', value: signalSubCategory });
+      else setActiveFilter(null);
+      
       const res = await fetch('/api/pulse-today', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ page: pageNum }),
+        body: JSON.stringify(requestBody),
       });
       if (!res.ok) throw new Error('Failed to fetch data');
       const data = await res.json();
@@ -117,6 +142,13 @@ export default function PulseToday() {
   useEffect(() => {
     fetchData(page);
   }, [page]);
+
+  // Reset page when search parameters change
+  useEffect(() => {
+    setPage(1);
+    setContexts([]);
+    setDisplayItems([]);
+  }, [searchParams]);
 
   const processInitialContexts = (allContexts) => {
     const uniqueContexts = Array.from(new Map(allContexts.map((c) => [c.id, c])).values());
@@ -286,10 +318,36 @@ export default function PulseToday() {
       }
     >
       <main className="px-3 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-16 xl:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-        <div ref={containerRef} className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 relative max-w-7xl mx-auto">
+        <div ref={containerRef} className={`flex flex-col gap-4 sm:gap-6 lg:gap-8 relative max-w-7xl mx-auto ${activeFilter ? 'lg:flex-col' : 'lg:flex-row'}`}>
+          
+          {/* Active Filter Display */}
+          {activeFilter && (
+            <div className="w-full mb-4">
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">Filtered by:</span>
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                      {activeFilter.type === 'sector' && 'Sector'}
+                      {activeFilter.type === 'subSector' && 'Sub-Sector'}
+                      {activeFilter.type === 'signalCategory' && 'Signal Category'}
+                      {activeFilter.type === 'signalSubCategory' && 'Signal Sub-Category'}
+                      : {activeFilter.value}
+                    </span>
+                  </div>
+                  <Link
+                    href="/pulse-today"
+                    className="text-sm text-gray-500 hover:text-gray-700 underline"
+                  >
+                    Clear Filter
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
           <div
             ref={mainContentRef}
-            className="w-full transition-all duration-300 ease-in-out lg:w-[72%] order-2 lg:order-1"
+            className={`w-full transition-all duration-300 ease-in-out ${activeFilter ? 'lg:w-full' : 'lg:w-[72%]'} order-2 lg:order-1`}
           >
             {displayItems.map((displayItem, index) => {
               const isLastItem = index === displayItems.length - 1 && hasMore;
@@ -298,11 +356,19 @@ export default function PulseToday() {
                   .map((item) => item.id)
                   .join('-')}-${index}`;
                 
-                // Determine grid classes based on number of items
+                // Determine grid classes based on number of items and filter state
                 const getGridClasses = (itemCount) => {
-                  if (itemCount === 1) return 'grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6';
-                  if (itemCount === 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6';
-                  return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                  if (activeFilter) {
+                    // When filtered, use more columns for better space utilization
+                    if (itemCount === 1) return 'grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                    if (itemCount === 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                  } else {
+                    // Normal layout
+                    if (itemCount === 1) return 'grid grid-cols-1 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                    if (itemCount === 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                    return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6';
+                  }
                 };
                 
                 return (
@@ -339,7 +405,8 @@ export default function PulseToday() {
           </div>
 
           {/* Sidebar - Mobile first, then desktop positioning */}
-          <div className="w-full lg:w-[28%] order-1 lg:order-2">
+          {!activeFilter && (
+            <div className="w-full lg:w-[28%] order-1 lg:order-2">
             {sidebarMessage && (
               <div className="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md mb-4 sm:mb-6">
                 <div className="flex items-center gap-2 mb-2 sm:mb-3">
@@ -368,22 +435,38 @@ export default function PulseToday() {
               <div className="space-y-2 sm:space-y-3">
                 {trendingThemes.map((theme, index) => (
                   <div
-                    key={index}
+                    key={`theme-${theme._id || index}`}
                     className="border-b border-dashed border-gray-300 pb-2 sm:pb-3 last:border-0 last:pb-0"
                   >
-                    <Link href={`/analyzer/theme-details/${slugify(theme.title)}`}>
-                      <div className="flex items-start gap-2 sm:gap-3">
-                        <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-xs sm:text-sm">
-                          {theme.score.toFixed(1)}
-                        </div>
-                        <div className="break-words min-w-0 flex-1">
-                          <h3 className="font-medium text-gray-800 text-xs sm:text-sm leading-tight">{theme.title}</h3>
-                          <div className="mt-1 text-xs text-gray-500">
-                            {theme.sectors.length > 0 && theme.sectors[0]}
-                          </div>
-                        </div>
+                    <div className="flex items-start gap-2 sm:gap-3">
+                      <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-blue-500 text-blue-500 font-medium text-xs sm:text-sm">
+                        {theme.score.toFixed(1)}
                       </div>
-                    </Link>
+                      <div className="break-words min-w-0 flex-1">
+                        <Link href={`/analyzer/theme-details/${slugify(theme.title)}`}>
+                          <h3 className="font-medium text-gray-800 text-xs sm:text-sm leading-tight hover:text-indigo-600 transition-colors">{theme.title}</h3>
+                        </Link>
+                        {/* Sub-sector tags */}
+                        {theme.subSectors && theme.subSectors.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {theme.subSectors.slice(0, 2).map((subSector, subIndex) => (
+                              <Link
+                                key={`subsector-${subSector._id || subIndex}`}
+                                href={`/analyzer/trend-analyzer?subSectorId=${subSector._id}`}
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+                              >
+                                {subSector.subSectorName}
+                              </Link>
+                            ))}
+                            {theme.subSectors.length > 2 && (
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                                +{theme.subSectors.length - 2}
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -404,6 +487,24 @@ export default function PulseToday() {
                     rel="noopener noreferrer"
                     className="block border-b border-dashed border-gray-300 pb-2 sm:pb-3 last:border-none hover:text-indigo-600 transition-colors"
                   >
+                    {/* Sub-sector tags */}
+                    {post.subSectors && post.subSectors.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {post.subSectors.slice(0, 3).map((subSector, index) => (
+                          <span
+                            key={`expert-subsector-${index}-${subSector}`}
+                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition-colors"
+                          >
+                            {subSector}
+                          </span>
+                        ))}
+                        {post.subSectors.length > 3 && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">
+                            +{post.subSectors.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    )}
                     <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors leading-tight">
                       {post.postTitle}
                     </h3>
@@ -422,7 +523,8 @@ export default function PulseToday() {
                 </div>
               )}
             </div>
-          </div>
+            </div>
+          )}
         </div>
       </main>
     </Suspense>

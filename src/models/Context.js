@@ -19,6 +19,7 @@ const ContextSchema = new mongoose.Schema({
   homePageShow: { type: Boolean, default: false },
   bannerImage: { type: String, default: '' },
   otherImage: { type: String, default: '' },
+  imageUrl: { type: String, default: '' }, // AWS S3 image URL for context
   dataForTypeNum: { type: String, default: '' },
   summary: { type: String, default: '' },
   hasSlider: { type: Boolean, default: false },

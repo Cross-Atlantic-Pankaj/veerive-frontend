@@ -4,19 +4,7 @@ import Link from 'next/link';
 import { Suspense, useEffect, useState } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
-import * as LucideIcons from 'lucide-react';
-
-const Tile = ({ bg, icon, color, size }) => {
-  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image; 
-  return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: bg, color }}
-    >
-      <IconComponent size={size} />
-    </div>
-  );
-};
+import ContextImage from '../../../components/ContextImage';
 
 const parseJsxCode = (jsxCode) => {
   if (!jsxCode) return null;
@@ -283,18 +271,12 @@ export default function HomePage() {
                         >
                           <Link href={`/context-details/${slug}`}>
                             <div className="bg-gray-100 aspect-[1000/630] relative mb-4 w-full">
-                              {tileTemplate ? (
-                                <Tile
-                                  bg={tileTemplate.bg}
-                                  icon={tileTemplate.icon}
-                                  color={tileTemplate.color}
-                                  size={tileTemplate.size}
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 text-base md:text-xl">
-                                  1000 × 630
-                                </div>
-                              )}
+                              <ContextImage
+                                context={context}
+                                tileTemplate={tileTemplate}
+                                className="w-full h-full"
+                                fallbackText="1000 × 630"
+                              />
                             </div>
 
                             {context.subSectors?.filter(
@@ -390,18 +372,12 @@ export default function HomePage() {
                         className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
                       >
                         <div className="w-full sm:w-[80px] md:w-[120px] h-[150px] sm:h-[50px] md:h-[75px] bg-gray-100 relative flex-shrink-0">
-                          {tileTemplate ? (
-                            <Tile
-                              bg={tileTemplate.bg}
-                              icon={tileTemplate.icon}
-                              color={tileTemplate.color}
-                              size={tileTemplate.size}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                              1000 × 630
-                            </div>
-                          )}
+                          <ContextImage
+                            post={post}
+                            tileTemplate={tileTemplate}
+                            className="w-full h-full"
+                            fallbackText="1000 × 630"
+                          />
                         </div>
                         <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                           <h3 className="text-sm sm:text-base text-gray-900 group-hover:text-indigo-600 mb-1 sm:mb-2 line-clamp-2 font-medium">
@@ -455,18 +431,12 @@ export default function HomePage() {
                         className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
                       >
                         <div className="w-full sm:w-[80px] md:w-[120px] h-[150px] sm:h-[50px] md:h-[75px] bg-gray-100 relative flex-shrink-0">
-                          {tileTemplate ? (
-                            <Tile
-                              bg={tileTemplate.bg}
-                              icon={tileTemplate.icon}
-                              color={tileTemplate.color}
-                              size={tileTemplate.size}
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                              1000 × 630
-                            </div>
-                          )}
+                          <ContextImage
+                            post={post}
+                            tileTemplate={tileTemplate}
+                            className="w-full h-full"
+                            fallbackText="1000 × 630"
+                          />
                         </div>
                         <div className="flex-1 min-w-0 mt-2 sm:mt-0">
                           <h3 className="text-sm sm:text-base text-gray-900 group-hover:text-indigo-600 mb-1 sm:mb-2 line-clamp-2 font-medium">
@@ -522,18 +492,12 @@ export default function HomePage() {
                     className="block"
                   >
                     <div className="bg-gray-100 h-[320px] relative w-full">
-                      {trendingThemes[0].tileTemplateId ? (
-                        <Tile
-                          bg={parseJsxCode(trendingThemes[0].tileTemplateId.jsxCode)?.bg}
-                          icon={parseJsxCode(trendingThemes[0].tileTemplateId.jsxCode)?.icon}
-                          color={parseJsxCode(trendingThemes[0].tileTemplateId.jsxCode)?.color}
-                          size={parseJsxCode(trendingThemes[0].tileTemplateId.jsxCode)?.size}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          1000 × 630
-                        </div>
-                      )}
+                      <ContextImage
+                        theme={trendingThemes[0]}
+                        tileTemplate={trendingThemes[0].tileTemplateId ? parseJsxCode(trendingThemes[0].tileTemplateId.jsxCode) : null}
+                        className="w-full h-full"
+                        fallbackText="1000 × 630"
+                      />
                     </div>
                     <div className="mt-3">
                       <div className="text-sm mb-2">
@@ -578,18 +542,12 @@ export default function HomePage() {
                     className="block"
                   >
                     <div className="bg-gray-100 h-[150px] relative w-full">
-                      {theme.tileTemplateId ? (
-                        <Tile
-                          bg={parseJsxCode(theme.tileTemplateId.jsxCode)?.bg}
-                          icon={parseJsxCode(theme.tileTemplateId.jsxCode)?.icon}
-                          color={parseJsxCode(theme.tileTemplateId.jsxCode)?.color}
-                          size={parseJsxCode(theme.tileTemplateId.jsxCode)?.size}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          1000 × 630
-                        </div>
-                      )}
+                      <ContextImage
+                        theme={theme}
+                        tileTemplate={theme.tileTemplateId ? parseJsxCode(theme.tileTemplateId.jsxCode) : null}
+                        className="w-full h-full"
+                        fallbackText="1000 × 630"
+                      />
                     </div>
                     <div className="mt-3">
                       <div className="text-sm mb-2">

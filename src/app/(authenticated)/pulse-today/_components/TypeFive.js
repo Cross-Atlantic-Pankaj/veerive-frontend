@@ -2,19 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import * as LucideIcons from 'lucide-react';
-
-const Tile = ({ bg, icon, color, size }) => {
-  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
-  return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: bg, color }}
-    >
-      <IconComponent size={size} />
-    </div>
-  );
-};
+import ContextImage from '../../../../components/ContextImage';
 
 const normalizeTitle = (text) => {
   return text
@@ -136,87 +124,97 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
       >
-        <div className="text-black-600 text-base md:text-lg font-semibold mb-2">
-          {context.contextTitle}
+        {/* Main content area with image, title, summary, and bordered posts */}
+        <div className="flex gap-4 mb-4">
+          {/* Image section - top left */}
+          <div className="flex-shrink-0">
+            <ContextImage
+              context={context}
+              tileTemplate={tileTemplate}
+              className="w-32 h-32 lg:w-40 lg:h-40"
+              fallbackText="1000 × 630"
+            />
+          </div>
+
+          {/* Content section - beside image */}
+          <div className="flex-1 min-w-0">
+            {/* Category/Tags */}
+            {context.originalContextSector && context.originalContextSector.length > 0 && (
+              <div className="text-xs text-red-600 font-medium mb-1">
+                {context.originalContextSector.slice(0, 2).join(' • ')}
+              </div>
+            )}
+            
+            {/* Context title */}
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+              {context.contextTitle}
+            </h2>
+            
+            {/* Summary snippet */}
+            {context.summary && context.summary.length > 0 ? (
+              <p 
+                className="text-sm text-gray-600 line-clamp-3"
+                dangerouslySetInnerHTML={{
+                  __html: context.summary
+                }}
+              />
+            ) : (
+              <p className="text-sm text-gray-400 italic">
+                Summary will be available soon
+              </p>
+            )}
+          </div>
+
+          {/* Bordered posts section - top right */}
+          {context.posts && context.posts.length >= 2 && (
+            <div className="flex-shrink-0 w-64 space-y-3">
+              {context.posts.slice(0, 2).map((post, index) => (
+                <div 
+                  key={`bordered-post-${index}-${post._id || post.postTitle}`} 
+                  className="border border-black rounded-lg p-3 bg-white"
+                >
+                  <div className="text-xs text-blue-600 font-medium mb-1">
+                    {post.postType}
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 line-clamp-2 mb-1">
+                    {post.postTitle}
+                  </h3>
+                  {post.summary && (
+                    <p className="text-xs text-gray-600 line-clamp-2">
+                      {post.summary}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
-         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-          <div className="w-full sm:w-1/3 flex items-stretch">
-  {tileTemplate ? (
-                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
-                  <Tile
-                  bg={tileTemplate.bg}
-                  icon={tileTemplate.icon}
-                  color={tileTemplate.color}
-                  size={tileTemplate.size}
-                />
+        {/* Bottom posts section - horizontal row */}
+        {context.posts && context.posts.length > 2 && (
+          <div className="border-t border-gray-100 pt-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {context.posts.slice(2, 5).map((post, index) => (
+                <div key={`bottom-post-${index}-${post._id || post.postTitle}`} className="group">
+                  <div className="text-xs text-blue-600 font-medium mb-1">
+                    {post.postType}
+                  </div>
+                  <h3 className="text-sm font-semibold text-gray-800 group-hover:text-indigo-600 transition-colors line-clamp-2 mb-1">
+                    {post.postTitle}
+                  </h3>
+                  {post.summary && (
+                    <p className="text-xs text-gray-600 line-clamp-2">
+                      {post.summary}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                  1000 × 630
-                </div>
-              )}
-            </div>
-
-          <div className="flex-1 flex flex-col gap-3">
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1">
-                {context.posts?.[0] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[0].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[1] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[1].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[2] && (
-                  <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
-                    {context.posts[2].postTitle}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-2">
-              <div className="flex-1">
-                {context.summary.length > 0 ? (
-            <p
-                                  className="text-black text-base sm:text-base mt-3 line-clamp-4"
-                                  dangerouslySetInnerHTML={{
-                                    __html:context.summary
-                                  }}
-                                />
-                ) : (
-                  <div className="text-gray-400 text-xs sm:text-sm italic">
-                    Summary will be available soon
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[3] && (
-                  <div className="font-semibold text-gray-800 text-[13px]">
-                    {context.posts[3].postTitle}
-                  </div>
-                )}
-              </div>
-              <div className="flex-1">
-                {context.posts?.[4] && (
-                  <div className="font-semibold text-gray-800 text-[13px] border border-black p-1 rounded">
-                    {context.posts[4].postTitle}
-                  </div>
-                )}
-              </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
 
-        <div className="mt-2 flex justify-end gap-2">
+        {/* Action buttons */}
+        <div className="mt-4 flex justify-end gap-2">
           <button
             onClick={handleSave}
             className={`inline-flex items-center px-3 py-1 rounded-md text-xs font-medium ${
@@ -227,7 +225,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 w-4 mr-1"
               fill={isSaved ? 'currentColor' : 'none'}
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -247,7 +245,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 mr-1"
+              className="h-4 w-4 mr-1"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"

@@ -15,6 +15,7 @@ const ThemeSchema = new mongoose.Schema({
   impactScoreImage: { type: String, default: '' },
   predictiveMomentumScoreImage: { type: String, default: '' },
   generalComment: { type: String, default: '' },
+  imageUrl: { type: String, default: '' }, // AWS S3 image URL for theme
   seoData: {
     metaDescription: { type: Boolean, default: false }
   },

@@ -4,6 +4,8 @@ import Context from '@/models/Context';
 import Post from '@/models/Post';
 import Sector from '@/models/Sector';
 import SubSector from '@/models/SubSector';
+import Signal from '@/models/Signal';
+import SubSignal from '@/models/SubSignal';
 import SidebarMessage from '@/models/SidebarMessage';
 import Theme from '@/models/Theme';
 import Source from '@/models/Source';
@@ -16,6 +18,8 @@ export async function POST(request) {
 		if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
 		if (!mongoose.models.SubSector)
 			mongoose.model('SubSector', SubSector.schema);
+		if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
+		if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
 		if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
 		if (!mongoose.models.SidebarMessage)
 			mongoose.model('SidebarMessage', SidebarMessage.schema);
@@ -24,11 +28,20 @@ export async function POST(request) {
 		if (!mongoose.models.TileTemplate) {
 			mongoose.model('TileTemplate', tileTemplate.schema);
 		}
+		if (!mongoose.models.contexts) {
+			mongoose.model('contexts', Context.schema);
+		}
 
 		const body = await request.json();
 		const page = body.page || 1;
+		
+		// Get filter parameters
+		const sector = body.sector;
+		const subSector = body.subSector;
+		const signalCategory = body.signalCategory;
+		const signalSubCategory = body.signalSubCategory;
 
-		const distinctDates = await Context.aggregate([
+		const distinctDates = await mongoose.model('contexts').aggregate([
 			{
 				$group: {
 					_id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
@@ -55,24 +68,59 @@ export async function POST(request) {
 			targetDate.originalDate.setHours(23, 59, 59, 999)
 		);
 
+		// Build filter query
+		const filterQuery = {
+			date: {
+				$gte: startOfDay,
+				$lte: endOfDay,
+			},
+		};
+
+		// Add filtering based on parameters
+		if (sector) {
+			// Find sector by name and get its ObjectId
+			const sectorDoc = await Sector.findOne({ sectorName: sector });
+			if (sectorDoc) {
+				filterQuery['sectors'] = { $in: [sectorDoc._id] };
+			}
+		}
+		if (subSector) {
+			// Find subSector by name and get its ObjectId
+			const subSectorDoc = await SubSector.findOne({ subSectorName: subSector });
+			if (subSectorDoc) {
+				filterQuery['subSectors'] = { $in: [subSectorDoc._id] };
+			}
+		}
+		if (signalCategory) {
+			// Find signal category by name and get its ObjectId
+			const signalDoc = await Signal.findOne({ signalName: signalCategory });
+			if (signalDoc) {
+				filterQuery['signalCategories'] = { $in: [signalDoc._id] };
+			}
+		}
+		if (signalSubCategory) {
+			// Find signal sub-category by name and get its ObjectId
+			const subSignalDoc = await SubSignal.findOne({ subSignalName: signalSubCategory });
+			if (subSignalDoc) {
+				filterQuery['signalSubCategories'] = { $in: [subSignalDoc._id] };
+			}
+		}
+
 		const [
 			contextsResult,
 			sidebarMessagesResult,
 			trendingThemes,
 			expertPostsResult,
 		] = await Promise.all([
-			Context.find({
-				date: {
-					$gte: startOfDay,
-					$lte: endOfDay,
-				},
-			})
+			mongoose.model('contexts').find(filterQuery)
 				.sort({ date: -1 })
 				.populate('sectors', 'sectorName')
 				.populate('subSectors', 'subSectorName')
+				.populate('signalCategories', 'signalName')
+				.populate('signalSubCategories', 'subSignalName')
 				.populate({
 					path: 'posts.postId',
-					select: 'postTitle date summary',
+					select: 'postTitle postType date summary',
 				})
         .populate({
 				path: 'tileTemplates',
@@ -98,7 +146,8 @@ export async function POST(request) {
 				.sort({ date: -1 })
 				.limit(7)
 				.populate('source', 'sourceName')
-				.select('postTitle date sourceUrl sourceUrls _id')
+				.populate('contexts', 'subSectors')
+				.select('postTitle date sourceUrl sourceUrls _id contexts')
 				.exec(),
 		]);
 
@@ -118,6 +167,7 @@ export async function POST(request) {
 					seenPostIds.add(p.postId._id.toString());
 					uniquePosts.push({
 						postTitle: p.postId.postTitle,
+						postType: p.postId.postType,
 						date: p.postId.date,
 						summary: p.postId.summary,
 					});
@@ -130,6 +180,10 @@ export async function POST(request) {
 				contextTitle: context.contextTitle,
 				sectors: context.sectors.map((s) => s.sectorName),
 				subSectors: context.subSectors.map((s) => s.subSectorName),
+				originalContextSector: context.sectors.map((s) => s.sectorName),
+				originalContextSubSector: context.subSectors.map((s) => s.subSectorName),
+				originalContextSignalCategory: context.signalCategories ? context.signalCategories.map((s) => s.signalName) : [],
+				originalContextSignalSubCategory: context.signalSubCategories ? context.signalSubCategories.map((s) => s.subSignalName) : [],
 				bannerImage: context.bannerImage,
 				summary: context.summary,
 				dataForTypeNum: context.dataForTypeNum,
@@ -150,8 +204,37 @@ export async function POST(request) {
 			score: theme.overallScore,
 			description: theme.themeDescription,
 			sectors: theme.sectors.map((s) => s.sectorName),
-			subSectors: theme.subSectors.map((s) => s.subSectorName),
+			subSectors: theme.subSectors.map((s) => ({
+				_id: s._id,
+				subSectorName: s.subSectorName
+			})),
 		}));
+
+		// Get all unique sub-sector IDs from expert posts' contexts
+		const allSubSectorIds = new Set();
+		expertPostsResult.forEach((post) => {
+			if (post.contexts && post.contexts.length > 0) {
+				post.contexts.forEach((context) => {
+					if (context.subSectors && context.subSectors.length > 0) {
+						context.subSectors.forEach((subSectorId) => {
+							allSubSectorIds.add(subSectorId);
+						});
+					}
+				});
+			}
+		});
+
+		// Fetch all sub-sectors in one query
+		const subSectorsMap = new Map();
+		if (allSubSectorIds.size > 0) {
+			const subSectors = await SubSector.find({
+				_id: { $in: Array.from(allSubSectorIds) }
+			}).select('_id subSectorName');
+			
+			subSectors.forEach((subSector) => {
+				subSectorsMap.set(subSector._id.toString(), subSector.subSectorName);
+			});
+		}
 
 		const expertPosts = expertPostsResult.map((post) => {
 			let effectiveSourceUrl = post.sourceUrl;
@@ -160,11 +243,28 @@ export async function POST(request) {
 					? post.sourceUrls[0]
 					: post.sourceUrls;
 			}
+
+			// Extract sub-sectors from the post's contexts
+			const postSubSectors = new Set();
+			if (post.contexts && post.contexts.length > 0) {
+				post.contexts.forEach((context) => {
+					if (context.subSectors && context.subSectors.length > 0) {
+						context.subSectors.forEach((subSectorId) => {
+							const subSectorName = subSectorsMap.get(subSectorId.toString());
+							if (subSectorName) {
+								postSubSectors.add(subSectorName);
+							}
+						});
+					}
+				});
+			}
+
 			return {
 				_id: post._id,
 				postTitle: post.postTitle,
 				date: post.date,
 				SourceUrl: effectiveSourceUrl || '',
+				subSectors: Array.from(postSubSectors),
 			};
 		});
 

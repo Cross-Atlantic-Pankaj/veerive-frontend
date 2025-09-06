@@ -2,19 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import * as LucideIcons from 'lucide-react';
-
-const Tile = ({ bg, icon, color, size }) => {
-  const IconComponent = LucideIcons[icon.charAt(0).toUpperCase() + icon.slice(1)] || LucideIcons.Image;
-  return (
-    <div
-      className="w-full h-full flex items-center justify-center"
-      style={{ backgroundColor: bg, color }}
-    >
-      <IconComponent size={size} />
-    </div>
-  );
-};
+import ContextImage from '../../../../components/ContextImage';
 
 const normalizeTitle = (text) => {
   return text
@@ -140,24 +128,30 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
           <div className="w-full sm:w-1/3">
-                      {tileTemplate ? (
-                                                <div className="w-full h-20 lg:h-24 rounded-lg overflow-hidden">
-                                                  <Tile
-                  bg={tileTemplate.bg}
-                  icon={tileTemplate.icon}
-                  color={tileTemplate.color}
-                  size={tileTemplate.size}
-                />
-                                                </div>
-                                              ) : (
-                                                <div className="w-full h-20 lg:h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center text-xs sm:text-sm text-gray-500">
-                                                  1000 × 630
-                                                </div>
-                                              )}
-                    </div>
+            <ContextImage
+              context={context}
+              tileTemplate={tileTemplate}
+              className="w-full h-20 lg:h-24"
+              fallbackText="1000 × 630"
+            />
+          </div>
           <div className="flex-1 flex flex-col">
             <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
-              {sectorsLabel}
+              {[...(context.sectors || []), ...(context.subSectors || [])].map((name, idx) => (
+                <React.Fragment key={`sector-${idx}-${name}`}>
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      router.push(`/pulse-today?${context.sectors?.includes(name) ? 'sector' : 'subSector'}=${encodeURIComponent(name)}`);
+                    }}
+                    className="hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
+                  >
+                    {name}
+                  </button>
+                  {idx < [...(context.sectors || []), ...(context.subSectors || [])].length - 1 && ' • '}
+                </React.Fragment>
+              ))}
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight">
               {context.contextTitle}
@@ -184,16 +178,24 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
           </div>
           <div className="w-full sm:w-1/3">
             {context.posts?.[0] && (
-              <div className="font-semibold text-gray-800 text-sm lg:px-3">
-                {context.posts[0].postTitle}
+              <div className="lg:px-3">
+                <div className="text-xs text-blue-600 font-medium mb-1">
+                  {context.posts[0].postType}
+                </div>
+                <div className="font-semibold text-gray-800 text-sm">
+                  {context.posts[0].postTitle}
+                </div>
               </div>
             )}
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:divide-y md:divide-y-0 md:divide-x divide-gray-300 gap-2 mt-5">
+        <div className="flex flex-col md:flex-row md:divide-x divide-gray-300 gap-2 mt-5">
           {context.posts?.slice(1, 4).map((post, i) => (
-            <div key={i} className="flex-1 px-2">
+            <div key={`post-${i}-${post._id || post.postTitle}`} className="flex-1 px-2">
+              <div className="text-xs text-blue-600 font-medium mb-1">
+                {post.postType}
+              </div>
               <div className="font-semibold text-gray-800 text-sm">
                 {post.postTitle}
               </div>
