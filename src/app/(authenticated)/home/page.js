@@ -8,6 +8,9 @@ import ContextImage from '../../../components/ContextImage';
 import { parseJsxCode } from '../../utils/Tile';
 
 const normalizeTitle = (text) => {
+  if (!text || typeof text !== 'string') {
+    return 'untitled';
+  }
   return text
     .toString()
     .toLowerCase()
@@ -93,28 +96,28 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    if (slides.length === 0) return;
+    if ((slides?.length || 0) === 0) return;
     
     // Ensure currentSlide is within bounds
-    if (currentSlide >= slides.length) {
+    if (currentSlide >= (slides?.length || 0)) {
       setCurrentSlide(0);
     }
     
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setCurrentSlide((prev) => (prev + 1) % (slides?.length || 1));
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [slides.length, currentSlide]);
+  }, [slides?.length, currentSlide]);
 
   const handleSlideChange = (index) => {
-    if (index >= 0 && index < slides.length) {
+    if (index >= 0 && index < (slides?.length || 0)) {
       setCurrentSlide(index);
     }
   };
 
   const ITEMS_PER_PAGE = 3;
-  const totalPages = Math.ceil(contexts.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil((contexts?.length || 0) / ITEMS_PER_PAGE);
 
   const nextPage = () => {
     setCurrentPage((prev) => (prev + 1) % totalPages);
@@ -175,7 +178,7 @@ export default function HomePage() {
               </div>
               <div className="w-full min-[531px]:w-3/5 mt-6 max-[530px]:mt-4 min-[531px]:mt-0 flex justify-end">
                 <div className="relative w-full max-w-[450px]">
-                  {slides.length > 0 ? (
+                  {(slides?.length || 0) > 0 ? (
                     <div className="flex flex-col">
                       <div className="h-fit">
                         {slides.map((slide, index) => (
@@ -263,7 +266,7 @@ export default function HomePage() {
               <div className="absolute bottom-[-8px] left-0 w-full h-[1px] bg-gray-300"></div>
             </div>
 
-            {contexts.length === 0 ? (
+            {(contexts?.length || 0) === 0 ? (
               <div className="text-gray-600 text-center py-12">
                 No trending events found
               </div>
@@ -510,7 +513,7 @@ export default function HomePage() {
                 {trendingThemes?.[0] && (
                   <Link
                     href={`/analyzer/theme-details/${normalizeTitle(
-                      trendingThemes[0].themeTitle
+                      trendingThemes[0].themeTitle || 'untitled'
                     )}`}
                     className="block"
                   >
@@ -560,7 +563,7 @@ export default function HomePage() {
                   <Link
                     key={theme._id}
                     href={`/analyzer/theme-details/${normalizeTitle(
-                      theme.themeTitle
+                      theme.themeTitle || 'untitled'
                     )}`}
                     className="block"
                   >
@@ -582,7 +585,7 @@ export default function HomePage() {
                                 {subSector.subSectorName}
                                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
                               </span>
-                              {index < theme.subSectors.length - 1 && (
+                              {index < (theme.subSectors?.length || 0) - 1 && (
                                 <span className="text-gray-400 mx-1">| </span>
                               )}
                             </React.Fragment>
