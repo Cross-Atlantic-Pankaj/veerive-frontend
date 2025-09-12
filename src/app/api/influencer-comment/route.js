@@ -33,22 +33,22 @@ export async function GET(request) {
       const rawSectorId = searchParams.get('sectorId');
       if (rawSectorId && mongoose.Types.ObjectId.isValid(rawSectorId)) {
         sectorId = new mongoose.Types.ObjectId(rawSectorId);
-        console.log('Validated sectorId:', sectorId.toString());
+        // Removed console.log for performance
       }
       const rawSubsectorId = searchParams.get('subsectorId');
       if (rawSubsectorId && mongoose.Types.ObjectId.isValid(rawSubsectorId)) {
         subsectorId = new mongoose.Types.ObjectId(rawSubsectorId);
-        console.log('Validated subsectorId:', subsectorId.toString());
+        // Removed console.log for performance
       }
       const rawSignalId = searchParams.get('signalId');
       if (rawSignalId && mongoose.Types.ObjectId.isValid(rawSignalId)) {
         signalId = new mongoose.Types.ObjectId(rawSignalId);
-        console.log('Validated signalId:', signalId.toString());
+        // Removed console.log for performance
       }
       const rawSubsignalId = searchParams.get('subsignalId');
       if (rawSubsignalId && mongoose.Types.ObjectId.isValid(rawSubsignalId)) {
         subsignalId = new mongoose.Types.ObjectId(rawSubsignalId);
-        console.log('Validated subsignalId:', subsignalId.toString());
+        // Removed console.log for performance
       }
     } catch (error) {
       console.error('Error converting ObjectId:', error.message);
@@ -69,8 +69,7 @@ export async function GET(request) {
     const limit = 10;
     const skip = (page - 1) * limit;
 
-    // console.log('Request query params:', Object.fromEntries(searchParams.entries()));
-    // console.log('Processed - SectorId:', sectorId, 'SubsectorId:', subsectorId, 'SignalId:', signalId, 'SubsignalId:', subsignalId);
+    // Removed console.log statements for performance
 
     const validPostTypes = [
       'Expert Opinion',
@@ -92,40 +91,40 @@ export async function GET(request) {
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
-        console.log('No contexts found for subsectorId:', subsectorId);
+        // Removed console.log for performance
         contextMatch = {};
       }
     } else if (sectorId) {
       const matchingContexts = await Context.find({ sectors: sectorId }).select('_id');
-      console.log('Contexts found for sectorId:', sectorId, matchingContexts);
+      // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
-        console.log('No contexts found for sectorId:', sectorId);
+        // Removed console.log for performance
         contextMatch = {};
       }
     } else if (subsignalId) {
       const matchingContexts = await Context.find({ signalSubCategories: subsignalId }).select('_id');
-      console.log('Contexts found for subsignalId:', subsignalId, matchingContexts);
+      // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
-        console.log('No contexts found for subsignalId:', subsignalId);
+        // Removed console.log for performance
         contextMatch = {};
       }
     } else if (signalId) {
       const matchingContexts = await Context.find({ signalCategories: signalId }).select('_id');
-      console.log('Contexts found for signalId:', signalId, matchingContexts);
+      // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
-        console.log('No contexts found for signalId:', signalId);
+        // Removed console.log for performance
         contextMatch = {};
       }
     }
 
     if (Object.keys(contextMatch).length === 0 && (sectorId || subsectorId || signalId || subsignalId)) {
-      console.log('No valid context match, returning empty result');
+      // Removed console.log for performance
       return NextResponse.json({
         success: true,
         posts: [],
@@ -209,7 +208,7 @@ export async function GET(request) {
       }
     ]);
 
-    // console.log('Fetched posts:', posts.map(p => p.postTitle));
+    // Removed console.log for performance
 
     const totalPosts = await Post.countDocuments({
       ...query,

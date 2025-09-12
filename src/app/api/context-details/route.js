@@ -95,16 +95,7 @@ export async function GET(request) {
     }
 
     if (!targetContext) {
-      console.log(
-        `No context found for slug: ${slug}, normalized slug: ${normalizedSlug}, alt normalized slug: ${altNormalizedSlug}`
-      );
-      console.log(
-        'Available contexts:',
-        contexts.map((ctx) => ({
-          contextTitle: ctx.contextTitle,
-          normalizedTitle: normalizeTitle(ctx.contextTitle),
-        }))
-      );
+      // Removed console.log statements for performance
       return NextResponse.json(
         { success: false, error: 'Context not found' },
         { status: 404 }

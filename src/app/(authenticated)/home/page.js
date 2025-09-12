@@ -35,11 +35,31 @@ export default function HomePage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch('/api/home');
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+        
+        const response = await fetch('/api/home', {
+          signal: controller.signal,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        clearTimeout(timeoutId);
+        
         if (!response.ok) {
-          throw new Error('Failed to fetch data');
+          if (response.status === 504) {
+            throw new Error('Server timeout - please try again');
+          } else if (response.status >= 500) {
+            throw new Error('Server error - please try again later');
+          } else {
+            throw new Error('Failed to fetch data');
+          }
         }
+        
         const data = await response.json();
+        
+        // Handle partial data gracefully
         setContexts(data.trendingEvents || []);
         setTrendingOpinions(data.trendingOpinions || []);
         setMarketStatistics(data.marketStatistics || []);
@@ -49,10 +69,21 @@ export default function HomePage() {
           data.slides?.slide2,
           data.slides?.slide3,
           data.slides?.slide4,
-        ]);
+        ].filter(Boolean)); // Remove any undefined slides
       } catch (err) {
-        console.error('Error fetching data:', err);
-        setError(err.message);
+        if (err.name === 'AbortError') {
+          console.error('Request timeout:', err);
+          setError('Request timeout - please try again');
+        } else {
+          console.error('Error fetching data:', err);
+          setError(err.message);
+        }
+        // Set empty arrays as fallback to prevent UI errors
+        setContexts([]);
+        setTrendingOpinions([]);
+        setMarketStatistics([]);
+        setTrendingThemes([]);
+        setSlides([]);
       } finally {
         setLoading(false);
       }
