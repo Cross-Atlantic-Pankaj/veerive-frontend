@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { connectDB } from '../../../../lib/db';
+import connectDB from '../../../../lib/db';
 import Context from '../../../../models/Context';
 import Post from '../../../../models/Post';
 import Theme from '../../../../models/Theme';

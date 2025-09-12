@@ -45,7 +45,8 @@ export async function GET(request) {
 				select: 'name type jsxCode',
 				options: { strictPopulate: false },
 			})
-			.sort({ date: -1 });
+			.sort({ date: -1 })
+			.limit(10);
 
 		const trendingOpinions = await Post.find({
 			postType: 'Expert Opinion',
@@ -63,7 +64,7 @@ export async function GET(request) {
 				options: { strictPopulate: false },
 			})
 			.sort({ date: -1 })
-			.limit(5);
+			.limit(3);
 
 		const marketStatistics = await Post.find({
 			postType: 'Infographic',
@@ -81,7 +82,7 @@ export async function GET(request) {
 				options: { strictPopulate: false },
 			})
 			.sort({ date: -1 })
-			.limit(5);
+			.limit(3);
 
 		const trendingThemes = await Theme.find({})
 			.populate({
@@ -102,7 +103,7 @@ export async function GET(request) {
 				options: { strictPopulate: false },
 			})
 			.sort({ overallScore: -1 })
-			.limit(5);
+			.limit(3);
 
 		const featuredTheme = await Theme.findOne({}).sort({ overallScore: -1 });
 
@@ -204,10 +205,22 @@ export async function GET(request) {
 
 		return new Response(
 			JSON.stringify({
-				trendingEvents,
-				trendingOpinions,
-				marketStatistics,
-				trendingThemes,
+				trendingEvents: trendingEvents.map(event => ({
+					...event.toObject(),
+					imageUrl: event.imageUrl
+				})),
+				trendingOpinions: trendingOpinions.map(opinion => ({
+					...opinion.toObject(),
+					imageUrl: opinion.imageUrl
+				})),
+				marketStatistics: marketStatistics.map(stat => ({
+					...stat.toObject(),
+					imageUrl: stat.imageUrl
+				})),
+				trendingThemes: trendingThemes.map(theme => ({
+					...theme.toObject(),
+					imageUrl: theme.imageUrl
+				})),
 				slides,
 			}),
 			{

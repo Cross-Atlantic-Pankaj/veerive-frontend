@@ -3,7 +3,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { Tile, parseJsxCode } from '@/app/utils/Tile';
+import ContextImage from '@/components/ContextImage';
+import { parseJsxCode } from '@/app/utils/Tile';
 
 const PostCard = ({ post }) => {
   const [isSaved, setIsSaved] = useState(false);
@@ -110,7 +111,7 @@ const PostCard = ({ post }) => {
     }
   };
 
-  const tileProps = post.tileTemplateId && post.tileTemplateId.jsxCode
+  const tileTemplate = post.tileTemplateId && post.tileTemplateId.jsxCode
       ? parseJsxCode(post.tileTemplateId.jsxCode)
       : null;
 
@@ -118,16 +119,13 @@ const PostCard = ({ post }) => {
     <Link href={post.sourceUrl || '#'} target="_blank" rel="noopener noreferrer" className="block">
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden flex flex-col">
         <div className="relative w-full h-[150px]">
-                  {tileProps ? (
-                    <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
-                      <Tile {...tileProps} />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-gray-200 flex items-center justify-center rounded-t-lg">
-                      <span className="text-gray-500 text-sm font-medium">1000*630</span>
-                    </div>
-                  )}
-                </div>
+          <ContextImage
+            post={post}
+            tileTemplate={tileTemplate}
+            className="w-full h-full rounded-t-lg"
+            fallbackText="1000 × 630"
+          />
+        </div>
 
         <div className="p-4 flex flex-col flex-grow">
           <div className="mb-2">

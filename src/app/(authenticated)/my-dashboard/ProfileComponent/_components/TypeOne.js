@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { Tile, parseJsxCode } from '../../../../utils/Tile';
+import ContextImage from '@/components/ContextImage';
+import { parseJsxCode, Tile } from '../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text
@@ -64,15 +65,12 @@ const TypeOne = ({ context, handleUnsave, isLastItem, lastContextCallback }) => 
         ref={isLastItem ? lastContextCallback : null}
         className="bg-white rounded-lg overflow-hidden w-full cursor-pointer hover:shadow-md transition-all duration-200 mb-4"
       >
-        {tileProps ? (
-                  <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
-                  <Tile {...tileProps} />
-                  </div>
-                ) : (
-                  <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] bg-gray-300 flex items-center justify-center text-gray-400 text-xs sm:text-sm">
-                    1000 × 630
-                  </div>
-                )}
+        <ContextImage
+          context={context}
+          tileTemplate={tileProps}
+          className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg"
+          fallbackText="1000 × 630"
+        />
         <div className="px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
             {[...context.sectorNames, ...context.subSectorNames].slice(0, 3).map((name, idx) => (

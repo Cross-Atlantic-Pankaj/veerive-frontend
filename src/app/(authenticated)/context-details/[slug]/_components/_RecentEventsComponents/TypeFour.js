@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { Tile, parseJsxCode } from '../../../../../utils/Tile';
+import ContextImage from '@/components/ContextImage';
+import { parseJsxCode, Tile } from '../../../../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text

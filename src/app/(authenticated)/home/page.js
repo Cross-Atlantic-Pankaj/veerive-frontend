@@ -5,22 +5,7 @@ import { Suspense, useEffect, useState } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import ContextImage from '../../../components/ContextImage';
-
-const parseJsxCode = (jsxCode) => {
-  if (!jsxCode) return null;
-  const regex = /bg="([^"]+)"\s+icon="([^"]+)"\s+color="([^"]+)"\s+size=\{(\d+)\}/;
-  const match = jsxCode.match(regex);
-  if (match) {
-    return {
-      bg: match[1],
-      icon: match[2],
-      color: match[3],
-      size: parseInt(match[4], 10),
-    };
-  }
-  console.warn(`Invalid jsxCode format: ${jsxCode}`);
-  return null;
-};
+import { parseJsxCode } from '../../utils/Tile';
 
 const normalizeTitle = (text) => {
   return text

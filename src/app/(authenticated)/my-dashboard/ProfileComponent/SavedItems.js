@@ -12,7 +12,8 @@ import {
 	TypeFive,
 	TypeNum,
 } from './_components';
-import { Tile, parseJsxCode } from '../../../utils/Tile';
+import ContextImage from '@/components/ContextImage';
+import { parseJsxCode, Tile } from '../../../utils/Tile';
 
 export default function SavedItems() {
 	const [savedItems, setSavedItems] = useState({
@@ -1203,17 +1204,12 @@ export default function SavedItems() {
 																		)
 																	}
 																>
-																	{tileProps ? (
-																		<div className="w-full h-[120px] sm:h-[140px] lg:h-[160px] rounded-t-lg overflow-hidden">
-																			<Tile {...tileProps} />
-																		</div>
-																	) : (
-																		<div className="relative w-full h-[120px] sm:h-[140px] lg:h-[160px]">
-																			<div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 text-sm sm:text-base">
-																				1000 x 630
-																			</div>
-																		</div>
-																	)}
+																	<ContextImage
+																		theme={theme}
+																		tileTemplate={tileProps}
+																		className="w-full h-[120px] sm:h-[140px] lg:h-[160px] rounded-t-lg"
+																		fallbackText="1000 × 630"
+																	/>
 
 																	{/* <div className="relative w-full h-[160px]">
                                     <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center text-gray-400">

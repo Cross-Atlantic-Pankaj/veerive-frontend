@@ -345,6 +345,7 @@ export async function GET(request) {
     const processedContext = {
       ...targetContext,
       id: targetContext._id.toString(),
+      imageUrl: targetContext.imageUrl,
       originalContextSector: sectors,
       originalContextSubSector: subSectors,
       originalContextSignalCategory: signalCategories,
@@ -355,9 +356,15 @@ export async function GET(request) {
       matchingSubSectors: processedMatchingSubSectors,
       matchingSignalCategories: processedMatchingSignalCategories,
       posts: processedPosts,
-      matchingContexts,
+      matchingContexts: matchingContexts.map(ctx => ({
+        ...ctx,
+        imageUrl: ctx.imageUrl
+      })),
       trendingExpertOpinions,
-      contextPosts,
+      contextPosts: contextPosts.map(post => ({
+        ...post,
+        imageUrl: post.imageUrl
+      })),
     };
 
     return NextResponse.json({

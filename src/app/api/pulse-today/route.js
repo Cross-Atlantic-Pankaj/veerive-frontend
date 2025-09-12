@@ -185,6 +185,7 @@ export async function POST(request) {
 				originalContextSignalCategory: context.signalCategories ? context.signalCategories.map((s) => s.signalName) : [],
 				originalContextSignalSubCategory: context.signalSubCategories ? context.signalSubCategories.map((s) => s.subSignalName) : [],
 				bannerImage: context.bannerImage,
+				imageUrl: context.imageUrl,
 				summary: context.summary,
 				dataForTypeNum: context.dataForTypeNum,
 				posts: uniquePosts,
@@ -203,6 +204,7 @@ export async function POST(request) {
 			title: theme.themeTitle,
 			score: theme.overallScore,
 			description: theme.themeDescription,
+			imageUrl: theme.imageUrl,
 			sectors: theme.sectors.map((s) => s.sectorName),
 			subSectors: theme.subSectors.map((s) => ({
 				_id: s._id,

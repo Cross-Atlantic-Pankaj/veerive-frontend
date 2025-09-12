@@ -3,7 +3,8 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Select from 'react-select';
 import toast from 'react-hot-toast';
-import { Tile, parseJsxCode } from '../../../utils/Tile';
+import ContextImage from '@/components/ContextImage';
+import { parseJsxCode, Tile } from '../../../utils/Tile';
 
 export default function TrendAnalyzer() {
   const [themes, setThemes] = useState([]);
@@ -381,15 +382,12 @@ export default function TrendAnalyzer() {
                 onClick={() => handleThemeClick(theme)}
               >
                 <div className="relative w-full h-[160px]">
-                  {tileProps ? (
-                  <div className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg overflow-hidden">
-                  <Tile {...tileProps} />
-                  </div>
-                ) : (
-                    <div className="w-full h-full bg-gradient-to-r from-gray-100 to-gray-200 flex items-center justify-center text-gray-400">
-                      1000 x 180
-                    </div>
-                  )}
+                  <ContextImage
+                    theme={theme}
+                    tileTemplate={tileProps}
+                    className="w-full h-full rounded-t-lg"
+                    fallbackText="1000 × 180"
+                  />
                 </div>
 
                 <div className="p-2 md:p-5">
