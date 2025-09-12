@@ -59,11 +59,11 @@ export default function HomePage() {
         
         const data = await response.json();
         
-        // Handle partial data gracefully
-        setContexts(data.trendingEvents || []);
-        setTrendingOpinions(data.trendingOpinions || []);
-        setMarketStatistics(data.marketStatistics || []);
-        setTrendingThemes(data.trendingThemes || []);
+        // Handle partial data gracefully with additional safety checks
+        setContexts(Array.isArray(data.trendingEvents) ? data.trendingEvents : []);
+        setTrendingOpinions(Array.isArray(data.trendingOpinions) ? data.trendingOpinions : []);
+        setMarketStatistics(Array.isArray(data.marketStatistics) ? data.marketStatistics : []);
+        setTrendingThemes(Array.isArray(data.trendingThemes) ? data.trendingThemes : []);
         setSlides([
           data.slides?.slide1,
           data.slides?.slide2,
@@ -93,15 +93,24 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
+    if (slides.length === 0) return;
+    
+    // Ensure currentSlide is within bounds
+    if (currentSlide >= slides.length) {
+      setCurrentSlide(0);
+    }
+    
     const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % 4);
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [slides.length, currentSlide]);
 
   const handleSlideChange = (index) => {
-    setCurrentSlide(index);
+    if (index >= 0 && index < slides.length) {
+      setCurrentSlide(index);
+    }
   };
 
   const ITEMS_PER_PAGE = 3;
@@ -270,9 +279,7 @@ export default function HomePage() {
                       const slug = context.contextTitle
                         ? normalizeTitle(context.contextTitle)
                         : `context-${context._id}`;
-                      console.log(
-                        `Generated slug for context "${context.contextTitle}": ${slug}`
-                      );
+                      // Removed console.log for production
 
                       // Parse tileTemplates.jsxCode if available
                       const tileTemplate =
@@ -382,7 +389,7 @@ export default function HomePage() {
                     return (
                       <a
                         key={post._id}
-                        href={post.sourceUrl || post.sourceUrls[0]}
+                        href={post.sourceUrl || (post.sourceUrls?.length > 0 ? post.sourceUrls[0] : '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
@@ -441,7 +448,7 @@ export default function HomePage() {
                     return (
                       <a
                         key={post._id}
-                        href={post.sourceUrl || post.sourceUrls[0]}
+                        href={post.sourceUrl || (post.sourceUrls?.length > 0 ? post.sourceUrls[0] : '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex flex-col sm:flex-row gap-2 sm:gap-4 group"
@@ -526,7 +533,7 @@ export default function HomePage() {
                                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-green-500"></span>
                               </span>
                               {index <
-                                trendingThemes[0].subSectors.length - 1 && (
+                                (trendingThemes[0].subSectors?.length || 0) - 1 && (
                                 <span className="text-gray-400 mx-1">|</span>
                               )}
                             </React.Fragment>
