@@ -41,6 +41,7 @@ export default function PulseToday() {
   const [hasMore, setHasMore] = useState(true);
   const [expertPosts, setExpertPosts] = useState([]);
   const [activeFilter, setActiveFilter] = useState(null);
+  const [user, setUser] = useState(null);
   const mainContentRef = useRef(null);
   const containerRef = useRef(null);
   const loaderRef = useRef(null);
@@ -138,6 +139,14 @@ export default function PulseToday() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    // Check for user authentication
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
+  }, []);
 
   useEffect(() => {
     fetchData(page);
@@ -407,7 +416,7 @@ export default function PulseToday() {
           {/* Sidebar - Mobile first, then desktop positioning */}
           {!activeFilter && (
             <div className="w-full lg:w-[28%] order-1 lg:order-2">
-            {sidebarMessage && (
+            {sidebarMessage && user && (
               <div className="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md mb-4 sm:mb-6">
                 <div className="flex items-center gap-2 mb-2 sm:mb-3">
                   <span className="text-teal-500 text-sm sm:text-base lg:text-lg flex-shrink-0">✦</span>
