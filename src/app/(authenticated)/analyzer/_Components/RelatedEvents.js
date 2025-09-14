@@ -119,7 +119,7 @@ export default function RelatedEvents({ relatedThemes }) {
       <div className="flex justify-between items-center mb-4">
         <h2 className="font-semibold text-base sm:text-lg text-gray-800">Other Key Trends</h2>
         <Link
-          href="/analyzer/trend-analyzer"
+          href="/analyzer/trend"
           className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700 self-start sm:self-auto"
         >
           VIEW MORE →
