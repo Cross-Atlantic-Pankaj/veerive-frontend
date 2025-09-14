@@ -8,6 +8,8 @@ import Context from '@/models/Context';
 import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import Post from '@/models/Post';
+import Drivers from '@/models/Drivers';
+import Region from '@/models/Region';
 import tileTemplate from '@/models/TileTemplate';
 
 function normalizeTitle(text) {
@@ -42,6 +44,8 @@ export async function GET(request) {
     if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
     if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
     if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
+    if (!mongoose.models.Drivers) mongoose.model('Drivers', Drivers.schema);
+    if (!mongoose.models.Region) mongoose.model('Region', Region.schema);
     if (!mongoose.models.TileTemplate) {
           mongoose.model('TileTemplate', tileTemplate.schema);
         }
@@ -50,6 +54,16 @@ export async function GET(request) {
     const themes = await Theme.find()
       .populate('sectors', 'sectorName')
       .populate('subSectors', 'subSectorName')
+      .populate({
+        path: 'trendAnalysis.driversAndSignals.keyDrivers.driverType',
+        model: 'Drivers',
+        select: 'driverName'
+      })
+      .populate({
+        path: 'trendAnalysis.regionalDynamics.regionalInsights.regions.regionId',
+        model: 'Region',
+        select: 'regionName regionIcon regionDescription'
+      })
       .lean();
 
     const targetTheme = themes.find(t => normalizeTitle(t.themeTitle) === normalizedSlug);

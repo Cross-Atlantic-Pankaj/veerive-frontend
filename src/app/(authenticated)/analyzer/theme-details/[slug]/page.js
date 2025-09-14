@@ -2,6 +2,12 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import ThemeInfo from '../../_Components/ThemeInfo';
+import OverviewSnapshot from '../../_Components/OverviewSnapshot';
+import TrendAnalysisNav from '../../_Components/TrendAnalysisNav';
+import DriversAndSignals from '../../_Components/DriversAndSignals';
+import ImpactAndOpinions from '../../_Components/ImpactAndOpinions';
+import RegionalDynamics from '../../_Components/RegionalDynamics';
+import ConsumerDynamics from '../../_Components/ConsumerDynamics';
 import OtherKeyTrend from '../../_Components/RelatedEvents';
 import RelatedContexts from '../../_Components/RelatedContexts';
 import TrendingExpertOpinions from '../../_Components/TrendingExpertOpinions';
@@ -13,6 +19,7 @@ export default function ThemeDetails() {
   const [trendingExpertOpinions, setTrendingExpertOpinions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [activeSection, setActiveSection] = useState('drivers-and-signals');
   const { slug } = useParams();
 
   useEffect(() => {
@@ -71,23 +78,61 @@ export default function ThemeDetails() {
   const hasRelatedThemes = relatedThemes.length > 0;
   const hasTrendingOpinions = trendingExpertOpinions.length > 0;
   const hasRightContent = hasRelatedThemes || hasTrendingOpinions;
+  
+  // Hide right sidebar for trend analysis sections to use full width
+  const isTrendAnalysisSection = ['drivers-and-signals', 'impact-and-opinions', 'regional-dynamics', 'consumer-dynamics'].includes(activeSection);
+  const shouldShowRightSidebar = hasRightContent && !isTrendAnalysisSection;
 
   return (
     <div className="bg-gray-50 min-h-screen p-2 md:p-4">
       <ThemeInfo theme={theme} />
-      <div className="flex flex-col lg:flex-row mx-auto gap-4">
-        <div className={hasRightContent ? 'lg:w-[72%]' : 'w-full'}>
-          <RelatedContexts contexts={contexts} />
+      
+      {/* Overview/Snapshot and Other Key Trends side by side */}
+      <div className="flex flex-col lg:flex-row mx-auto gap-4 mb-4">
+        <div className="lg:w-[72%]">
+          <OverviewSnapshot theme={theme} />
         </div>
-        {hasRightContent && (
-          <div className="lg:w-[28%] flex flex-col gap-4">
-            {hasRelatedThemes && <OtherKeyTrend relatedThemes={relatedThemes} />}
-            {hasTrendingOpinions && (
-              <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
-            )}
+        {hasRelatedThemes && (
+          <div className="lg:w-[28%]">
+            <OtherKeyTrend relatedThemes={relatedThemes} />
           </div>
         )}
       </div>
+
+      {/* Trend Analysis Section - Full Width */}
+      <div className="mx-auto">
+        <TrendAnalysisNav 
+          activeSection={activeSection} 
+          onSectionChange={setActiveSection}
+          theme={theme}
+        />
+        
+        {/* Conditional Content Rendering */}
+        {activeSection === 'drivers-and-signals' && (
+          <DriversAndSignals theme={theme} />
+        )}
+        
+        {activeSection === 'impact-and-opinions' && (
+          <ImpactAndOpinions theme={theme} />
+        )}
+        
+        {activeSection === 'regional-dynamics' && (
+          <RegionalDynamics theme={theme} />
+        )}
+        
+        {activeSection === 'consumer-dynamics' && (
+          <ConsumerDynamics theme={theme} />
+        )}
+        
+        <RelatedContexts contexts={contexts} />
+      </div>
+
+      {/* Trending Expert Opinions - Full Width Below */}
+      {hasTrendingOpinions && (
+        <div className="mx-auto mt-4">
+          <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
+        </div>
+      )}
     </div>
   );
 }

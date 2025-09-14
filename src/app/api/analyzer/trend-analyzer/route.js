@@ -19,12 +19,7 @@ export async function GET(request) {
     const sectorId = searchParams.get('sectorId');
     const subSectorId = searchParams.get('subSectorId');
 
-    if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
-    if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
-    if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
-    if (!mongoose.models.TileTemplate) {
-          mongoose.model('TileTemplate', tileTemplate.schema);
-        }
+    // Models are already registered when imported, no need to re-register
 
     const filter = {};
 
@@ -60,8 +55,8 @@ export async function GET(request) {
     const populatedThemes = await Theme.populate(uniqueThemes, [
       { path: 'sectors', select: 'sectorName' },
       { path: 'subSectors', select: 'subSectorName' },
-      { path: 'tileTemplateId', select: 'name type jsxCode', options: { strictPopulate: false }, },
-    ])
+      { path: 'tileTemplateId', select: 'name type jsxCode', options: { strictPopulate: false } },
+    ]);
 
     let sectors, subsectors;
     if (cachedSectors && cachedSubsectors) {
@@ -112,8 +107,9 @@ export async function GET(request) {
     });
   } catch (error) {
     console.error('Error fetching data:', error);
+    console.error('Error stack:', error.stack);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch data' },
+      { success: false, error: 'Failed to fetch data', details: error.message },
       { status: 500 }
     );
   }
