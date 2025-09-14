@@ -23,11 +23,11 @@ export async function GET(request) {
 
     const filter = {};
 
-    if (sectorId) {
+    if (sectorId && mongoose.Types.ObjectId.isValid(sectorId)) {
       filter.sectors = { $in: [new mongoose.Types.ObjectId(sectorId)] };
     }
 
-    if (subSectorId) {
+    if (subSectorId && mongoose.Types.ObjectId.isValid(subSectorId)) {
       const subSector = await SubSector.findById(subSectorId).select('sectorId');
       if (subSector && subSector.sectorId) {
         filter.$and = [
@@ -48,7 +48,7 @@ export async function GET(request) {
 
     const themes = await Theme.aggregate(aggregation);
 
-    const uniqueThemes = [...new Set(themes.map(t => t._id.toString()))].map(id => themes.find(t => t._id.toString() === id));
+    const uniqueThemes = [...new Set(themes.filter(t => t && t._id).map(t => t._id.toString()))].map(id => themes.find(t => t && t._id && t._id.toString() === id)).filter(Boolean);
 
     const totalThemes = await Theme.countDocuments(filter);
 
@@ -73,24 +73,36 @@ export async function GET(request) {
     const subSectorsInThemes = new Set();
 
     populatedThemes.forEach((theme) => {
-      theme.sectors.forEach((sector) => sectorsInThemes.add(sector._id.toString()));
-      theme.subSectors.forEach((subSector) => subSectorsInThemes.add(subSector._id.toString()));
+      if (theme.sectors && Array.isArray(theme.sectors)) {
+        theme.sectors.forEach((sector) => {
+          if (sector && sector._id) {
+            sectorsInThemes.add(sector._id.toString());
+          }
+        });
+      }
+      if (theme.subSectors && Array.isArray(theme.subSectors)) {
+        theme.subSectors.forEach((subSector) => {
+          if (subSector && subSector._id) {
+            subSectorsInThemes.add(subSector._id.toString());
+          }
+        });
+      }
     });
 
-    const filteredSectors = sectors
-      .filter((sector) => sectorsInThemes.has(sector._id.toString()))
+    const filteredSectors = (sectors || [])
+      .filter((sector) => sector && sector._id && sectorsInThemes.has(sector._id.toString()))
       .map((sector) => {
-        const relatedSubsectors = subsectors
-          .filter((subsector) => subsector.sectorId && subsector.sectorId.toString() === sector._id.toString())
-          .filter((subsector) => subSectorsInThemes.has(subsector._id.toString()))
+        const relatedSubsectors = (subsectors || [])
+          .filter((subsector) => subsector && subsector.sectorId && subsector.sectorId.toString() === sector._id.toString())
+          .filter((subsector) => subsector && subsector._id && subSectorsInThemes.has(subsector._id.toString()))
           .map((subsector) => ({
             subSectorId: subsector._id.toString(),
-            subSectorName: subsector.subSectorName,
+            subSectorName: subsector.subSectorName || 'Unknown SubSector',
           }));
 
         return {
           sectorId: sector._id.toString(),
-          sectorName: sector.sectorName,
+          sectorName: sector.sectorName || 'Unknown Sector',
           subsectors: relatedSubsectors,
         };
       });
