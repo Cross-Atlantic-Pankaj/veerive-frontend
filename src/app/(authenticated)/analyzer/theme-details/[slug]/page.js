@@ -87,16 +87,9 @@ export default function ThemeDetails() {
     <div className="bg-gray-50 min-h-screen p-2 md:p-4">
       <ThemeInfo theme={theme} />
       
-      {/* Overview/Snapshot and Other Key Trends side by side */}
-      <div className="flex flex-col lg:flex-row mx-auto gap-4 mb-4">
-        <div className="lg:w-[72%]">
-          <OverviewSnapshot theme={theme} />
-        </div>
-        {hasRelatedThemes && (
-          <div className="lg:w-[28%]">
-            <OtherKeyTrend relatedThemes={relatedThemes} />
-          </div>
-        )}
+      {/* Overview/Snapshot - Full Width */}
+      <div className="mx-auto mb-4">
+        <OverviewSnapshot theme={theme} />
       </div>
 
       {/* Trend Analysis Section - Full Width */}
@@ -127,12 +120,19 @@ export default function ThemeDetails() {
         <RelatedContexts contexts={contexts} />
       </div>
 
-      {/* Trending Expert Opinions - Full Width Below */}
-      {hasTrendingOpinions && (
-        <div className="mx-auto mt-4">
-          <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
-        </div>
-      )}
+      {/* Other Key Trends and Trending Expert Opinions - Side by Side */}
+      <div className="flex flex-col lg:flex-row mx-auto gap-4 mt-4">
+        {hasRelatedThemes && (
+          <div className="lg:w-[72%]">
+            <OtherKeyTrend relatedThemes={relatedThemes} />
+          </div>
+        )}
+        {hasTrendingOpinions && (
+          <div className="lg:w-[28%]">
+            <TrendingExpertOpinions trendingExpertOpinions={trendingExpertOpinions} />
+          </div>
+        )}
+      </div>
     </div>
   );
 }

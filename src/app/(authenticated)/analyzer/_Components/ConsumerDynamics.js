@@ -1,19 +1,11 @@
 import React, { useState } from 'react';
 
 export default function ConsumerDynamics({ theme }) {
-  const [expandedInsights, setExpandedInsights] = useState({});
   const [showImpactInfo, setShowImpactInfo] = useState(false);
 
   const consumerDynamics = theme?.trendAnalysis?.consumerDynamics;
   const behavioralInsights = consumerDynamics?.behavioralInsights || [];
   const impactAnalyser = consumerDynamics?.impactAnalyser || [];
-
-  const toggleInsightExpansion = (index) => {
-    setExpandedInsights(prev => ({
-      ...prev,
-      [index]: !prev[index]
-    }));
-  };
 
   const getTrendIcon = (score) => {
     if (score >= 70) {
@@ -38,21 +30,17 @@ export default function ConsumerDynamics({ theme }) {
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Left Column - Behavioral Insights */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">Behavioral Insights</h3>
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+      
+      {/* Behavioral Insights Container */}
+      <div className="rounded-xl shadow-sm border border-gray-400 p-4" style={{backgroundColor: '#f2fbfb'}}>
+          <h3 className="text-lg font-bold text-gray-800 mb-4">Behavioral Insights</h3>
           
           {behavioralInsights.length > 0 ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {behavioralInsights.map((insight, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                  <div 
-                    className="flex items-center gap-3 cursor-pointer"
-                    onClick={() => toggleInsightExpansion(index)}
-                  >
+                <div key={index} className="bg-transparent border border-gray-400 rounded-lg p-3">
+                  <div className="flex items-center gap-3">
                     {/* Icon */}
                     <div className="w-8 h-8 flex items-center justify-center">
                       {insight.icon ? (
@@ -69,30 +57,19 @@ export default function ConsumerDynamics({ theme }) {
                     </div>
                     
                     {/* Heading */}
-                    <h4 className="font-semibold text-gray-800 flex-1">{insight.heading}</h4>
-                    
-                    {/* Expand/Collapse Icon */}
-                    <div className="w-6 h-6 flex items-center justify-center">
-                      {expandedInsights[index] ? (
-                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
-                        </svg>
-                      ) : (
-                        <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      )}
-                    </div>
+                    <h4 
+                      className="font-semibold text-gray-800 flex-1 text-sm"
+                      dangerouslySetInnerHTML={{ __html: insight.heading }}
+                    ></h4>
                   </div>
                   
-                  {/* Expandable Content */}
-                  {expandedInsights[index] && (
-                    <div className="mt-4 pt-4 border-t border-gray-100">
-                      <p className="text-sm text-gray-600 leading-relaxed">
-                        {insight.text}
-                      </p>
-                    </div>
-                  )}
+                  {/* Content - Always visible */}
+                  <div className="mt-3 pt-3 border-t border-gray-300">
+                    <div 
+                      className="text-xs text-gray-500 leading-relaxed"
+                      dangerouslySetInnerHTML={{ __html: insight.text }}
+                    ></div>
+                  </div>
                 </div>
               ))}
             </div>
@@ -106,12 +83,12 @@ export default function ConsumerDynamics({ theme }) {
               <p className="text-sm text-gray-500">No behavioral insights available</p>
             </div>
           )}
-        </div>
+      </div>
 
-        {/* Right Column - Impact Analyzer */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-800">Impact Analyzer</h3>
+      {/* Impact Analyzer Container */}
+      <div className="rounded-xl shadow-sm border border-gray-400 p-4" style={{backgroundColor: '#f2fbfb'}}>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-gray-800">Impact Analyzer</h3>
             <button
               onClick={() => setShowImpactInfo(true)}
               className="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
@@ -123,12 +100,12 @@ export default function ConsumerDynamics({ theme }) {
           {impactAnalyser.length > 0 ? (
             <div className="space-y-4">
               {impactAnalyser.map((item, index) => (
-                <div key={index} className="bg-white border border-gray-200 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <h4 className="font-semibold text-gray-800">{item.consumerSegmentName}</h4>
+                <div key={index}>
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-semibold text-gray-600 text-sm">{item.consumerSegmentName}</h4>
                     <div className="flex items-center gap-2">
                       {getTrendIcon(item.impactScore)}
-                      <span className="text-sm font-medium text-gray-700">{item.impactScore}%</span>
+                      <span className="text-xs font-medium text-gray-500">{item.impactScore}%</span>
                     </div>
                   </div>
                   
@@ -152,12 +129,11 @@ export default function ConsumerDynamics({ theme }) {
               <p className="text-sm text-gray-500">No impact analysis data available</p>
             </div>
           )}
-        </div>
       </div>
 
       {/* Impact Analyzer Info Modal */}
       {showImpactInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-md mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-800">Impact Analyzer</h3>

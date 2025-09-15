@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 
 export default function ImpactAndOpinions({ theme }) {
   const [expertOpinions, setExpertOpinions] = useState([]);
@@ -74,52 +74,58 @@ export default function ImpactAndOpinions({ theme }) {
   // Prepare chart data - filter out invalid data points
   const chartData = relatedThemes
     .filter(theme => 
-      theme.disruptivePotential !== null && 
-      theme.disruptivePotential !== undefined && 
-      theme.trendMomentum !== null && 
-      theme.trendMomentum !== undefined &&
-      !isNaN(theme.disruptivePotential) && 
-      !isNaN(theme.trendMomentum)
+      theme.impactScore !== null && 
+      theme.impactScore !== undefined && 
+      theme.predictiveMomentumScore !== null && 
+      theme.predictiveMomentumScore !== undefined &&
+      !isNaN(theme.impactScore) && 
+      !isNaN(theme.predictiveMomentumScore)
     )
     .map((theme, index) => ({
       ...theme,
-      color: getChartColor(index)
+      color: getChartColor(index),
+      label: theme.themeTitle ? theme.themeTitle.split(' ')[0] : `Theme ${index + 1}`
     }));
 
   // Add current theme to chart data if available and valid
   if (currentTheme && 
-      currentTheme.disruptivePotential !== null && 
-      currentTheme.disruptivePotential !== undefined && 
-      currentTheme.trendMomentum !== null && 
-      currentTheme.trendMomentum !== undefined &&
-      !isNaN(currentTheme.disruptivePotential) && 
-      !isNaN(currentTheme.trendMomentum)) {
+      currentTheme.impactScore !== null && 
+      currentTheme.impactScore !== undefined && 
+      currentTheme.predictiveMomentumScore !== null && 
+      currentTheme.predictiveMomentumScore !== undefined &&
+      !isNaN(currentTheme.impactScore) && 
+      !isNaN(currentTheme.predictiveMomentumScore)) {
     chartData.unshift({
       ...currentTheme,
       color: '#FF0000', // Red for current theme
-      isCurrent: true
+      isCurrent: true,
+      label: currentTheme.themeTitle ? currentTheme.themeTitle.split(' ')[0] : 'Current'
     });
   }
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-6">
-      {/* Context and Explanation Section */}
+      {/* Title and Explanation Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">Context and Explanation</h2>
-        <div className="text-gray-600 leading-relaxed">
-          {title?.explanation || 'No explanation available for this trend.'}
-        </div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-4">{title?.content || 'Context and Explanation'}</h2>
+        <div 
+          className="text-gray-600 leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: title?.explanation || 'No explanation available for this trend.' }}
+        ></div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column - Disruptive Potential and Trend Momentum */}
-        <div className="lg:col-span-1 space-y-6 bg-blue-50 rounded-lg p-4">
+        <div className="lg:col-span-1 space-y-6">
           {/* Disruptive Potential */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Disruptive Potential</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              Disruptive Potential
+            </h3>
             
             {disruptivePotential?.highLowContainer && (
-              <div className="bg-white border border-gray-200 rounded-lg p-3 mb-3">
+              <div className="bg-white border-2 border-black rounded-lg p-3 mb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {disruptivePotential.highLowContainer.icon && (
@@ -147,18 +153,22 @@ export default function ImpactAndOpinions({ theme }) {
             )}
 
             {disruptivePotential?.content && (
-              <div className="text-sm text-gray-600 leading-relaxed mt-3">
-                {disruptivePotential.content}
-              </div>
+              <div 
+                className="text-sm text-gray-600 leading-relaxed mt-3"
+                dangerouslySetInnerHTML={{ __html: disruptivePotential.content }}
+              ></div>
             )}
           </div>
 
           {/* Trend Momentum */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-            <h3 className="text-lg font-bold text-gray-800 mb-4">Trend Momentum</h3>
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
+            <h3 className="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+              Trend Momentum
+            </h3>
             
             {trendMomentum?.highLowContainer && (
-              <div className="bg-white border border-gray-200 rounded-lg p-3 mb-3">
+              <div className="bg-white border-2 border-black rounded-lg p-3 mb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     {trendMomentum.highLowContainer.icon && (
@@ -186,9 +196,10 @@ export default function ImpactAndOpinions({ theme }) {
             )}
 
             {trendMomentum?.content && (
-              <div className="text-sm text-gray-600 leading-relaxed mt-3">
-                {trendMomentum.content}
-              </div>
+              <div 
+                className="text-sm text-gray-600 leading-relaxed mt-3"
+                dangerouslySetInnerHTML={{ __html: trendMomentum.content }}
+              ></div>
             )}
           </div>
         </div>
@@ -196,7 +207,7 @@ export default function ImpactAndOpinions({ theme }) {
         {/* Right Column - Chart and Market Leaders & Influencer Opinions */}
         <div className="lg:col-span-2 space-y-6">
           {/* Scatter Plot Chart */}
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-800">Fintech Trends Quadrant: Predictive Momentum vs Disruption Potential</h3>
               <button
@@ -221,7 +232,7 @@ export default function ImpactAndOpinions({ theme }) {
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                     <XAxis 
                       type="number" 
-                      dataKey="trendMomentum" 
+                      dataKey="predictiveMomentumScore" 
                       name="Predictive Momentum"
                       domain={[0, 5]}
                       tickCount={6}
@@ -230,7 +241,7 @@ export default function ImpactAndOpinions({ theme }) {
                     />
                     <YAxis 
                       type="number" 
-                      dataKey="disruptivePotential" 
+                      dataKey="impactScore" 
                       name="Disruption Potential"
                       domain={[0, 5]}
                       tickCount={6}
@@ -243,12 +254,12 @@ export default function ImpactAndOpinions({ theme }) {
                           const data = payload[0].payload;
                           return (
                             <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="font-semibold text-gray-800">{data.name}</p>
+                              <p className="font-semibold text-gray-800">{data.label || data.name}</p>
                               <p className="text-sm text-gray-600">
-                                Predictive Momentum: {data.trendMomentum?.toFixed(1) || 'N/A'}
+                                Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
                               </p>
                               <p className="text-sm text-gray-600">
-                                Disruption Potential: {data.disruptivePotential?.toFixed(1) || 'N/A'}
+                                Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
                               </p>
                               <p className="text-sm text-gray-600">
                                 Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
@@ -262,10 +273,19 @@ export default function ImpactAndOpinions({ theme }) {
                         return null;
                       }}
                     />
-                    <Scatter dataKey="trendMomentum">
+                    <Scatter dataKey="predictiveMomentumScore">
                       {chartData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
+                      <LabelList 
+                        dataKey="label" 
+                        position="top" 
+                        style={{ 
+                          fontSize: '12px', 
+                          fontWeight: 'bold',
+                          fill: '#374151'
+                        }}
+                      />
                     </Scatter>
                   </ScatterChart>
                 </ResponsiveContainer>
@@ -278,7 +298,7 @@ export default function ImpactAndOpinions({ theme }) {
           </div>
 
           {/* Market Leaders & Influencer Opinions */}
-          <div className="bg-blue-50 rounded-lg p-4">
+          <div className="bg-white border border-gray-200 rounded-lg p-4">
             <div className="flex items-center gap-2 mb-6">
               <div className="w-6 h-6 flex items-center justify-center">
                 <span className="text-lg">📄</span>
@@ -333,7 +353,7 @@ export default function ImpactAndOpinions({ theme }) {
 
       {/* Chart Info Modal */}
       {showChartInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-800">Chart Data Information</h3>
@@ -348,80 +368,68 @@ export default function ImpactAndOpinions({ theme }) {
             </div>
             
             <div className="space-y-4">
+              {/* Current Theme */}
               <div>
-                <h4 className="font-semibold text-gray-800 mb-2">Data Source</h4>
-                <p className="text-sm text-gray-700 leading-relaxed">
-                  This chart displays themes that share sub-sectors with the current theme. 
-                  The data is fetched from the Theme collection and shows the top 7 related themes 
-                  based on their overall score.
-                </p>
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-2">Current Theme Data</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">Current Theme</h4>
                 {currentTheme ? (
                   <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div>
-                        <span className="font-medium text-gray-700">Theme Name:</span>
-                        <p className="text-gray-600">{currentTheme.name}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-700">Overall Score:</span>
-                        <p className="text-gray-600">{currentTheme.overallScore?.toFixed(2) || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-700">Disruption Potential:</span>
-                        <p className="text-gray-600">{currentTheme.disruptivePotential?.toFixed(2) || 'N/A'}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-700">Trend Momentum:</span>
-                        <p className="text-gray-600">{currentTheme.trendMomentum?.toFixed(2) || 'N/A'}</p>
+                    <div className="text-sm">
+                      <div className="font-medium text-gray-700 mb-1">{currentTheme.name}</div>
+                      <div className="grid grid-cols-3 gap-2 text-xs text-gray-600">
+                        <div>Score: {currentTheme.overallScore?.toFixed(1) || 'N/A'}</div>
+                        <div>DP: {currentTheme.impactScore?.toFixed(1) || 'N/A'}</div>
+                        <div>PM: {currentTheme.predictiveMomentumScore?.toFixed(1) || 'N/A'}</div>
                       </div>
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No current theme data available</p>
+                  <p className="text-sm text-gray-500">No current theme data</p>
+                )}
+              </div>
+
+              {/* Sub-sectors */}
+              <div>
+                <h4 className="font-semibold text-gray-800 mb-2">Sub-sectors</h4>
+                {theme?.subSectors?.length > 0 ? (
+                  <div className="bg-gray-50 rounded-lg p-3">
+                    <div className="flex flex-wrap gap-1">
+                      {theme.subSectors.map((subSector, index) => (
+                        <span key={index} className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
+                          {subSector.subSectorName}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-500">No sub-sectors available</p>
                 )}
               </div>
               
+              {/* Top 7 Related Themes */}
               <div>
-                <h4 className="font-semibold text-gray-800 mb-2">Related Themes Data</h4>
+                <h4 className="font-semibold text-gray-800 mb-2">Top 7 Related Themes</h4>
                 {chartData.length > 0 ? (
                   <div className="bg-gray-50 rounded-lg p-3 max-h-48 overflow-y-auto">
                     <div className="space-y-2">
-                      {chartData.filter(theme => !theme.isCurrent).map((theme, index) => (
-                        <div key={theme.id} className="flex items-center justify-between p-2 bg-white rounded border">
-                          <div className="flex items-center gap-3">
+                      {chartData.filter(theme => !theme.isCurrent).slice(0, 7).map((theme, index) => (
+                        <div key={theme.id || index} className="flex items-center justify-between p-2 bg-white rounded border">
+                          <div className="flex items-center gap-2">
                             <div 
-                              className="w-4 h-4 rounded-full" 
+                              className="w-3 h-3 rounded-full" 
                               style={{ backgroundColor: theme.color }}
                             ></div>
-                            <span className="text-sm font-medium text-gray-700">{theme.name}</span>
+                            <span className="text-sm font-medium text-gray-700">{theme.label || theme.name}</span>
                           </div>
                           <div className="text-xs text-gray-600">
-                            DP: {theme.disruptivePotential?.toFixed(1) || 'N/A'} | 
-                            TM: {theme.trendMomentum?.toFixed(1) || 'N/A'} | 
-                            Score: {theme.overallScore?.toFixed(1) || 'N/A'}
+                            {theme.overallScore?.toFixed(1) || 'N/A'} | {theme.impactScore?.toFixed(1) || 'N/A'} | {theme.predictiveMomentumScore?.toFixed(1) || 'N/A'}
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
                 ) : (
-                  <p className="text-sm text-gray-500">No related themes data available</p>
+                  <p className="text-sm text-gray-500">No related themes found</p>
                 )}
-              </div>
-              
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-2">Chart Legend</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• <strong>Red Point:</strong> Current theme being analyzed</li>
-                  <li>• <strong>Colored Points:</strong> Related themes sharing sub-sectors</li>
-                  <li>• <strong>X-Axis:</strong> Predictive Momentum (1-5 scale)</li>
-                  <li>• <strong>Y-Axis:</strong> Disruption Potential (1-5 scale)</li>
-                  <li>• <strong>Hover:</strong> Shows detailed information for each point</li>
-                </ul>
               </div>
             </div>
             
