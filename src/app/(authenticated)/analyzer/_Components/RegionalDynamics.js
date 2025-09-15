@@ -64,11 +64,10 @@ export default function RegionalDynamics({ theme }) {
   const percentageRanges = [0, 0.5, 1, 1.5, 2];
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        
-        {/* Left Column - Regional Adoption Heat Map */}
-        <div className="bg-blue-50 rounded-lg p-4">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+      
+      {/* Regional Adoption Heat Map Container */}
+      <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
           <div className="flex items-center justify-between mb-4">
             <div>
               <h3 className="text-xl font-bold text-gray-800">Regional Adoption Heat Map</h3>
@@ -160,20 +159,19 @@ export default function RegionalDynamics({ theme }) {
               <p className="text-gray-500 text-sm">No heat map data available</p>
             </div>
           )}
-        </div>
+      </div>
 
-        {/* Right Column - Regional Insights */}
-        <div className="bg-blue-50 rounded-lg p-4">
-          <h3 className="text-xl font-bold text-gray-800 mb-6">Regional Insights</h3>
-          
-          {/* Overall Summary */}
-          {overallSummary && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
-              <p className="text-sm text-gray-600 leading-relaxed">
-                {overallSummary}
-              </p>
-            </div>
-          )}
+      {/* Regional Insights Container */}
+      <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
+        <h3 className="text-xl font-bold text-gray-800 mb-6">Regional Insights</h3>
+        
+        {/* Overall Summary - Direct content without container */}
+        {overallSummary && (
+          <div 
+            className="text-sm text-gray-600 leading-relaxed mb-6"
+            dangerouslySetInnerHTML={{ __html: overallSummary }}
+          ></div>
+        )}
 
           {/* All Regions Display */}
           {regions.length > 0 && (
@@ -209,12 +207,13 @@ export default function RegionalDynamics({ theme }) {
                   {/* Region Description from Region collection or fallback */}
                   {(region.regionId?.regionDescription || region.regionDescription) && (
                     <div className="text-sm text-gray-600 leading-relaxed">
-                      <pre className="whitespace-pre-wrap font-sans">
-                        {formatDescription(
+                      <div 
+                        className="whitespace-pre-wrap font-sans"
+                        dangerouslySetInnerHTML={{ __html: formatDescription(
                           region.regionId?.regionDescription || region.regionDescription, 
                           expandedRegions[index]
-                        )}
-                      </pre>
+                        ) }}
+                      ></div>
                       
                       {(region.regionId?.regionDescription || region.regionDescription)?.length > 200 && (
                         <button
@@ -239,23 +238,22 @@ export default function RegionalDynamics({ theme }) {
             </div>
           )}
 
-          {/* No regions available */}
-          {regions.length === 0 && (
-            <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
-              <div className="w-12 h-12 bg-gray-200 rounded-lg mx-auto mb-3 flex items-center justify-center">
-                <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <p className="text-gray-500 text-sm">No regional insights available</p>
+        {/* No regions available */}
+        {regions.length === 0 && (
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 text-center">
+            <div className="w-12 h-12 bg-gray-200 rounded-lg mx-auto mb-3 flex items-center justify-center">
+              <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-          )}
-        </div>
+            <p className="text-gray-500 text-sm">No regional insights available</p>
+          </div>
+        )}
       </div>
 
       {/* Heat Map Info Modal */}
       {showHeatMapInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-lg mx-4">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-800">Regional Adoption Heat Map</h3>

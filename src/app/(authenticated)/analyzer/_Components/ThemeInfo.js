@@ -19,7 +19,10 @@ export default function ThemeInfo({ theme }) {
       
       {/* Teaser Text */}
       {theme.teaser && (
-        <p className="text-gray-600 mb-4 text-base leading-relaxed">{theme.teaser}</p>
+        <div 
+          className="text-gray-600 mb-4 text-base leading-relaxed"
+          dangerouslySetInnerHTML={{ __html: theme.teaser }}
+        ></div>
       )}
       
       <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-4">
@@ -97,7 +100,7 @@ export default function ThemeInfo({ theme }) {
 
       {/* Methodology Modal */}
       {showMethodologyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-gray-800">Methodology</h3>
@@ -113,7 +116,20 @@ export default function ThemeInfo({ theme }) {
             
             <div className="text-gray-700 leading-relaxed">
               {theme.methodology ? (
-                <div dangerouslySetInnerHTML={{ __html: theme.methodology }} />
+                <div 
+                  style={{
+                    lineHeight: '1.6'
+                  }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: theme.methodology.replace(
+                      /<ul>/g, 
+                      '<ul style="list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem;">'
+                    ).replace(
+                      /<li>/g, 
+                      '<li style="margin-bottom: 0.5rem;">'
+                    )
+                  }} 
+                />
               ) : (
                 <p className="text-gray-500 italic">No methodology information available for this theme.</p>
               )}

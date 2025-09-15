@@ -46,8 +46,9 @@ export async function GET(request) {
     const chartData = relatedThemes.map(theme => ({
       id: theme._id,
       name: theme.themeTitle,
-      disruptivePotential: theme.impactScore || 0,
-      trendMomentum: theme.predictiveMomentumScore || 0,
+      themeTitle: theme.themeTitle,
+      impactScore: theme.impactScore || 0,
+      predictiveMomentumScore: theme.predictiveMomentumScore || 0,
       overallScore: theme.overallScore || 0
     }));
 
@@ -57,8 +58,9 @@ export async function GET(request) {
       currentTheme: {
         id: currentTheme._id,
         name: currentTheme.themeTitle,
-        disruptivePotential: currentTheme.impactScore || 0,
-        trendMomentum: currentTheme.predictiveMomentumScore || 0,
+        themeTitle: currentTheme.themeTitle,
+        impactScore: currentTheme.impactScore || 0,
+        predictiveMomentumScore: currentTheme.predictiveMomentumScore || 0,
         overallScore: currentTheme.overallScore || 0
       }
     }, { status: 200 });
