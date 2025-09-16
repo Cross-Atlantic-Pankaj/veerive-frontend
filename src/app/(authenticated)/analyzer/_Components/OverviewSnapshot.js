@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function OverviewSnapshot({ theme }) {
   const [showFullSummary, setShowFullSummary] = useState(false);
+  const [showFullExecutiveSummary, setShowFullExecutiveSummary] = useState(false);
 
   const executiveSummary = theme?.overviewSnapshot?.executiveSummary;
   const marketMetrics = theme?.overviewSnapshot?.marketMetrics || [];
@@ -10,6 +11,14 @@ export default function OverviewSnapshot({ theme }) {
   const validMarketMetrics = marketMetrics.filter(metric => 
     metric.value && metric.text && metric.value.trim() !== '' && metric.text.trim() !== ''
   );
+
+  // Helper function to get first paragraph of content
+  const getFirstParagraph = (content) => {
+    if (!content) return '';
+    // Split by paragraph tags and get the first one
+    const paragraphs = content.split('</p>');
+    return paragraphs[0] + '</p>';
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -40,7 +49,11 @@ export default function OverviewSnapshot({ theme }) {
                 <div 
                   className="text-gray-700 text-sm leading-relaxed" 
                   style={{fontFamily: 'Arial'}}
-                  dangerouslySetInnerHTML={{ __html: executiveSummary.trendSignificance.content }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: showFullExecutiveSummary 
+                      ? executiveSummary.trendSignificance.content 
+                      : getFirstParagraph(executiveSummary.trendSignificance.content)
+                  }}
                 ></div>
               </div>
             </div>
@@ -55,7 +68,11 @@ export default function OverviewSnapshot({ theme }) {
                 <div 
                   className="text-gray-700 text-sm leading-relaxed" 
                   style={{fontFamily: 'Arial'}}
-                  dangerouslySetInnerHTML={{ __html: executiveSummary.potentialChallenges.content }}
+                  dangerouslySetInnerHTML={{ 
+                    __html: showFullExecutiveSummary 
+                      ? executiveSummary.potentialChallenges.content 
+                      : getFirstParagraph(executiveSummary.potentialChallenges.content)
+                  }}
                 ></div>
               </div>
             </div>
@@ -64,12 +81,12 @@ export default function OverviewSnapshot({ theme }) {
 
         {/* View More Button */}
         <button
-          onClick={() => setShowFullSummary(!showFullSummary)}
+          onClick={() => setShowFullExecutiveSummary(!showFullExecutiveSummary)}
           className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-2 transition-colors group"
         >
-          {showFullSummary ? 'View Less' : 'View More'}
+          {showFullExecutiveSummary ? 'View Less' : 'View More'}
           <svg 
-            className={`w-4 h-4 transition-transform group-hover:translate-y-0.5 ${showFullSummary ? 'rotate-180' : ''}`} 
+            className={`w-4 h-4 transition-transform group-hover:translate-y-0.5 ${showFullExecutiveSummary ? 'rotate-180' : ''}`} 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"

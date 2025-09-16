@@ -55,12 +55,12 @@ export default function ThemeInfo({ theme }) {
         </div>
 
         {/* Score Metrics */}
-        <div className="flex-1 flex gap-4 flex-wrap md:justify-end mt-4 md:mt-0">
+        <div className="flex-1 flex gap-4 items-center md:justify-end mt-4 md:mt-0">
           <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
             <div className="text-sm text-[#174c77] leading-tight text-center">
               Disruption Potential
             </div>
-            <div className="bg-[#f76c3c] text-white font-bold w-9 h-9 p-2 flex items-center justify-center rounded">
+            <div className="bg-[#f76c3c] text-white font-bold w-16 h-9 p-2 flex items-center justify-center rounded">
               {theme.impactScore?.toFixed(2)}
             </div>
           </div>
@@ -68,26 +68,24 @@ export default function ThemeInfo({ theme }) {
             <div className="text-sm text-[#174c77] leading-tight text-center">
               Predictive Momentum
             </div>
-            <div className="bg-[#f76c3c] text-white font-bold w-9 h-9 p-2 flex items-center justify-center rounded">
+            <div className="bg-[#f76c3c] text-white font-bold w-16 h-9 p-2 flex items-center justify-center rounded">
               {theme.predictiveMomentumScore?.toFixed(2)}
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
-              <div className="text-sm text-[#174c77] leading-tight text-center">
-                Trending Pulse
-              </div>
-              <div className="bg-[#f76c3c] text-white font-semibold w-9 h-9 p-2 flex items-center justify-center rounded">
-                {theme.trendingScore?.toFixed(2)}
-              </div>
+          <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
+            <div className="text-sm text-[#174c77] leading-tight text-center">
+              Trending Pulse
             </div>
-            <button
-              onClick={() => setShowMethodologyModal(true)}
-              className="w-5 h-5 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
-            >
-              <span className="text-xs font-bold">i</span>
-            </button>
+            <div className="bg-[#f76c3c] text-white font-semibold w-16 h-9 p-2 flex items-center justify-center rounded">
+              {theme.trendingScore?.toFixed(2)}
+            </div>
           </div>
+          <button
+            onClick={() => setShowMethodologyModal(true)}
+            className="w-5 h-5 bg-gray-600 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+          >
+            <span className="text-xs font-bold">i</span>
+          </button>
         </div>
       </div>
 

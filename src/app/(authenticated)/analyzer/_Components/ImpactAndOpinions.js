@@ -8,6 +8,8 @@ export default function ImpactAndOpinions({ theme }) {
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
   const [showChartInfo, setShowChartInfo] = useState(false);
+  const [expandedDisruptive, setExpandedDisruptive] = useState(false);
+  const [expandedMomentum, setExpandedMomentum] = useState(false);
 
   const impactAndOpinions = theme?.trendAnalysis?.impactAndOpinions;
   const title = impactAndOpinions?.title;
@@ -153,10 +155,42 @@ export default function ImpactAndOpinions({ theme }) {
             )}
 
             {disruptivePotential?.content && (
-              <div 
-                className="text-sm text-gray-600 leading-relaxed mt-3"
-                dangerouslySetInnerHTML={{ __html: disruptivePotential.content }}
-              ></div>
+              <div className="mt-3">
+                {expandedDisruptive ? (
+                  <div 
+                    className="text-sm text-gray-600 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: disruptivePotential.content }}
+                  ></div>
+                ) : (
+                  <div 
+                    className="text-sm text-gray-600 leading-relaxed"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      lineHeight: '1.4'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: disruptivePotential.content }}
+                  ></div>
+                )}
+                
+                {/* View More Button */}
+                <button
+                  onClick={() => setExpandedDisruptive(!expandedDisruptive)}
+                  className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1 transition-colors mt-2"
+                >
+                  {expandedDisruptive ? 'View Less' : 'View More'}
+                  <svg 
+                    className={`w-3 h-3 transition-transform ${expandedDisruptive ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
             )}
           </div>
 
@@ -196,10 +230,42 @@ export default function ImpactAndOpinions({ theme }) {
             )}
 
             {trendMomentum?.content && (
-              <div 
-                className="text-sm text-gray-600 leading-relaxed mt-3"
-                dangerouslySetInnerHTML={{ __html: trendMomentum.content }}
-              ></div>
+              <div className="mt-3">
+                {expandedMomentum ? (
+                  <div 
+                    className="text-sm text-gray-600 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: trendMomentum.content }}
+                  ></div>
+                ) : (
+                  <div 
+                    className="text-sm text-gray-600 leading-relaxed"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      overflow: 'hidden',
+                      lineHeight: '1.4'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: trendMomentum.content }}
+                  ></div>
+                )}
+                
+                {/* View More Button */}
+                <button
+                  onClick={() => setExpandedMomentum(!expandedMomentum)}
+                  className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1 transition-colors mt-2"
+                >
+                  {expandedMomentum ? 'View Less' : 'View More'}
+                  <svg 
+                    className={`w-3 h-3 transition-transform ${expandedMomentum ? 'rotate-180' : ''}`} 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+              </div>
             )}
           </div>
         </div>
