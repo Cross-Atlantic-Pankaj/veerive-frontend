@@ -37,13 +37,124 @@ export default function DriversAndSignals({ theme }) {
       return description;
     }
     
-    // Show first 2 lines or bullet points
-    const lines = description.split('\n').filter(line => line.trim());
-    if (lines.length <= 2) {
+    // Create a temporary element to measure text with HTML
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = description;
+    tempDiv.style.cssText = `
+      position: absolute;
+      visibility: hidden;
+      width: 100%;
+      font-size: 12px;
+      line-height: 1.4;
+      font-family: Arial, sans-serif;
+    `;
+    document.body.appendChild(tempDiv);
+    
+    const lineHeight = tempDiv.offsetHeight / (tempDiv.textContent.split('\n').length || 1);
+    const maxHeight = lineHeight * 2; // 2 lines
+    
+    document.body.removeChild(tempDiv);
+    
+    // If content is already within 2 lines, return as is
+    if (tempDiv.offsetHeight <= maxHeight) {
       return description;
     }
     
-    return lines.slice(0, 2).join('\n') + '...';
+    // Truncate by characters to show exactly 2 lines (roughly 60-80 characters for 2 lines)
+    const plainText = description.replace(/<[^>]*>/g, '');
+    if (plainText.length <= 60) {
+      return description;
+    }
+    
+    // Find a good break point near 60 characters for exactly 2 lines
+    let truncateAt = 60;
+    const text = plainText.substring(0, truncateAt);
+    const lastSpace = text.lastIndexOf(' ');
+    if (lastSpace > 40) {
+      truncateAt = lastSpace;
+    }
+    
+    // Reconstruct with HTML tags preserved up to truncation point
+    let truncatedHtml = '';
+    let charCount = 0;
+    let inTag = false;
+    let currentTag = '';
+    
+    for (let i = 0; i < description.length; i++) {
+      const char = description[i];
+      
+      if (char === '<') {
+        inTag = true;
+        currentTag = char;
+      } else if (char === '>') {
+        inTag = false;
+        currentTag += char;
+        truncatedHtml += currentTag;
+        currentTag = '';
+      } else if (inTag) {
+        currentTag += char;
+      } else {
+        if (charCount >= truncateAt) {
+          break;
+        }
+        truncatedHtml += char;
+        charCount++;
+      }
+    }
+    
+    return truncatedHtml + '...';
+  };
+
+  const formatSignalContent = (content, isExpanded) => {
+    if (!content) return '';
+    
+    if (isExpanded) {
+      return content;
+    }
+    
+    // Truncate by characters to show exactly 2 lines (roughly 60-80 characters for 2 lines)
+    const plainText = content.replace(/<[^>]*>/g, '');
+    if (plainText.length <= 60) {
+      return content;
+    }
+    
+    // Find a good break point near 60 characters for exactly 2 lines
+    let truncateAt = 60;
+    const text = plainText.substring(0, truncateAt);
+    const lastSpace = text.lastIndexOf(' ');
+    if (lastSpace > 40) {
+      truncateAt = lastSpace;
+    }
+    
+    // Reconstruct with HTML tags preserved up to truncation point
+    let truncatedHtml = '';
+    let charCount = 0;
+    let inTag = false;
+    let currentTag = '';
+    
+    for (let i = 0; i < content.length; i++) {
+      const char = content[i];
+      
+      if (char === '<') {
+        inTag = true;
+        currentTag = char;
+      } else if (char === '>') {
+        inTag = false;
+        currentTag += char;
+        truncatedHtml += currentTag;
+        currentTag = '';
+      } else if (inTag) {
+        currentTag += char;
+      } else {
+        if (charCount >= truncateAt) {
+          break;
+        }
+        truncatedHtml += char;
+        charCount++;
+      }
+    }
+    
+    return truncatedHtml + '...';
   };
 
   return (
@@ -102,14 +213,28 @@ export default function DriversAndSignals({ theme }) {
                     
                     {/* Description */}
                     <div className="text-xs text-gray-600 leading-relaxed mb-2">
-                      <div 
-                        className="whitespace-pre-wrap font-sans"
-                        dangerouslySetInnerHTML={{ __html: formatDescription(driver.description, expandedDrivers[index]) }}
-                      ></div>
+                      {expandedDrivers[index] ? (
+                        <div 
+                          className="whitespace-pre-wrap font-sans"
+                          dangerouslySetInnerHTML={{ __html: driver.description }}
+                        ></div>
+                      ) : (
+                        <div 
+                          className="whitespace-pre-wrap font-sans"
+                          style={{
+                            display: '-webkit-box',
+                            WebkitLineClamp: 2,
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            lineHeight: '1.4'
+                          }}
+                          dangerouslySetInnerHTML={{ __html: driver.description }}
+                        ></div>
+                      )}
                     </div>
                     
                     {/* View More Button */}
-                    {driver.description && driver.description.length > 150 && (
+                    {driver.description && (
                       <button
                         onClick={() => toggleDriverExpansion(index)}
                         className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1 transition-colors"
@@ -203,10 +328,24 @@ export default function DriversAndSignals({ theme }) {
                            Initiative
                         </h5>
                       <div className="text-gray-700 leading-relaxed text-sm">
-                        <div 
-                          className="whitespace-pre-wrap font-sans"
-                          dangerouslySetInnerHTML={{ __html: signal.initiative.description }}
-                        ></div>
+                        {expandedSignals[index] ? (
+                          <div 
+                            className="whitespace-pre-wrap font-sans"
+                            dangerouslySetInnerHTML={{ __html: signal.initiative.description }}
+                          ></div>
+                        ) : (
+                          <div 
+                            className="whitespace-pre-wrap font-sans"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              lineHeight: '1.4'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: signal.initiative.description }}
+                          ></div>
+                        )}
                       </div>
                     </div>
                   )}
@@ -218,17 +357,31 @@ export default function DriversAndSignals({ theme }) {
                            Strategic Imperative
                         </h5>
                       <div className="text-gray-700 leading-relaxed text-sm">
-                        <div 
-                          className="whitespace-pre-wrap font-sans"
-                          dangerouslySetInnerHTML={{ __html: signal.strategicImperative.description }}
-                        ></div>
+                        {expandedSignals[index] ? (
+                          <div 
+                            className="whitespace-pre-wrap font-sans"
+                            dangerouslySetInnerHTML={{ __html: signal.strategicImperative.description }}
+                          ></div>
+                        ) : (
+                          <div 
+                            className="whitespace-pre-wrap font-sans"
+                            style={{
+                              display: '-webkit-box',
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: 'vertical',
+                              overflow: 'hidden',
+                              lineHeight: '1.4'
+                            }}
+                            dangerouslySetInnerHTML={{ __html: signal.strategicImperative.description }}
+                          ></div>
+                        )}
                       </div>
                     </div>
                   )}
                 </div>
                 
                 {/* View More Button */}
-                {signal.description && signal.description.length > 150 && (
+                {((signal.initiative?.description) || (signal.strategicImperative?.description)) && (
                   <div className="mt-4">
                     <button
                       onClick={() => toggleSignalExpansion(index)}
