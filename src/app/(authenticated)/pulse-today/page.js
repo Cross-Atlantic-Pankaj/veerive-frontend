@@ -327,7 +327,7 @@ export default function PulseToday() {
       }
     >
       <main className="px-3 py-4 sm:px-6 sm:py-6 md:px-8 md:py-8 lg:px-16 xl:px-24 lg:py-8 bg-gradient-to-b from-gray-50 to-gray-100 min-h-screen">
-        <div ref={containerRef} className={`flex flex-col gap-4 sm:gap-6 lg:gap-8 relative max-w-7xl mx-auto ${activeFilter ? 'lg:flex-col' : 'lg:flex-row'}`}>
+        <div ref={containerRef} className={`flex flex-col gap-4 sm:gap-6 lg:gap-8 relative ${activeFilter ? 'lg:flex-col max-w-7xl mx-auto' : 'lg:flex-row max-w-7xl mx-auto'}`}>
           
           {/* Active Filter Display */}
           {activeFilter && (
@@ -365,6 +365,9 @@ export default function PulseToday() {
                   .map((item) => item.id)
                   .join('-')}-${index}`;
                 
+                // Check if any item in the group is Type-Five
+                const hasTypeFive = displayItem.items.some(item => item.containerType === 'Type-Five');
+                
                 // Determine grid classes based on number of items and filter state
                 const getGridClasses = (itemCount) => {
                   if (activeFilter) {
@@ -379,6 +382,23 @@ export default function PulseToday() {
                     return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6';
                   }
                 };
+                
+                if (hasTypeFive) {
+                  // For Type-Five containers, break out of normal layout
+                  return (
+                    <div key={groupKey} className="w-full mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
+                      <div className="px-3 sm:px-6 md:px-8 lg:px-16 xl:px-24">
+                        {displayItem.items.map((context, itemIndex) =>
+                          renderContextBox(
+                            context,
+                            isLastItem && itemIndex === displayItem.items.length - 1,
+                            `${groupKey}-${context.id}-${itemIndex}`
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                }
                 
                 return (
                   <div
@@ -396,6 +416,19 @@ export default function PulseToday() {
                 );
               } else {
                 const singleKey = `${displayItem.item.id}-${index}`;
+                const isTypeFive = displayItem.item.containerType === 'Type-Five';
+                
+                if (isTypeFive) {
+                  // For Type-Five containers, break out of normal layout
+                  return (
+                    <div key={singleKey} className="w-full mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
+                      <div className="px-3 sm:px-6 md:px-8 lg:px-16 xl:px-24">
+                        {renderContextBox(displayItem.item, isLastItem, singleKey)}
+                      </div>
+                    </div>
+                  );
+                }
+                
                 return (
                   <div key={singleKey} className="mb-4 sm:mb-6">
                     {renderContextBox(displayItem.item, isLastItem, singleKey)}
@@ -430,18 +463,12 @@ export default function PulseToday() {
               </div>
             )}
 
-            <div className="bg-gray-100 p-3 sm:p-4 rounded-lg border border-gray-200 shadow-sm">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-                <h2 className="font-semibold text-base sm:text-lg text-gray-800">Trending Themes</h2>
-                <Link
-                  href="/analyzer/trend-analyzer"
-                  className="text-indigo-600 text-xs sm:text-sm flex items-center hover:text-indigo-700 self-start sm:self-auto"
-                >
-                  VIEW MORE →
-                </Link>
+            <div className="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md">
+              <div className="mb-3 sm:mb-4">
+                <h2 className="text-lg font-semibold text-gray-900">Trending Themes</h2>
               </div>
 
-              <div className="space-y-2 sm:space-y-3">
+              <div className="space-y-3 sm:space-y-4">
                 {trendingThemes.map((theme, index) => (
                   <div
                     key={`theme-${theme._id || index}`}
@@ -453,7 +480,7 @@ export default function PulseToday() {
                       </div>
                       <div className="break-words min-w-0 flex-1">
                         <Link href={`/analyzer/theme-details/${slugify(theme.title)}`}>
-                          <h3 className="font-medium text-gray-800 text-xs sm:text-sm leading-tight hover:text-indigo-600 transition-colors">{theme.title}</h3>
+                          <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors leading-tight">{theme.title}</h3>
                         </Link>
                         {/* Sub-sector tags */}
                         {theme.subSectors && theme.subSectors.length > 0 && (
@@ -462,7 +489,7 @@ export default function PulseToday() {
                               <Link
                                 key={`subsector-${subSector._id || subIndex}`}
                                 href={`/analyzer/trend-analyzer?subSectorId=${subSector._id}`}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition-colors"
                               >
                                 {subSector.subSectorName}
                               </Link>
@@ -479,11 +506,21 @@ export default function PulseToday() {
                   </div>
                 ))}
               </div>
+              
+              {/* VIEW MORE button at bottom */}
+              <div className="mt-3 sm:mt-4 text-center">
+                <Link
+                  href="/analyzer/trend-analyzer"
+                  className="text-indigo-600 text-xs sm:text-sm font-medium hover:text-indigo-700 transition-colors"
+                >
+                  VIEW MORE →
+                </Link>
+              </div>
             </div>
 
             <div className="bg-white mt-4 sm:mt-6 p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md">
               <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 sm:mb-4 gap-2 sm:gap-0">
-                <h2 className="font-semibold text-sm sm:text-base lg:text-lg text-gray-900">
+                <h2 className="text-lg font-semibold text-gray-900">
                   Trending Expert Opinion
                 </h2>
               </div>
@@ -496,9 +533,12 @@ export default function PulseToday() {
                     rel="noopener noreferrer"
                     className="block border-b border-dashed border-gray-300 pb-2 sm:pb-3 last:border-none hover:text-indigo-600 transition-colors"
                   >
+                    <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors leading-tight">
+                      {post.postTitle}
+                    </h3>
                     {/* Sub-sector tags */}
                     {post.subSectors && post.subSectors.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-2">
+                      <div className="flex flex-wrap gap-1 mt-1">
                         {post.subSectors.slice(0, 3).map((subSector, index) => (
                           <span
                             key={`expert-subsector-${index}-${subSector}`}
@@ -514,9 +554,6 @@ export default function PulseToday() {
                         )}
                       </div>
                     )}
-                    <h3 className="text-xs sm:text-sm font-semibold text-gray-900 line-clamp-2 hover:text-indigo-600 transition-colors leading-tight">
-                      {post.postTitle}
-                    </h3>
                   </a>
                 ))}
               </div>

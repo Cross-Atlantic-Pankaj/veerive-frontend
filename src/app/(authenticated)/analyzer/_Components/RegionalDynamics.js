@@ -24,44 +24,38 @@ export default function RegionalDynamics({ theme }) {
       return description;
     }
     
-    // Show first 3-4 lines
-    const lines = description.split('\n').filter(line => line.trim());
-    if (lines.length <= 4) {
+    // Show first 2 lines by limiting character count (approximately 2 lines)
+    const maxChars = 150; // Approximate characters for 2 lines
+    if (description.length <= maxChars) {
       return description;
     }
     
-    return lines.slice(0, 4).join('\n') + '...';
-  };
-
-  const getHeatMapColor = (value) => {
-    if (value >= 80) return '#ef4444'; // red-500
-    if (value >= 60) return '#f97316'; // orange-500
-    if (value >= 40) return '#eab308'; // yellow-500
-    if (value >= 20) return '#4ade80'; // green-400
-    return '#bbf7d0'; // green-200
-  };
-
-  // Create heatmap grid data
-  const createHeatMapGrid = () => {
-    const percentageRanges = [0, 0.5, 1, 1.5, 2];
-    const regions = heatMapData.map(item => item.nameOfRegion);
+    // Find the last space before the limit to avoid cutting words
+    const truncated = description.substring(0, maxChars);
+    const lastSpace = truncated.lastIndexOf(' ');
+    const finalText = lastSpace > 0 ? truncated.substring(0, lastSpace) : truncated;
     
-    return regions.map(region => {
-      const regionData = heatMapData.find(item => item.nameOfRegion === region);
-      const value = regionData?.values || 0;
-      
-      return {
-        region,
-        value,
-        color: getHeatMapColor(value),
-        // Determine which percentage range this value falls into
-        range: percentageRanges.find(range => value <= range) || percentageRanges[percentageRanges.length - 1]
-      };
-    });
+    return finalText + '...';
   };
 
-  const heatMapGrid = createHeatMapGrid();
-  const percentageRanges = [0, 0.5, 1, 1.5, 2];
+  const getCircleColor = (value) => {
+    if (value >= 80) return '#900000'; // dark red
+    if (value >= 60) return '#ee2400'; // light red
+    if (value >= 40) return '#ea580c'; // dark orange
+    if (value >= 20) return '#fb923c'; // light orange
+    return '#eab308'; // yellow
+  };
+
+  // Create circle data for regions
+  const createCircleData = () => {
+    return heatMapData.map(item => ({
+      region: item.nameOfRegion,
+      value: item.values || 0,
+      color: getCircleColor(item.values || 0)
+    }));
+  };
+
+  const circleData = createCircleData();
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
@@ -70,7 +64,7 @@ export default function RegionalDynamics({ theme }) {
       <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h3 className="text-xl font-bold text-gray-800">Regional Adoption Heat Map</h3>
+              <h3 className="text-lg font-bold text-gray-800">Regional Adoption Heat Map</h3>
               <p className="text-sm text-gray-600 mt-1">BNPL penetration and risk assessment by region</p>
             </div>
             <button
@@ -83,68 +77,46 @@ export default function RegionalDynamics({ theme }) {
           
           {heatMapData.length > 0 ? (
             <div className="space-y-4">
-              {/* Custom Heatmap Grid */}
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <div className="grid grid-cols-6 gap-2">
-                  {/* Header row with percentage ranges */}
-                  <div className="text-xs font-medium text-gray-600 text-center py-2"></div>
-                  {percentageRanges.map((range, index) => (
-                    <div key={index} className="text-xs font-medium text-gray-600 text-center py-2">
-                      {range}%
-                    </div>
-                  ))}
-                  
-                  {/* Data rows */}
-                  {heatMapGrid.map((item, rowIndex) => (
-                    <React.Fragment key={rowIndex}>
-                      {/* Region name */}
-                      <div className="text-xs font-medium text-gray-700 py-2 pr-2 text-right">
-                        {item.region}
+              {/* Regional Data Circles */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {circleData.map((item, index) => (
+                    <div key={index} className="flex flex-col items-center space-y-2">
+                      <div 
+                        className="w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg"
+                        style={{ backgroundColor: item.color }}
+                        title={`${item.region}: ${item.value}%`}
+                      >
+                        {item.value}%
                       </div>
-                      
-                      {/* Heatmap cells */}
-                      {percentageRanges.map((range, colIndex) => {
-                        const isActive = item.range === range;
-                        return (
-                          <div
-                            key={colIndex}
-                            className={`w-8 h-8 rounded border-2 transition-all duration-200 ${
-                              isActive 
-                                ? 'border-gray-800 shadow-md' 
-                                : 'border-gray-200 bg-gray-50'
-                            }`}
-                            style={{
-                              backgroundColor: isActive ? item.color : '#f9fafb'
-                            }}
-                            title={`${item.region}: ${item.value}%`}
-                          />
-                        );
-                      })}
-                    </React.Fragment>
+                      <span className="text-sm font-medium text-gray-700 text-center">
+                        {item.region}
+                      </span>
+                    </div>
                   ))}
                 </div>
               </div>
               
               {/* Legend */}
-              <div className="flex justify-center gap-4 text-xs">
+              <div className="flex flex-wrap justify-center gap-3 text-sm">
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: '#bbf7d0' }}></div>
-                  <span className="text-gray-700 font-medium">0-19%</span>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#eab308' }}></div>
+                  <span className="text-gray-700 font-medium">0-20%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: '#4ade80' }}></div>
-                  <span className="text-gray-700 font-medium">20-39%</span>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#fb923c' }}></div>
+                  <span className="text-gray-700 font-medium">20-40%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: '#eab308' }}></div>
-                  <span className="text-gray-700 font-medium">40-59%</span>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ea580c' }}></div>
+                  <span className="text-gray-700 font-medium">40-60%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: '#f97316' }}></div>
-                  <span className="text-gray-700 font-medium">60-79%</span>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ee2400' }}></div>
+                  <span className="text-gray-700 font-medium">60-80%</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded" style={{ backgroundColor: '#ef4444' }}></div>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#900000' }}></div>
                   <span className="text-gray-700 font-medium">80-100%</span>
                 </div>
               </div>
@@ -163,7 +135,7 @@ export default function RegionalDynamics({ theme }) {
 
       {/* Regional Insights Container */}
       <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
-        <h3 className="text-xl font-bold text-gray-800 mb-6">Regional Insights</h3>
+        <h3 className="text-lg font-bold text-gray-800 mb-6">Regional Insights</h3>
         
         {/* Overall Summary - Direct content without container */}
         {overallSummary && (
@@ -215,7 +187,7 @@ export default function RegionalDynamics({ theme }) {
                         ) }}
                       ></div>
                       
-                      {(region.regionId?.regionDescription || region.regionDescription)?.length > 200 && (
+                      {(region.regionId?.regionDescription || region.regionDescription)?.length > 150 && (
                         <button
                           onClick={() => toggleRegionExpansion(index)}
                           className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1 mt-2 transition-colors"
@@ -253,13 +225,13 @@ export default function RegionalDynamics({ theme }) {
 
       {/* Heat Map Info Modal */}
       {showHeatMapInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-lg mx-4">
-            <div className="flex items-center justify-between mb-4">
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-lg mx-4 shadow-2xl border border-gray-200 ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
               <h3 className="text-lg font-bold text-gray-800">Regional Adoption Heat Map</h3>
               <button
                 onClick={() => setShowHeatMapInfo(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-all duration-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -271,7 +243,7 @@ export default function RegionalDynamics({ theme }) {
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">About This Chart</h4>
                 <p className="text-sm text-gray-700 leading-relaxed">
-                  BNPL penetration and risk assessment by region. Bar length shows percentage values, colors indicate risk levels.
+                  BNPL penetration and risk assessment by region. Circle size and color indicate percentage values and risk levels.
                 </p>
               </div>
               
@@ -281,53 +253,45 @@ export default function RegionalDynamics({ theme }) {
                   {heatMapData.length > 0 ? (
                     <div className="space-y-1">
                       {heatMapData.map((region, index) => (
-                        <div key={index} className="flex justify-between items-center text-xs">
+                        <div key={index} className="flex justify-between items-center text-sm">
                           <span className="text-gray-700 font-medium">{region.nameOfRegion}</span>
                           <span className="text-gray-600">{region.values}%</span>
                         </div>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-xs text-gray-500">No data available</p>
+                    <p className="text-sm text-gray-500">No data available</p>
                   )}
                 </div>
               </div>
               
               <div>
                 <h4 className="font-semibold text-gray-800 mb-2">Color Legend</h4>
-                <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: '#bbf7d0' }}></div>
-                    <span className="text-gray-700">0-19% (Low Risk)</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#eab308' }}></div>
+                    <span className="text-gray-700">0-20% (Yellow)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: '#4ade80' }}></div>
-                    <span className="text-gray-700">20-39% (Low-Medium)</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#fb923c' }}></div>
+                    <span className="text-gray-700">20-40% (Light Orange)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: '#eab308' }}></div>
-                    <span className="text-gray-700">40-59% (Medium Risk)</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ea580c' }}></div>
+                    <span className="text-gray-700">40-60% (Dark Orange)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: '#f97316' }}></div>
-                    <span className="text-gray-700">60-79% (High Risk)</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#ee2400' }}></div>
+                    <span className="text-gray-700">60-80% (Light Red)</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded" style={{ backgroundColor: '#ef4444' }}></div>
-                    <span className="text-gray-700">80-100% (Very High)</span>
+                    <div className="w-3 h-3 rounded-full" style={{ backgroundColor: '#900000' }}></div>
+                    <span className="text-gray-700">80-100% (Dark Red)</span>
                   </div>
                 </div>
               </div>
             </div>
             
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowHeatMapInfo(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Got it
-              </button>
-            </div>
           </div>
         </div>
       )}

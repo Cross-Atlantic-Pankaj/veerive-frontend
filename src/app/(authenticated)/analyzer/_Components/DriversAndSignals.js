@@ -162,7 +162,7 @@ export default function DriversAndSignals({ theme }) {
       
       {/* Key Drivers Section */}
       <div>
-        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
           <Image 
             src={keyDriverIcon} 
             alt="Key Drivers Icon" 
@@ -207,20 +207,20 @@ export default function DriversAndSignals({ theme }) {
                     )}
                     
                     {/* Title */}
-                    <h4 className="font-bold text-gray-800 mb-1 text-sm">
+                    <h4 className="font-bold text-gray-800 mb-1 text-base">
                       {driver.driverTitle}
                     </h4>
                     
                     {/* Description */}
-                    <div className="text-xs text-gray-600 leading-relaxed mb-2">
+                    <div className="text-sm text-gray-600 leading-relaxed mb-2">
                       {expandedDrivers[index] ? (
                         <div 
-                          className="whitespace-pre-wrap font-sans"
+                          className="whitespace-pre-wrap font-sans drivers-signals-content"
                           dangerouslySetInnerHTML={{ __html: driver.description }}
                         ></div>
                       ) : (
                         <div 
-                          className="whitespace-pre-wrap font-sans"
+                          className="whitespace-pre-wrap font-sans drivers-signals-content"
                           style={{
                             display: '-webkit-box',
                             WebkitLineClamp: 2,
@@ -237,7 +237,7 @@ export default function DriversAndSignals({ theme }) {
                     {driver.description && (
                       <button
                         onClick={() => toggleDriverExpansion(index)}
-                        className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1 transition-colors"
+                        className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1 transition-colors"
                       >
                         {expandedDrivers[index] ? 'View Less' : 'View More'}
                         <svg 
@@ -269,7 +269,7 @@ export default function DriversAndSignals({ theme }) {
 
       {/* Signals in Action Section */}
       <div>
-        <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2">
           <Image 
             src={signalsInActionIcon} 
             alt="Signals in Action Icon" 
@@ -314,7 +314,7 @@ export default function DriversAndSignals({ theme }) {
                 {/* Description Section */}
                 <div className="bg-gray-50 p-3 mb-4 -mx-4 relative z-10">
                   <div 
-                    className="text-gray-600 leading-relaxed text-sm"
+                    className="text-gray-600 leading-relaxed text-sm drivers-signals-content"
                     dangerouslySetInnerHTML={{ __html: signal.description }}
                   ></div>
                 </div>
@@ -324,18 +324,18 @@ export default function DriversAndSignals({ theme }) {
                   {/* Initiative Section */}
                   {signal.initiative?.description && (
                     <div className="flex-1">
-                        <h5 className="font-bold text-green-700 mb-2 text-xs uppercase tracking-wide flex items-center gap-2">
+                        <h5 className="font-bold text-green-700 mb-2 text-sm uppercase tracking-wide flex items-center gap-2">
                            Initiative
                         </h5>
                       <div className="text-gray-700 leading-relaxed text-sm">
                         {expandedSignals[index] ? (
                           <div 
-                            className="whitespace-pre-wrap font-sans"
+                            className="whitespace-pre-wrap font-sans drivers-signals-content"
                             dangerouslySetInnerHTML={{ __html: signal.initiative.description }}
                           ></div>
                         ) : (
                           <div 
-                            className="whitespace-pre-wrap font-sans"
+                            className="whitespace-pre-wrap font-sans drivers-signals-content"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,
@@ -353,18 +353,18 @@ export default function DriversAndSignals({ theme }) {
                   {/* Strategic Imperative Section */}
                   {signal.strategicImperative?.description && (
                     <div className="flex-1">
-                        <h5 className="font-bold text-green-700 mb-2 text-xs uppercase tracking-wide flex items-center gap-2">
+                        <h5 className="font-bold text-green-700 mb-2 text-sm uppercase tracking-wide flex items-center gap-2">
                            Strategic Imperative
                         </h5>
                       <div className="text-gray-700 leading-relaxed text-sm">
                         {expandedSignals[index] ? (
                           <div 
-                            className="whitespace-pre-wrap font-sans"
+                            className="whitespace-pre-wrap font-sans drivers-signals-content"
                             dangerouslySetInnerHTML={{ __html: signal.strategicImperative.description }}
                           ></div>
                         ) : (
                           <div 
-                            className="whitespace-pre-wrap font-sans"
+                            className="whitespace-pre-wrap font-sans drivers-signals-content"
                             style={{
                               display: '-webkit-box',
                               WebkitLineClamp: 2,

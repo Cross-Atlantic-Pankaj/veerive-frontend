@@ -49,13 +49,44 @@ export default function ContextDetails() {
           headers: { 'Content-Type': 'application/json' },
         });
 
+        // Check if the response is actually JSON
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          console.error('Response is not JSON:', contentType);
+          const textResponse = await response.text();
+          console.error('Response text:', textResponse.substring(0, 500));
+          throw new Error('Server returned non-JSON response');
+        }
+
         if (!response.ok) {
-          const errorData = await response.json();
+          let errorData;
+          try {
+            errorData = await response.json();
+          } catch (parseError) {
+            console.error('Failed to parse error response as JSON:', parseError);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+          
           console.error('API error response:', errorData);
+          
+          // Handle redirect case
+          if (errorData.redirectUrl) {
+            console.log('Redirecting to:', errorData.redirectUrl);
+            router.replace(errorData.redirectUrl);
+            return;
+          }
+          
           throw new Error(errorData.error || 'Failed to fetch context details');
         }
 
-        const data = await response.json();
+        let data;
+        try {
+          data = await response.json();
+        } catch (parseError) {
+          console.error('Failed to parse success response as JSON:', parseError);
+          throw new Error('Server returned invalid JSON response');
+        }
+        
         console.log('Fetched context:', data.context);
         setContext(data.context);
       } catch (err) {

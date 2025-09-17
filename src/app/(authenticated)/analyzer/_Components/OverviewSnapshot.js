@@ -21,10 +21,10 @@ export default function OverviewSnapshot({ theme }) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-6">
       
       {/* Executive Summary Container */}
-      <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
+      <div className="lg:col-span-6 rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
         <div className="flex items-center gap-3 mb-6">
           {executiveSummary?.executiveSummaryIcon && (
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -35,7 +35,7 @@ export default function OverviewSnapshot({ theme }) {
               />
             </div>
           )}
-          <h3 className="text-xl font-bold text-gray-800" style={{fontFamily: 'sans-serif'}}>Executive Summary</h3>
+          <h3 className="text-lg font-bold text-gray-800" style={{fontFamily: 'sans-serif'}}>Trend Snapshot</h3>
         </div>
 
         {/* Executive Summary Content - Direct Layout */}
@@ -43,11 +43,17 @@ export default function OverviewSnapshot({ theme }) {
           {/* Trend Significance */}
           {executiveSummary?.trendSignificance?.content && (
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="w-6 h-6 mt-1 flex-shrink-0">
+                <img 
+                  src="/assets/Picture1.png" 
+                  alt="Trend Significance" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <h4 className="font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Trend Significance</h4>
+                <h4 className="text-lg font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Trend Significance</h4>
                 <div 
-                  className="text-gray-700 text-sm leading-relaxed" 
+                  className="text-gray-700 text-sm leading-relaxed executive-summary-content" 
                   style={{fontFamily: 'Arial'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
@@ -62,11 +68,17 @@ export default function OverviewSnapshot({ theme }) {
           {/* Potential Challenges */}
           {executiveSummary?.potentialChallenges?.content && (
             <div className="flex items-start gap-3">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+              <div className="w-6 h-6 mt-1 flex-shrink-0">
+                <img 
+                  src="/assets/Picture2.png" 
+                  alt="Potential Challenges" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div>
-                <h4 className="font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Potential Challenges</h4>
+                <h4 className="text-lg font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Potential Challenges</h4>
                 <div 
-                  className="text-gray-700 text-sm leading-relaxed" 
+                  className="text-gray-700 text-sm leading-relaxed executive-summary-content" 
                   style={{fontFamily: 'Arial'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
@@ -97,8 +109,8 @@ export default function OverviewSnapshot({ theme }) {
       </div>
 
       {/* Market Metrics Container */}
-      <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
-        <h3 className="text-xl font-bold text-gray-800 mb-6" style={{fontFamily: 'sans-serif'}}>Market Metrics</h3>
+      <div className="lg:col-span-4 rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
+        <h3 className="text-lg font-bold text-gray-800 mb-6" style={{fontFamily: 'sans-serif'}}>Market Metrics</h3>
         
          {validMarketMetrics.length > 0 ? (
            <div className="grid grid-cols-2 gap-3">

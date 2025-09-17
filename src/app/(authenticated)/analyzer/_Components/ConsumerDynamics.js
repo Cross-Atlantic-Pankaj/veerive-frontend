@@ -2,10 +2,18 @@ import React, { useState } from 'react';
 
 export default function ConsumerDynamics({ theme }) {
   const [showImpactInfo, setShowImpactInfo] = useState(false);
+  const [expandedInsights, setExpandedInsights] = useState({});
 
   const consumerDynamics = theme?.trendAnalysis?.consumerDynamics;
   const behavioralInsights = consumerDynamics?.behavioralInsights || [];
   const impactAnalyser = consumerDynamics?.impactAnalyser || [];
+
+  const toggleInsightExpansion = (index) => {
+    setExpandedInsights(prev => ({
+      ...prev,
+      [index]: !prev[index]
+    }));
+  };
 
   const getTrendIcon = (score) => {
     if (score >= 70) {
@@ -34,7 +42,7 @@ export default function ConsumerDynamics({ theme }) {
       
       {/* Behavioral Insights Container */}
       <div className="rounded-xl shadow-sm border border-gray-400 p-4" style={{backgroundColor: '#f2fbfb'}}>
-          <h3 className="text-lg font-bold text-gray-800 mb-4">Behavioral Insights</h3>
+           <h3 className="text-lg font-bold text-gray-800 mb-4">Behavioral Insights</h3>
           
           {behavioralInsights.length > 0 ? (
             <div className="space-y-3">
@@ -63,12 +71,44 @@ export default function ConsumerDynamics({ theme }) {
                     ></h4>
                   </div>
                   
-                  {/* Content - Always visible */}
+                  {/* Content - With 2-line truncation and View More */}
                   <div className="mt-3 pt-3 border-t border-gray-300">
-                    <div 
-                      className="text-xs text-gray-500 leading-relaxed"
-                      dangerouslySetInnerHTML={{ __html: insight.text }}
-                    ></div>
+                    {expandedInsights[index] ? (
+                      <div 
+                        className="text-xs text-gray-500 leading-relaxed consumer-dynamics-content"
+                        dangerouslySetInnerHTML={{ __html: insight.text }}
+                      ></div>
+                    ) : (
+                      <div 
+                        className="text-xs text-gray-500 leading-relaxed consumer-dynamics-content"
+                        style={{
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+                          lineHeight: '1.4'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: insight.text }}
+                      ></div>
+                    )}
+                    
+                    {/* View More Button */}
+                    {insight.text && (
+                      <button
+                        onClick={() => toggleInsightExpansion(index)}
+                        className="text-blue-600 hover:text-blue-800 font-medium text-xs flex items-center gap-1 transition-colors mt-2"
+                      >
+                        {expandedInsights[index] ? 'View Less' : 'View More'}
+                        <svg 
+                          className={`w-3 h-3 transition-transform ${expandedInsights[index] ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
@@ -133,39 +173,77 @@ export default function ConsumerDynamics({ theme }) {
 
       {/* Impact Analyzer Info Modal */}
       {showImpactInfo && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md mx-4">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Impact Analyzer</h3>
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-gray-100 ring-1 ring-gray-50 relative overflow-hidden">
+            {/* Decorative gradient background */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500"></div>
+            
+            <div className="flex items-center justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
+                <h3 className="text-2xl font-bold text-gray-800">Impact Analyzer</h3>
+              </div>
               <button
                 onClick={() => setShowImpactInfo(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full p-2 transition-all duration-200 group"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <h4 className="font-semibold text-gray-800 mb-2">How to Read</h4>
-                <ul className="text-sm text-gray-700 space-y-1">
-                  <li>• <strong>Progress Bar:</strong> Visual representation of impact percentage</li>
-                  <li>• <strong>Trend Icons:</strong> Up (70%+), Flat (50-69%), Down (&lt;50%)</li>
-                  <li>• <strong>Percentage:</strong> Direct impact score for each segment</li>
-                </ul>
+            <div className="space-y-6">
+              <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-100">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-800">How to Read</h4>
+                </div>
+                
+                <div className="space-y-4">
+                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
+                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <div className="w-4 h-2 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-gray-800 mb-1">Progress Bar</h5>
+                      <p className="text-sm text-gray-600">Visual representation of impact percentage with color-coded segments</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
+                    <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+                      </svg>
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-gray-800 mb-1">Trend Icons</h5>
+                      <p className="text-sm text-gray-600">Up (70%+), Flat (50-69%), Down (&lt;50%) indicating performance direction</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
+                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-purple-600 font-bold text-sm">%</span>
+                    </div>
+                    <div>
+                      <h5 className="font-semibold text-gray-800 mb-1">Percentage</h5>
+                      <p className="text-sm text-gray-600">Direct impact score for each consumer segment</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
             
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowImpactInfo(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Got it
-              </button>
-            </div>
           </div>
         </div>
       )}
