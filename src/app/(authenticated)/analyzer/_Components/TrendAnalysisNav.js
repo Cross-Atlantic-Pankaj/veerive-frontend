@@ -33,16 +33,16 @@ export default function TrendAnalysisNav({ activeSection, onSectionChange, theme
   const availableSections = sections.filter(section => section.hasData);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm mb-6 p-6">
+    <div className="bg-blue-50 border border-blue-200 rounded-xl shadow-sm mb-6 p-6">
       <div className="flex gap-2">
         {availableSections.map((section, index) => (
           <button
             key={section.id}
             onClick={() => onSectionChange(section.id)}
-            className={`flex-1 px-6 py-4 font-semibold text-base rounded-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 ${
+            className={`flex-1 px-6 py-4 font-semibold text-base rounded-lg transition-all duration-300 transform hover:scale-105 hover:-translate-y-1 border border-gray-300 ${
               activeSection === section.id
-                ? 'bg-white border border-gray-200 shadow-md text-gray-800'
-                : 'bg-transparent text-gray-600 hover:bg-white hover:border hover:border-gray-200 hover:shadow-md'
+                ? 'bg-blue-600 text-white shadow-lg'
+                : 'bg-transparent text-gray-600 hover:bg-white hover:shadow-md'
             }`}
           >
             {section.label}

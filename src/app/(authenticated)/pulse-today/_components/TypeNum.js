@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import PPTViewer from '../../../../components/PPTViewer';
 
 const normalizeTitle = (text) => {
   return text
@@ -127,11 +128,39 @@ const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
       >
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/3 flex items-center justify-center">
-            <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
-              {context.dataForTypeNum}
-            </div>
+            {context.pptUrl ? (
+              <PPTViewer
+                pptUrl={context.pptUrl}
+                className="w-full h-32"
+              />
+            ) : (
+              <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
+                {context.dataForTypeNum}
+              </div>
+            )}
           </div>
           <div className="flex-1">
+            {/* Category/Tags */}
+            {[...(context.sectors || []), ...(context.subSectors || [])].length > 0 && (
+              <div className="text-xs text-red-600 font-medium mb-2">
+                {[...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).map((name, idx) => (
+                  <React.Fragment key={`sector-${idx}-${name}`}>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/pulse-today?${context.sectors?.includes(name) ? 'sector' : 'subSector'}=${encodeURIComponent(name)}`);
+                      }}
+                      className="hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
+                    >
+                      {name}
+                    </button>
+                    {idx < [...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).length - 1 && ' • '}
+                  </React.Fragment>
+                ))}
+              </div>
+            )}
+            
             {context.summary.length > 0 ? (
             <p
                                   className="text-black text-base sm:text-base mt-3"

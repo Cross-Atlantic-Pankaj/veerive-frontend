@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import ContextImage from '../../../../components/ContextImage';
+import PPTViewer from '../../../../components/PPTViewer';
 
 const normalizeTitle = (text) => {
   return text
@@ -126,12 +127,19 @@ const TypeTwo = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
       >
         <div className="flex flex-col sm:flex-row gap-4 mb-4">
                   <div className="w-full sm:w-1/3">
-                    <ContextImage
-                      context={context}
-                      tileTemplate={tileTemplate}
-                      className="w-full h-20 lg:h-24"
-                      fallbackText="1000 × 630"
-                    />
+                    {context.pptUrl ? (
+                      <PPTViewer
+                        pptUrl={context.pptUrl}
+                        className="w-full h-20 lg:h-24"
+                      />
+                    ) : (
+                      <ContextImage
+                        context={context}
+                        tileTemplate={tileTemplate}
+                        className="w-full h-20 lg:h-24"
+                        fallbackText="1000 × 630"
+                      />
+                    )}
                   </div>
                   <div className="flex-1 flex flex-col">
                     <div className="text-red-600 text-xs font-semibold mb-1">

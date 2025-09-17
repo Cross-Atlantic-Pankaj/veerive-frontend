@@ -24,12 +24,17 @@ function normalizeTitle(text) {
 
 export async function GET(request) {
   try {
+    console.log('API: Starting context details fetch for slug:', request.url);
+    
     await connectDB();
+    console.log('API: Database connected successfully');
 
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
+    console.log('API: Extracted slug:', slug);
 
     if (!slug) {
+      console.log('API: No slug provided');
       return NextResponse.json(
         { success: false, error: 'Slug is required' },
         { status: 400 }
@@ -104,7 +109,11 @@ export async function GET(request) {
 
     const canonicalSlug = normalizeTitle(targetContext.contextTitle);
     if (normalizedSlug !== canonicalSlug) {
-      return NextResponse.redirect(new URL(`/context-details/${canonicalSlug}`, request.url));
+      return NextResponse.json({
+        success: false,
+        error: 'Redirect required',
+        redirectUrl: `/context-details/${canonicalSlug}`
+      }, { status: 301 });
     }
 
     let originalTheme = null;
@@ -358,20 +367,51 @@ export async function GET(request) {
       })),
     };
 
+    console.log('API: Successfully processed context, returning JSON response');
     return NextResponse.json({
       success: true,
       context: processedContext,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
     });
   } catch (error) {
-    console.error('Error fetching context details:', error);
+    console.error('API: Error fetching context details:', error);
+    console.error('API: Error stack:', error.stack);
+    
     const isDev = process.env.NODE_ENV === 'development';
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Failed to fetch context details',
-        ...(isDev && { details: error.message }),
-      },
-      { status: 500 }
-    );
+    
+    // Ensure we always return JSON, even for unexpected errors
+    try {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Failed to fetch context details',
+          ...(isDev && { details: error.message, stack: error.stack }),
+        },
+        { 
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+    } catch (responseError) {
+      console.error('API: Failed to create error response:', responseError);
+      // Last resort - return a basic JSON error
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'Internal server error'
+        }),
+        {
+          status: 500,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+    }
   }
 }

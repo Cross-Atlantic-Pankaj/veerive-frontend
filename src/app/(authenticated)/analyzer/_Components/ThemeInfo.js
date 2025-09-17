@@ -98,13 +98,13 @@ export default function ThemeInfo({ theme }) {
 
       {/* Methodology Modal */}
       {showMethodologyModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-800">Methodology</h3>
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200 ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800">Methodology</h3>
               <button
                 onClick={() => setShowMethodologyModal(false)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-all duration-200"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -133,14 +133,6 @@ export default function ThemeInfo({ theme }) {
               )}
             </div>
             
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={() => setShowMethodologyModal(false)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Close
-              </button>
-            </div>
           </div>
         </div>
       )}

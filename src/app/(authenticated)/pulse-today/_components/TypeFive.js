@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import ContextImage from '../../../../components/ContextImage';
+import PPTViewer from '../../../../components/PPTViewer';
 
 const normalizeTitle = (text) => {
   return text
@@ -128,12 +129,19 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
         <div className="flex gap-4 mb-4">
           {/* Image section - top left */}
           <div className="flex-shrink-0">
-            <ContextImage
-              context={context}
-              tileTemplate={tileTemplate}
-              className="w-32 h-32 lg:w-40 lg:h-40"
-              fallbackText="1000 × 630"
-            />
+            {context.pptUrl ? (
+              <PPTViewer
+                pptUrl={context.pptUrl}
+                className="w-32 h-32 lg:w-40 lg:h-40"
+              />
+            ) : (
+              <ContextImage
+                context={context}
+                tileTemplate={tileTemplate}
+                className="w-32 h-32 lg:w-40 lg:h-40"
+                fallbackText="1000 × 630"
+              />
+            )}
           </div>
 
           {/* Content section - beside image */}
@@ -141,7 +149,21 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
             {/* Category/Tags */}
             {context.originalContextSector && context.originalContextSector.length > 0 && (
               <div className="text-xs text-red-600 font-medium mb-1">
-                {context.originalContextSector.slice(0, 2).join(' • ')}
+                {context.originalContextSector.slice(0, 2).map((name, idx) => (
+                  <React.Fragment key={`sector-${idx}-${name}`}>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        router.push(`/pulse-today?sector=${encodeURIComponent(name)}`);
+                      }}
+                      className="hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
+                    >
+                      {name}
+                    </button>
+                    {idx < context.originalContextSector.slice(0, 2).length - 1 && ' • '}
+                  </React.Fragment>
+                ))}
               </div>
             )}
             

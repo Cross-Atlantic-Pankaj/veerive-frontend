@@ -182,7 +182,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback}) => {
           </div>
         </div>
 
-        <div className="flex flex-col md:flex-row md:divide-y md:divide-y-0 md:divide-x divide-gray-300 gap-2 mt-5">
+        <div className="flex flex-col md:flex-row md:divide-x divide-gray-300 gap-2 mt-5">
           {context.posts?.slice(1, 4).map((post, i) => (
             <div key={i} className="flex-1 px-2">
               <div className="font-semibold text-gray-800 text-sm">

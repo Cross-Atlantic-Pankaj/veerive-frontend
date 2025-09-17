@@ -46,6 +46,86 @@ html {
   width: 0;  
   background: transparent;
 }
+/* Executive Summary Bullet Points Styling */
+.executive-summary-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 20px !important;
+  padding-left: 0 !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.executive-summary-content li {
+  margin-bottom: 8px !important;
+  display: list-item !important;
+  list-style-type: disc !important;
+}
+
+.executive-summary-content p {
+  margin-bottom: 8px !important;
+}
+
+/* Drivers and Signals Bullet Points Styling */
+.drivers-signals-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 20px !important;
+  padding-left: 0 !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.drivers-signals-content li {
+  margin-bottom: 8px !important;
+  display: list-item !important;
+  list-style-type: disc !important;
+}
+
+.drivers-signals-content p {
+  margin-bottom: 8px !important;
+}
+
+/* Impact and Opinions Bullet Points Styling */
+.impact-opinions-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 20px !important;
+  padding-left: 0 !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.impact-opinions-content li {
+  margin-bottom: 8px !important;
+  display: list-item !important;
+  list-style-type: disc !important;
+}
+
+.impact-opinions-content p {
+  margin-bottom: 8px !important;
+}
+
+/* Consumer Dynamics Bullet Points Styling */
+.consumer-dynamics-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 20px !important;
+  padding-left: 0 !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.consumer-dynamics-content li {
+  margin-bottom: 8px !important;
+  display: list-item !important;
+  list-style-type: disc !important;
+}
+
+.consumer-dynamics-content p {
+  margin-bottom: 8px !important;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #FF0000;
 }
