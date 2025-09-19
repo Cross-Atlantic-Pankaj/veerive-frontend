@@ -8,18 +8,13 @@ import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import Source from '@/models/Source';
 import connectDB from '@/lib/db';
+import { registerModels } from '@/lib/registerModels';
 
 export async function GET(request) {
   try {
     await connectDB();
 
-    if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
-    if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
-    if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
-    if (!mongoose.models.Source) mongoose.model('Source', Source.schema);
-    if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
-    if (!mongoose.models.Context) mongoose.model('Context', Context.schema);
+    registerModels();
 
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get('page') || '1', 10);
@@ -80,14 +75,14 @@ export async function GET(request) {
       'Loyalty Programs'
     ];
 
-    const query = {};
+    const query = { doNotPublish: { $ne: true } }; // Filter out posts where doNotPublish is true
     if (postType && validPostTypes.includes(postType)) {
       query.postType = postType;
     }
 
     let contextMatch = {};
     if (subsectorId) {
-      const matchingContexts = await Context.find({ subSectors: subsectorId }).select('_id');
+      const matchingContexts = await Context.find({ subSectors: subsectorId, doNotPublish: { $ne: true } }).select('_id');
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
       } else {
@@ -95,7 +90,7 @@ export async function GET(request) {
         contextMatch = {};
       }
     } else if (sectorId) {
-      const matchingContexts = await Context.find({ sectors: sectorId }).select('_id');
+      const matchingContexts = await Context.find({ sectors: sectorId, doNotPublish: { $ne: true } }).select('_id');
       // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
@@ -104,7 +99,7 @@ export async function GET(request) {
         contextMatch = {};
       }
     } else if (subsignalId) {
-      const matchingContexts = await Context.find({ signalSubCategories: subsignalId }).select('_id');
+      const matchingContexts = await Context.find({ signalSubCategories: subsignalId, doNotPublish: { $ne: true } }).select('_id');
       // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };
@@ -113,7 +108,7 @@ export async function GET(request) {
         contextMatch = {};
       }
     } else if (signalId) {
-      const matchingContexts = await Context.find({ signalCategories: signalId }).select('_id');
+      const matchingContexts = await Context.find({ signalCategories: signalId, doNotPublish: { $ne: true } }).select('_id');
       // Removed console.log for performance
       if (matchingContexts.length > 0) {
         contextMatch = { contexts: { $in: matchingContexts.map(ctx => ctx._id) } };

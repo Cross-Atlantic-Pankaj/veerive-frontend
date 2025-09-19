@@ -21,7 +21,7 @@ export async function GET(request) {
 
     // Models are already registered when imported, no need to re-register
 
-    const filter = {};
+    const filter = { doNotPublish: { $ne: true } }; // Filter out themes where doNotPublish is true
 
     if (sectorId && mongoose.Types.ObjectId.isValid(sectorId)) {
       filter.sectors = { $in: [new mongoose.Types.ObjectId(sectorId)] };

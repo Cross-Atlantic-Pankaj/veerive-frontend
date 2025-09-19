@@ -1,39 +1,54 @@
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose'
 
-const PostSchema = new mongoose.Schema({
-  postTitle: { type: String, required: true },
-  postType: { type: String, required: true },
-  tileTemplateId: { type: mongoose.Schema.Types.ObjectId, ref: 'TileTemplate' },
-  date: { type: Date, required: true },
-  isTrending: { type: Boolean, default: false },
-  includeInContainer: { type: Boolean, default: false },
-  homePageShow: { type: Boolean, default: false },
-  countries: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Country' }],
-  summary: { type: String, required: true },
-  completeContent: { type: String, default: '' },
-  sentiment: { type: String, required: true },
-  primaryCompanies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Company' }],
-  secondaryCompanies: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Company' }],
-  source: { type: mongoose.Schema.Types.ObjectId, ref: 'Source' },
-  sourceUrl: { type: String },
-  sourceUrls: {
-    type: mongoose.Schema.Types.Mixed,
-    validate: {
-      validator: function(value) {
-        return typeof value === 'string' || Array.isArray(value);
-      },
-      message: 'sourceUrls must be either a string or an array of strings.',
+const postSchema = new Schema ({
+    postTitle: { type: String, required: true },
+    date: { type: Date, required: true },       
+    postType: { type: String, enum: ['News', 'Expert Opinion', 'Research Report', 'Infographic', 'Interview'], required: true },
+    //postTypeId: { type: Schema.Types.ObjectId, ref: 'PostType', required: true},
+    isTrending: {type: Boolean, default: false},
+    includeInContainer: {type: Boolean, default: false},
+    homePageShow: {type: Boolean, default: false},
+    doNotPublish: {type: Boolean, default: false},
+    contexts: [{ type: Schema.Types.ObjectId, ref: 'Context', required: true}],
+    countries: [{ type: Schema.Types.ObjectId, ref: 'Country', required: true}],
+    summary: { type: String, required: true },
+    completeContent: { type: String, required: false },   
+    sentiment: { type: String, enum: ['Positive', 'Negative', 'Neutral'], required: true},
+    primaryCompanies: [{ type: Schema.Types.ObjectId, ref: 'Company', required: false}],
+    secondaryCompanies: [{ type: Schema.Types.ObjectId, ref: 'Company', required: false}],
+    generalComment: { type: String, required: false },
+    // source: { type: String, ref: 'Source', required: true},
+    // sourceUrl: {type: String, required: true},
+    source: [{ type: Schema.Types.ObjectId, ref: 'Source', required: true }], // ✅ Now an array
+    sourceUrls: [{ type: String, required: true }], // ✅ Now an array
+
+    // Google Drive URL (always available)
+    googleDriveUrl: { type: String, required: false }, // Google Drive link for any post type
+    
+    // Legacy fields for backward compatibility
+    infographicsUrl: { type: String, required: false }, // Deprecated: Google Drive link for Infographic posts
+    researchReportsUrl: { type: String, required: false }, // Deprecated: Google Drive link for Research Report posts
+
+    tileTemplateId: { type: Schema.Types.ObjectId, ref: 'TileTemplate', required: false },
+
+    // Market Data Documents
+    marketDataDocuments: [{ type: Schema.Types.ObjectId, ref: 'MarketData', required: false }],
+
+    // Image URL for post
+    imageUrl: { type: String, required: false },
+
+    seoData: {
+      seoURL: { type: String, required: false }, 
+      metaTitle: { type: String, required: false },
+      metaKeyword: { type: String, required: false },
+      metaDescription: { type: Boolean, default: false },
+      header: {},
+      footer: {},
     },
-    default: [],
-  },
-  generalComment: { type: String, default: '' },
-  imageUrl: { type: String, default: '' }, // AWS S3 image URL for post
-  seoData: {
-    metaDescription: { type: Boolean, default: false }
-  },
-  contexts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Context' }],
-}, {
-  timestamps: true
-});
+  
+}, {timestamps: true})
 
-export default mongoose.models.Post || mongoose.model('Post', PostSchema);
+
+const Post = model('Post', postSchema)
+
+export default Post

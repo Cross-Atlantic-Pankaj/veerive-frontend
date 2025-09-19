@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import PPTViewer from '../../../../components/PPTViewer';
 
 const normalizeTitle = (text) => {
   return text
@@ -128,16 +127,9 @@ const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
       >
         <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
           <div className="w-full sm:w-1/3 flex items-center justify-center">
-            {context.pptUrl ? (
-              <PPTViewer
-                pptUrl={context.pptUrl}
-                className="w-full h-32"
-              />
-            ) : (
-              <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
-                {context.dataForTypeNum}
-              </div>
-            )}
+            <div className="text-3xl sm:text-4xl font-bold text-indigo-600 whitespace-nowrap">
+              {context.dataForTypeNum}
+            </div>
           </div>
           <div className="flex-1">
             {/* Category/Tags */}

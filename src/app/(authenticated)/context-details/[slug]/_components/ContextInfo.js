@@ -2,8 +2,20 @@
 
 import React from 'react';
 import Link from 'next/link';
+import PDFPageSlideshow from '../../../../../components/PDFPageSlideshow';
 
 const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
+	// Debug logging
+	console.log('ContextInfo: Context data:', {
+		contextTitle: context?.contextTitle,
+		pdfUrl: context?.pdfUrl,
+		pptUrl: context?.pptUrl,
+		pdfFile: context?.pdfFile,
+		hasSlider: context?.hasSlider,
+		slides: context?.slides?.length || 0,
+		contextId: context?._id
+	});
+
 	const slugify = (text) => {
 		return text
 			.toString()
@@ -128,7 +140,18 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 				</div>
 			)}
 
-			{context.hasSlider && context.slides && context.slides.length > 0 && (
+			{/* Display PDF Slideshow if pdfFile is present */}
+			{context.pdfFile && context.pdfFile.fileName && (
+				<div className="mt-6 sm:mt-8 mb-4 sm:mb-6">
+					<PDFPageSlideshow
+						contextId={context._id}
+						className="w-full max-w-4xl mx-auto"
+					/>
+				</div>
+			)}
+
+			{/* Display slides if hasSlider is true and no pdfFile */}
+			{!context.pdfFile && context.hasSlider && context.slides && context.slides.length > 0 && (
 				<div
 					className="relative mt-6 sm:mt-8 mb-4 sm:mb-6 bg-slate-700 text-white rounded-lg overflow-hidden"
 					ref={sliderRef}
