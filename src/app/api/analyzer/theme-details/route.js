@@ -11,6 +11,7 @@ import Post from '@/models/Post';
 import Drivers from '@/models/Drivers';
 import Region from '@/models/Region';
 import tileTemplate from '@/models/TileTemplate';
+import { registerModels } from '@/lib/registerModels';
 
 function normalizeTitle(text) {
   return text
@@ -37,21 +38,10 @@ export async function GET(request) {
       );
     }
 
-    if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
-    if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
-    if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
-    if (!mongoose.models.Context) mongoose.model('Context', Context.schema);
-    if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
-    if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
-    if (!mongoose.models.Drivers) mongoose.model('Drivers', Drivers.schema);
-    if (!mongoose.models.Region) mongoose.model('Region', Region.schema);
-    if (!mongoose.models.TileTemplate) {
-          mongoose.model('TileTemplate', tileTemplate.schema);
-        }
+    registerModels();
     const normalizedSlug = normalizeTitle(slug);
 
-    const themes = await Theme.find()
+    const themes = await Theme.find({ doNotPublish: { $ne: true } })
       .populate('sectors', 'sectorName')
       .populate('subSectors', 'subSectorName')
       .populate({
@@ -80,7 +70,8 @@ export async function GET(request) {
 
     const relatedThemes = await Theme.find({
       subSectors: { $in: targetSubSectorIds },
-      _id: { $ne: targetTheme._id }
+      _id: { $ne: targetTheme._id },
+      doNotPublish: { $ne: true }
     })
       .populate('sectors', 'sectorName')
       .populate('subSectors', 'subSectorName')
@@ -90,7 +81,8 @@ export async function GET(request) {
 
     const contexts = await Context.find({
       themes: targetTheme._id,
-      isTrending: true
+      isTrending: true,
+      doNotPublish: { $ne: true }
     })
       .populate('sectors', 'sectorName')
       .populate('subSectors', 'subSectorName')

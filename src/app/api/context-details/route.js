@@ -9,6 +9,7 @@ import Signal from '@/models/Signal';
 import SubSignal from '@/models/SubSignal';
 import connectDB from '@/lib/db';
 import tileTemplate from '@/models/TileTemplate';
+import { registerModels } from '@/lib/registerModels';
 
 function normalizeTitle(text) {
   return text
@@ -28,6 +29,7 @@ export async function GET(request) {
     
     await connectDB();
     console.log('API: Database connected successfully');
+    registerModels();
 
     const { searchParams } = new URL(request.url);
     const slug = searchParams.get('slug');
@@ -41,21 +43,10 @@ export async function GET(request) {
       );
     }
 
-    // Ensure all models are registered
-    if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
-    if (!mongoose.models.SubSector) mongoose.model('SubSector', SubSector.schema);
-    if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
-    if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
-    if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-    if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
-	if (!mongoose.models.TileTemplate) {
-				mongoose.model('TileTemplate', tileTemplate.schema);
-			}
-
     const normalizedSlug = normalizeTitle(slug);
     const altNormalizedSlug = normalizedSlug.replace(/dollar/g, '');
 
-    let contexts = await Context.find()
+    let contexts = await Context.find({ doNotPublish: { $ne: true } })
       .select('contextTitle _id')
       .lean();
     let targetContext = contexts.find(
