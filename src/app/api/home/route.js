@@ -7,6 +7,7 @@ import SubSector from '@/models/SubSector';
 import Source from '@/models/Source';
 import Theme from '@/models/Theme';
 import tileTemplate from '@/models/TileTemplate';
+import { registerModels } from '@/lib/registerModels';
 
 // Simple in-memory cache for home data
 let homeCache = null;
@@ -40,21 +41,7 @@ export async function GET(request) {
 			await connectDB();
 
 		// Register models if not already registered
-		if (!mongoose.models.Sector) {
-			mongoose.model('Sector', Sector.schema);
-		}
-		if (!mongoose.models.SubSector) {
-			mongoose.model('SubSector', SubSector.schema);
-		}
-		if (!mongoose.models.Source) {
-			mongoose.model('Source', Source.schema);
-		}
-		if (!mongoose.models.Theme) {
-			mongoose.model('Theme', Theme.schema);
-		}
-		if (!mongoose.models.TileTemplate) {
-			mongoose.model('TileTemplate', tileTemplate.schema);
-		}
+		registerModels();
 
 		// Run all queries in parallel to reduce total execution time
 		const [
@@ -68,7 +55,7 @@ export async function GET(request) {
 			featuredInfographic
 		] = await Promise.all([
 			// Trending Events - optimized with select and lean
-			Context.find({ isTrending: true })
+			Context.find({ isTrending: true, doNotPublish: { $ne: true } })
 				.select('contextTitle summary imageUrl date sectors subSectors tileTemplates')
 				.populate('sectors', 'sectorName')
 				.populate('subSectors', 'subSectorName')
@@ -81,6 +68,7 @@ export async function GET(request) {
 			Post.find({
 				postType: 'Expert Opinion',
 				isTrending: true,
+				doNotPublish: { $ne: true }
 			})
 				.select('postTitle summary imageUrl date source tileTemplateId')
 				.populate('source', 'sourceName')
@@ -93,6 +81,7 @@ export async function GET(request) {
 			Post.find({
 				postType: 'Infographic',
 				isTrending: true,
+				doNotPublish: { $ne: true }
 			})
 				.select('postTitle summary imageUrl date source tileTemplateId')
 				.populate('source', 'sourceName')
@@ -102,7 +91,7 @@ export async function GET(request) {
 				.lean(),
 
 			// Trending Themes - optimized with select and lean
-			Theme.find({})
+			Theme.find({ doNotPublish: { $ne: true } })
 				.select('themeName summary imageUrl overallScore sectors subSectors tileTemplateId')
 				.populate('sectors', 'sectorName')
 				.populate('subSectors', 'subSectorName')
@@ -112,17 +101,18 @@ export async function GET(request) {
 				.lean(),
 
 			// Featured items - simplified queries with select
-			Theme.findOne({})
+			Theme.findOne({ doNotPublish: { $ne: true } })
 				.select('themeName summary imageUrl overallScore')
 				.sort({ overallScore: -1 })
 				.lean(),
-			Context.findOne({ displayOrder: 1 })
+			Context.findOne({ displayOrder: 1, doNotPublish: { $ne: true } })
 				.select('contextTitle summary imageUrl date')
 				.sort({ date: -1 })
 				.lean(),
 			Post.findOne({
 				postType: 'Expert Opinion',
 				homePageShow: true,
+				doNotPublish: { $ne: true }
 			})
 				.select('postTitle summary imageUrl date source')
 				.sort({ date: -1 })
@@ -131,6 +121,7 @@ export async function GET(request) {
 			Post.findOne({
 				postType: 'Infographic',
 				homePageShow: true,
+				doNotPublish: { $ne: true }
 			})
 				.select('postTitle summary imageUrl date source')
 				.sort({ date: -1 })

@@ -162,7 +162,8 @@ export default function PulseToday() {
   const processInitialContexts = (allContexts) => {
     const uniqueContexts = Array.from(new Map(allContexts.map((c) => [c.id, c])).values());
     const allTypeOneContexts = uniqueContexts.filter((c) => c.containerType === 'Type-One');
-    const allOtherContexts = uniqueContexts.filter((c) => c.containerType !== 'Type-One');
+    const allTypeFiveContexts = uniqueContexts.filter((c) => c.containerType === 'Type-Five');
+    const allOtherContexts = uniqueContexts.filter((c) => c.containerType !== 'Type-One' && c.containerType !== 'Type-Five');
 
     let currentGroup = [];
     const typeOneGroups = [];
@@ -187,13 +188,20 @@ export default function PulseToday() {
       }
     });
 
+    // Process Type-Five contexts as individual single items (not grouped)
+    const typeFiveItems = allTypeFiveContexts.map((context) => ({
+      type: 'single',
+      item: context,
+      displayOrder: context.displayOrder || 0,
+    }));
+
     const otherItems = allOtherContexts.map((context) => ({
       type: 'single',
       item: context,
       displayOrder: context.displayOrder || 0,
     }));
 
-    const result = [...typeOneGroups, ...otherItems].sort((a, b) => {
+    const result = [...typeOneGroups, ...typeFiveItems, ...otherItems].sort((a, b) => {
       const aOrder = a.type === 'group' ? a.displayOrder : a.item.displayOrder || 0;
       const bOrder = b.type === 'group' ? b.displayOrder : b.item.displayOrder || 0;
       return aOrder - bOrder;
@@ -217,7 +225,8 @@ export default function PulseToday() {
   const processNewContexts = (newContexts, prevDisplayItems) => {
     const uniqueNewContexts = Array.from(new Map(newContexts.map((c) => [c.id, c])).values());
     const newTypeOneContexts = uniqueNewContexts.filter((c) => c.containerType === 'Type-One');
-    const newOtherContexts = uniqueNewContexts.filter((c) => c.containerType !== 'Type-One');
+    const newTypeFiveContexts = uniqueNewContexts.filter((c) => c.containerType === 'Type-Five');
+    const newOtherContexts = uniqueNewContexts.filter((c) => c.containerType !== 'Type-One' && c.containerType !== 'Type-Five');
 
     const allExistingTypeOneIds = new Set();
     prevDisplayItems.forEach((item) => {
@@ -274,13 +283,20 @@ export default function PulseToday() {
       }
     });
 
+    // Process Type-Five contexts as individual single items (not grouped)
+    const newTypeFiveItems = newTypeFiveContexts.map((context) => ({
+      type: 'single',
+      item: context,
+      displayOrder: context.displayOrder || 0,
+    }));
+
     const newOtherItems = newOtherContexts.map((context) => ({
       type: 'single',
       item: context,
       displayOrder: context.displayOrder || 0,
     }));
 
-    const result = [...newTypeOneGroups, ...newOtherItems];
+    const result = [...newTypeOneGroups, ...newTypeFiveItems, ...newOtherItems];
     console.log('Processed New Display Items:', result);
     return result;
   };
@@ -384,9 +400,9 @@ export default function PulseToday() {
                 };
                 
                 if (hasTypeFive) {
-                  // For Type-Five containers, break out of normal layout
+                  // For Type-Five containers, break out of normal layout completely
                   return (
-                    <div key={groupKey} className="w-full mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
+                    <div key={groupKey} className="w-screen mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
                       <div className="px-3 sm:px-6 md:px-8 lg:px-16 xl:px-24">
                         {displayItem.items.map((context, itemIndex) =>
                           renderContextBox(
@@ -419,9 +435,9 @@ export default function PulseToday() {
                 const isTypeFive = displayItem.item.containerType === 'Type-Five';
                 
                 if (isTypeFive) {
-                  // For Type-Five containers, break out of normal layout
+                  // For Type-Five containers, break out of normal layout completely
                   return (
-                    <div key={singleKey} className="w-full mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
+                    <div key={singleKey} className="w-screen mb-4 sm:mb-6 -mx-3 sm:-mx-6 md:-mx-8 lg:-mx-16 xl:-mx-24">
                       <div className="px-3 sm:px-6 md:px-8 lg:px-16 xl:px-24">
                         {renderContextBox(displayItem.item, isLastItem, singleKey)}
                       </div>

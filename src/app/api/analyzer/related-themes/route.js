@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import Theme from '@/models/Theme';
+import { registerModels } from '@/lib/registerModels';
 
 export async function GET(request) {
   try {
@@ -14,7 +15,7 @@ export async function GET(request) {
     }
 
     // Ensure models are registered
-    if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
+    registerModels();
 
     // Find the current theme to get its sub-sectors
     const currentTheme = await Theme.findById(themeId)

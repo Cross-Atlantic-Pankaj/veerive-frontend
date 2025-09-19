@@ -3,7 +3,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import ContextImage from '../../../../components/ContextImage';
-import PPTViewer from '../../../../components/PPTViewer';
 
 const normalizeTitle = (text) => {
   return text
@@ -126,19 +125,12 @@ const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
         className="bg-white rounded-lg overflow-hidden w-full shadow-md cursor-pointer hover:shadow-md transition-all duration-200"
       >
 
-        {context.pptUrl ? (
-          <PPTViewer
-            pptUrl={context.pptUrl}
-            className="w-full h-[120px] sm:h-[140px] md:h-[160px]"
-          />
-        ) : (
-          <ContextImage
-            context={context}
-            tileTemplate={tileTemplate}
-            className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg"
-            fallbackText="1000 × 630"
-          />
-        )}
+        <ContextImage
+          context={context}
+          tileTemplate={tileTemplate}
+          className="w-full h-[120px] sm:h-[140px] md:h-[160px] rounded-t-lg"
+          fallbackText="1000 × 630"
+        />
         <div className="px-3 py-2 sm:px-4 sm:py-3">
           <div className="flex flex-wrap gap-1 sm:gap-2 mb-1">
             {[...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).map((name, idx) => (

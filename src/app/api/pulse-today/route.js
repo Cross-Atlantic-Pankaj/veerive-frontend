@@ -11,26 +11,12 @@ import Theme from '@/models/Theme';
 import Source from '@/models/Source';
 import connectDB from '@/lib/db';
 import tileTemplate from '@/models/TileTemplate';
+import { registerModels } from '@/lib/registerModels';
 
 export async function POST(request) {
 	try {
 		await connectDB();
-		if (!mongoose.models.Sector) mongoose.model('Sector', Sector.schema);
-		if (!mongoose.models.SubSector)
-			mongoose.model('SubSector', SubSector.schema);
-		if (!mongoose.models.Signal) mongoose.model('Signal', Signal.schema);
-		if (!mongoose.models.SubSignal) mongoose.model('SubSignal', SubSignal.schema);
-		if (!mongoose.models.Post) mongoose.model('Post', Post.schema);
-		if (!mongoose.models.SidebarMessage)
-			mongoose.model('SidebarMessage', SidebarMessage.schema);
-		if (!mongoose.models.Theme) mongoose.model('Theme', Theme.schema);
-		if (!mongoose.models.Source) mongoose.model('Source', Source.schema);
-		if (!mongoose.models.TileTemplate) {
-			mongoose.model('TileTemplate', tileTemplate.schema);
-		}
-		if (!mongoose.models.contexts) {
-			mongoose.model('contexts', Context.schema);
-		}
+		registerModels();
 
 		const body = await request.json();
 		const page = body.page || 1;
@@ -41,7 +27,43 @@ export async function POST(request) {
 		const signalCategory = body.signalCategory;
 		const signalSubCategory = body.signalSubCategory;
 
+		// Build base filter (without date restriction) so that we compute dates
+		// only from publishable contexts and applied facet filters
+		const baseFilter = { doNotPublish: { $ne: true } };
+
+		// Add filtering based on parameters (to the base filter)
+		if (sector) {
+			// Find sector by name and get its ObjectId
+			const sectorDoc = await Sector.findOne({ sectorName: sector });
+			if (sectorDoc) {
+				baseFilter['sectors'] = { $in: [sectorDoc._id] };
+			}
+		}
+		if (subSector) {
+			// Find subSector by name and get its ObjectId
+			const subSectorDoc = await SubSector.findOne({ subSectorName: subSector });
+			if (subSectorDoc) {
+				baseFilter['subSectors'] = { $in: [subSectorDoc._id] };
+			}
+		}
+		if (signalCategory) {
+			// Find signal category by name and get its ObjectId
+			const signalDoc = await Signal.findOne({ signalName: signalCategory });
+			if (signalDoc) {
+				baseFilter['signalCategories'] = { $in: [signalDoc._id] };
+			}
+		}
+		if (signalSubCategory) {
+			// Find signal sub-category by name and get its ObjectId
+			const subSignalDoc = await SubSignal.findOne({ subSignalName: signalSubCategory });
+			if (subSignalDoc) {
+				baseFilter['signalSubCategories'] = { $in: [subSignalDoc._id] };
+			}
+		}
+
+		// Compute distinct dates only from documents that match the base filter
 		const distinctDates = await mongoose.model('contexts').aggregate([
+			{ $match: baseFilter },
 			{
 				$group: {
 					_id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
@@ -50,6 +72,7 @@ export async function POST(request) {
 			},
 			{ $sort: { originalDate: -1 } },
 		]);
+
 
 		if (page > distinctDates.length) {
 			return NextResponse.json({
@@ -68,43 +91,14 @@ export async function POST(request) {
 			targetDate.originalDate.setHours(23, 59, 59, 999)
 		);
 
-		// Build filter query
+		// Final filter includes the date window
 		const filterQuery = {
+			...baseFilter,
 			date: {
 				$gte: startOfDay,
 				$lte: endOfDay,
 			},
 		};
-
-		// Add filtering based on parameters
-		if (sector) {
-			// Find sector by name and get its ObjectId
-			const sectorDoc = await Sector.findOne({ sectorName: sector });
-			if (sectorDoc) {
-				filterQuery['sectors'] = { $in: [sectorDoc._id] };
-			}
-		}
-		if (subSector) {
-			// Find subSector by name and get its ObjectId
-			const subSectorDoc = await SubSector.findOne({ subSectorName: subSector });
-			if (subSectorDoc) {
-				filterQuery['subSectors'] = { $in: [subSectorDoc._id] };
-			}
-		}
-		if (signalCategory) {
-			// Find signal category by name and get its ObjectId
-			const signalDoc = await Signal.findOne({ signalName: signalCategory });
-			if (signalDoc) {
-				filterQuery['signalCategories'] = { $in: [signalDoc._id] };
-			}
-		}
-		if (signalSubCategory) {
-			// Find signal sub-category by name and get its ObjectId
-			const subSignalDoc = await SubSignal.findOne({ subSignalName: signalSubCategory });
-			if (subSignalDoc) {
-				filterQuery['signalSubCategories'] = { $in: [subSignalDoc._id] };
-			}
-		}
 
 		const [
 			contextsResult,
@@ -135,14 +129,14 @@ export async function POST(request) {
 				.limit(1)
 				.exec(),
 
-			Theme.find({ isTrending: true })
+			Theme.find({ isTrending: true, doNotPublish: { $ne: true } })
 				.sort({ overallScore: -1 })
 				.limit(5)
 				.populate('sectors', 'sectorName')
 				.populate('subSectors', 'subSectorName')
 				.exec(),
 
-			Post.find({ postType: 'Expert Opinion' })
+			Post.find({ postType: 'Expert Opinion', doNotPublish: { $ne: true } })
 				.sort({ date: -1 })
 				.limit(7)
 				.populate('source', 'sourceName')
@@ -158,6 +152,7 @@ export async function POST(request) {
 			seenIds.add(idString);
 			return true;
 		});
+
 
 		const processedContexts = uniqueContexts.map((context) => {
 			const uniquePosts = [];
