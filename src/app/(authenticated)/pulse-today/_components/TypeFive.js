@@ -20,6 +20,24 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
   const [isSaved, setIsSaved] = useState(false);
   const router = useRouter();
 
+  // Helper function to strip HTML tags and limit text while preserving line breaks
+  const stripHtmlAndLimit = (htmlString, limit = 600) => {
+    if (!htmlString) return '';
+    // Replace line break tags with actual line breaks
+    let processedText = htmlString
+      .replace(/<br\s*\/?>/gi, '\n')  // Replace <br> and <br/> with line breaks
+      .replace(/<\/p>/gi, '\n')       // Replace </p> with line breaks
+      .replace(/<p[^>]*>/gi, '')      // Remove opening <p> tags
+      .replace(/<\/div>/gi, '\n')     // Replace </div> with line breaks
+      .replace(/<div[^>]*>/gi, '')    // Remove opening <div> tags
+      .replace(/<[^>]*>/g, '')        // Remove all other HTML tags
+      .replace(/\n\s*\n/g, '\n')      // Remove multiple consecutive line breaks
+      .trim();                        // Remove leading/trailing whitespace
+    
+    // Limit to specified characters
+    return processedText.length > limit ? processedText.substring(0, limit) + '...' : processedText;
+  };
+
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
     : 'context-unnamed';
@@ -164,14 +182,11 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
               {context.contextTitle}
             </h2>
             
-            {/* Summary snippet */}
+            {/* Summary - 500 characters max for Type-Five */}
             {context.summary && context.summary.length > 0 ? (
-              <p 
-                className="text-sm text-gray-600 line-clamp-3"
-                dangerouslySetInnerHTML={{
-                  __html: context.summary
-                }}
-              />
+              <div className="text-sm text-gray-600 whitespace-pre-line">
+                {stripHtmlAndLimit(context.summary, 600)}
+              </div>
             ) : (
               <p className="text-sm text-gray-400 italic">
                 Summary will be available soon

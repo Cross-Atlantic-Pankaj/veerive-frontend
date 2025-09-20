@@ -19,6 +19,24 @@ const normalizeTitle = (text) => {
 const TypeFive = ({ context, handleUnsave, isLastItem, lastContextCallback }) => {
   const [isSaved, setIsSaved] = useState(true);
 
+  // Helper function to strip HTML tags and limit text while preserving line breaks
+  const stripHtmlAndLimit = (htmlString, limit = 600) => {
+    if (!htmlString) return '';
+    // Replace line break tags with actual line breaks
+    let processedText = htmlString
+      .replace(/<br\s*\/?>/gi, '\n')  // Replace <br> and <br/> with line breaks
+      .replace(/<\/p>/gi, '\n')       // Replace </p> with line breaks
+      .replace(/<p[^>]*>/gi, '')      // Remove opening <p> tags
+      .replace(/<\/div>/gi, '\n')     // Replace </div> with line breaks
+      .replace(/<div[^>]*>/gi, '')    // Remove opening <div> tags
+      .replace(/<[^>]*>/g, '')        // Remove all other HTML tags
+      .replace(/\n\s*\n/g, '\n')      // Remove multiple consecutive line breaks
+      .trim();                        // Remove leading/trailing whitespace
+    
+    // Limit to specified characters
+    return processedText.length > limit ? processedText.substring(0, limit) + '...' : processedText;
+  };
+
   const slug = context.contextTitle
     ? normalizeTitle(context.contextTitle)
     : `context-${context._id}`;
@@ -110,12 +128,9 @@ const TypeFive = ({ context, handleUnsave, isLastItem, lastContextCallback }) =>
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
                 {context.summary.length > 0 ? (
-            <p
-                                  className="text-black text-base sm:text-base mt-3 line-clamp-4"
-                                  dangerouslySetInnerHTML={{
-                                    __html:context.summary
-                                  }}
-                                />
+            <div className="text-black text-base sm:text-base mt-3 whitespace-pre-line">
+                                  {stripHtmlAndLimit(context.summary, 600)}
+                                </div>
                 ) : (
                   <div className="text-gray-400 text-xs sm:text-sm italic">
                     Summary will be available soon
