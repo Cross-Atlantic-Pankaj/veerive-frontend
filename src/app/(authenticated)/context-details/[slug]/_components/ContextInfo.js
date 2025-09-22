@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import PDFPageSlideshow from '../../../../../components/PDFPageSlideshow';
+import SimplePDFSlideshow from '../../../../../components/SimplePDFSlideshow';
 
 const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 	// Debug logging
@@ -143,7 +143,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 			{/* Display PDF Slideshow if pdfFile is present */}
 			{context.pdfFile && context.pdfFile.fileName && (
 				<div className="mt-6 sm:mt-8 mb-4 sm:mb-6">
-					<PDFPageSlideshow
+					<SimplePDFSlideshow
 						contextId={context._id}
 						className="w-full max-w-4xl mx-auto"
 					/>

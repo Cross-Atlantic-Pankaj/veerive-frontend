@@ -7,7 +7,6 @@ import ContextInfo from './_components/ContextInfo';
 import TrendingThemes from './_components/TrendingThemes';
 import RelatedEvents from './_components/RelatedEvents';
 import TrendingExpertOpinion from './_components/TrendingExpertOpinion';
-import Head from 'next/head';
 
 const normalizeTitle = (text) => {
   return text
@@ -142,19 +141,7 @@ export default function ContextDetails() {
   }
 
   return (
-    <>
-      <Head>
-        <title>{context.contextTitle}</title>
-        <meta
-          name="description"
-          content={
-            context.seoData?.metaDescription ||
-            context.summary?.replace(/<[^>]*>/g, '').slice(0, 160) ||
-            'Explore detailed insights and updates.'
-          }
-        />
-      </Head>
-      <div className="min-h-screen bg-white py-2 sm:py-4">
+    <div className="min-h-screen bg-white py-2 sm:py-4">
         <div className="container mx-auto px-2 sm:px-4 lg:px-8">
           <div className="bg-[#f0f0f0] py-4 flex justify-center mb-4 px-2 sm:px-4">
             <form onSubmit={handleSearch} className="flex w-full max-w-md sm:max-w-lg lg:w-1/2">
@@ -223,6 +210,5 @@ export default function ContextDetails() {
           </div>
         </div>
       </div>
-    </>
   );
 }

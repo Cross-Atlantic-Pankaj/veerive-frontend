@@ -1,14 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import Context from '@/models/Context';
-import Post from '@/models/Post';
-import Sector from '@/models/Sector';
-import SubSector from '@/models/SubSector';
-import Theme from '@/models/Theme';
-import Signal from '@/models/Signal';
-import SubSignal from '@/models/SubSignal';
 import connectDB from '@/lib/db';
-import tileTemplate from '@/models/TileTemplate';
 import { registerModels } from '@/lib/registerModels';
 
 function normalizeTitle(text) {
@@ -46,7 +38,7 @@ export async function GET(request) {
     const normalizedSlug = normalizeTitle(slug);
     const altNormalizedSlug = normalizedSlug.replace(/dollar/g, '');
 
-    let contexts = await Context.find({ doNotPublish: { $ne: true } })
+    let contexts = await mongoose.model('Context').find({ doNotPublish: { $ne: true } })
       .select('contextTitle _id')
       .lean();
     let targetContext = contexts.find(
@@ -56,7 +48,7 @@ export async function GET(request) {
     );
 
     if (targetContext) {
-      targetContext = await Context.findById(targetContext._id)
+      targetContext = await mongoose.model('Context').findById(targetContext._id)
         .populate({
           path: 'themes',
           select: 'themeTitle themeDescription trendingScore impactScore predictiveMomentumScore',
@@ -123,7 +115,7 @@ export async function GET(request) {
     const signalCategories = targetContext.signalCategories.map((signal) => signal.signalName);
     const signalSubCategories = targetContext.signalSubCategories.map((subSignal) => subSignal.subSignalName);
 
-    let matchingThemes = await Theme.find({
+    let matchingThemes = await mongoose.model('Theme').find({
       subSectors: { $in: targetContext.subSectors.map((ss) => ss._id) },
       isTrending: true,
     })
@@ -137,7 +129,7 @@ export async function GET(request) {
       .sort({ overallScore: -1 });
 
     if (matchingThemes.length === 0) {
-      matchingThemes = await Theme.find({
+      matchingThemes = await mongoose.model('Theme').find({
         sectors: { $in: targetContext.sectors.map((s) => s._id) },
         isTrending: true,
       })
@@ -213,7 +205,7 @@ export async function GET(request) {
         }
       }
 
-      matchingContexts = await Context.find({
+      matchingContexts = await mongoose.model('Context').find({
         _id: { $ne: targetContext._id },
         $or: pairConditions,
       })

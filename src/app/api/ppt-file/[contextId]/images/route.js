@@ -1,13 +1,15 @@
 import { NextResponse } from 'next/server';
-import Context from '@/models/Context';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
+import { registerModels } from '@/lib/registerModels';
 
 export async function GET(request, { params }) {
   await connectDB();
+  registerModels();
   const { contextId } = await params;
 
   try {
-    const context = await Context.findById(contextId);
+    const context = await mongoose.model('Context').findById(contextId);
 
     if (!context) {
       return NextResponse.json({ error: 'Context not found' }, { status: 404 });
@@ -19,7 +21,7 @@ export async function GET(request, { params }) {
 
     // For now, we'll use a reasonable default page count
     // In a real implementation, you might want to use pdf-parse to get actual page count
-    const totalSlides = 10; // Default assumption
+    const totalSlides = 5; // Reduced default assumption
 
     console.log(`Using default page count: ${totalSlides} pages`);
 

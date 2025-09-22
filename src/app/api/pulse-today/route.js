@@ -1,16 +1,6 @@
 import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
-import Context from '@/models/Context';
-import Post from '@/models/Post';
-import Sector from '@/models/Sector';
-import SubSector from '@/models/SubSector';
-import Signal from '@/models/Signal';
-import SubSignal from '@/models/SubSignal';
-import SidebarMessage from '@/models/SidebarMessage';
-import Theme from '@/models/Theme';
-import Source from '@/models/Source';
 import connectDB from '@/lib/db';
-import tileTemplate from '@/models/TileTemplate';
 import { registerModels } from '@/lib/registerModels';
 
 export async function POST(request) {
@@ -34,28 +24,28 @@ export async function POST(request) {
 		// Add filtering based on parameters (to the base filter)
 		if (sector) {
 			// Find sector by name and get its ObjectId
-			const sectorDoc = await Sector.findOne({ sectorName: sector });
+			const sectorDoc = await mongoose.model('Sector').findOne({ sectorName: sector });
 			if (sectorDoc) {
 				baseFilter['sectors'] = { $in: [sectorDoc._id] };
 			}
 		}
 		if (subSector) {
 			// Find subSector by name and get its ObjectId
-			const subSectorDoc = await SubSector.findOne({ subSectorName: subSector });
+			const subSectorDoc = await mongoose.model('SubSector').findOne({ subSectorName: subSector });
 			if (subSectorDoc) {
 				baseFilter['subSectors'] = { $in: [subSectorDoc._id] };
 			}
 		}
 		if (signalCategory) {
 			// Find signal category by name and get its ObjectId
-			const signalDoc = await Signal.findOne({ signalName: signalCategory });
+			const signalDoc = await mongoose.model('Signal').findOne({ signalName: signalCategory });
 			if (signalDoc) {
 				baseFilter['signalCategories'] = { $in: [signalDoc._id] };
 			}
 		}
 		if (signalSubCategory) {
 			// Find signal sub-category by name and get its ObjectId
-			const subSignalDoc = await SubSignal.findOne({ subSignalName: signalSubCategory });
+			const subSignalDoc = await mongoose.model('SubSignal').findOne({ subSignalName: signalSubCategory });
 			if (subSignalDoc) {
 				baseFilter['signalSubCategories'] = { $in: [subSignalDoc._id] };
 			}
@@ -124,19 +114,19 @@ export async function POST(request) {
 			})
 				.exec(),
 
-			SidebarMessage.find({ isActive: true })
+			mongoose.model('SidebarMessage').find({ isActive: true })
 				.sort({ createdAt: -1 })
 				.limit(1)
 				.exec(),
 
-			Theme.find({ isTrending: true, doNotPublish: { $ne: true } })
+			mongoose.model('Theme').find({ isTrending: true, doNotPublish: { $ne: true } })
 				.sort({ overallScore: -1 })
 				.limit(5)
 				.populate('sectors', 'sectorName')
 				.populate('subSectors', 'subSectorName')
 				.exec(),
 
-			Post.find({ postType: 'Expert Opinion', doNotPublish: { $ne: true } })
+			mongoose.model('Post').find({ postType: 'Expert Opinion', doNotPublish: { $ne: true } })
 				.sort({ date: -1 })
 				.limit(7)
 				.populate('source', 'sourceName')
@@ -224,7 +214,7 @@ export async function POST(request) {
 		// Fetch all sub-sectors in one query
 		const subSectorsMap = new Map();
 		if (allSubSectorIds.size > 0) {
-			const subSectors = await SubSector.find({
+			const subSectors = await mongoose.model('SubSector').find({
 				_id: { $in: Array.from(allSubSectorIds) }
 			}).select('_id subSectorName');
 			

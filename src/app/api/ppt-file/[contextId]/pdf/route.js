@@ -1,17 +1,19 @@
 import { NextResponse } from 'next/server';
+import mongoose from 'mongoose';
 import connectDB from '@/lib/db';
-import Context from '@/models/Context';
+import { registerModels } from '@/lib/registerModels';
 
 export async function GET(_request, { params }) {
   try {
     await connectDB();
+    registerModels();
 
     const { contextId } = await params;
     if (!contextId) {
       return NextResponse.json({ error: 'Context ID is required' }, { status: 400 });
     }
 
-    const context = await Context.findById(contextId).select('pdfFile');
+    const context = await mongoose.model('Context').findById(contextId).select('pdfFile');
     if (!context) {
       return NextResponse.json({ error: 'Context not found' }, { status: 404 });
     }
