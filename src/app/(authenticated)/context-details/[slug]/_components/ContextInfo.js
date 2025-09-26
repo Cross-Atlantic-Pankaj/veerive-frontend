@@ -53,7 +53,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 						<Link
 							key={`sector-${sector._id || index}`}
 							href={`/pulse-today?sector=${encodeURIComponent(sector)}`}
-							className="p-2 sm:p-2 bg-blue-50 text-blue-700 rounded-full text-xs sm:text-sm font-medium hover:bg-blue-100 transition-colors cursor-pointer"
+							className="text-red-600 text-xs sm:text-sm font-bold hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
 						>
 							{sector}
 						</Link>
@@ -62,7 +62,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 						<Link
 							key={`subsector-${subSector._id || index}`}
 							href={`/pulse-today?subSector=${encodeURIComponent(subSector)}`}
-							className="p-2 sm:p-2 bg-purple-50 text-purple-700 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-100 transition-colors cursor-pointer"
+							className="text-red-600 text-xs sm:text-sm font-bold hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
 						>
 							{subSector}
 						</Link>
@@ -108,7 +108,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 								Disruption Potential
 							</div>
 							<div className="bg-[#f76c3c] text-white font-bold w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center rounded">
-								{context.originalTheme.impactScore}
+								{context.originalTheme.impactScore ? Math.floor(context.originalTheme.impactScore * 10) / 10 : 'N/A'}
 							</div>
 						</div>
 						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-1 sm:px-2 py-1 gap-1 sm:gap-2">
@@ -116,7 +116,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 								Predictive Momentum
 							</div>
 							<div className="bg-[#f76c3c] text-white font-bold w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center rounded">
-								{context.originalTheme.predictiveMomentumScore}
+								{context.originalTheme.predictiveMomentumScore ? Math.floor(context.originalTheme.predictiveMomentumScore * 10) / 10 : 'N/A'}
 							</div>
 						</div>
 						<div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-1 sm:px-2 py-1 gap-1 sm:gap-2">
@@ -124,7 +124,7 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 								Trending Pulse
 							</div>
 							<div className="bg-[#f76c3c] text-white font-semibold w-6 sm:w-8 h-6 sm:h-8 flex items-center justify-center rounded">
-								{context.originalTheme.trendingScore}
+								{context.originalTheme.trendingScore ? Math.floor(context.originalTheme.trendingScore * 10) / 10 : 'N/A'}
 							</div>
 						</div>
 					</div>

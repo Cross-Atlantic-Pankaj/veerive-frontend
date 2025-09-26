@@ -134,7 +134,7 @@ const TypeNum = ({ context, isLastItem, lastContextCallback }) => {
           <div className="flex-1">
             {/* Category/Tags */}
             {[...(context.sectors || []), ...(context.subSectors || [])].length > 0 && (
-              <div className="text-xs text-red-600 font-medium mb-2">
+              <div className="text-xs text-red-600 font-bold mb-2">
                 {[...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).map((name, idx) => (
                   <React.Fragment key={`sector-${idx}-${name}`}>
                     <button

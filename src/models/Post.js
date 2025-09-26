@@ -49,6 +49,14 @@ const postSchema = new Schema ({
 }, {timestamps: true})
 
 
-const Post = model('Post', postSchema)
+// Check if model is already compiled to prevent overwrite errors
+let Post;
+try {
+  Post = model('Post', postSchema);
+} catch (error) {
+  // If model already exists, get it from mongoose
+  const mongoose = require('mongoose');
+  Post = mongoose.models.Post;
+}
 
 export default Post

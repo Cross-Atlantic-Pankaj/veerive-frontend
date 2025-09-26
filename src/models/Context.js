@@ -71,6 +71,14 @@ const contextSchema = new Schema ({
       },
 }, {timestamps: true})
 
-const Context = model('Context', contextSchema)
+// Check if model is already compiled to prevent overwrite errors
+let Context;
+try {
+  Context = model('Context', contextSchema);
+} catch (error) {
+  // If model already exists, get it from mongoose
+  const mongoose = require('mongoose');
+  Context = mongoose.models.Context;
+}
 
 export default Context

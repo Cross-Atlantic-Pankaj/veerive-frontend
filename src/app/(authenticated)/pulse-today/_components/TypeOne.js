@@ -141,7 +141,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
                   e.stopPropagation();
                   router.push(`/pulse-today?${context.sectors?.includes(name) ? 'sector' : 'subSector'}=${encodeURIComponent(name)}`);
                 }}
-                className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500 hover:text-green-700 hover:border-green-700 transition-colors cursor-pointer bg-transparent border-none p-0"
+                className="text-[10px] sm:text-xs text-red-600 font-bold hover:text-red-800 transition-colors cursor-pointer bg-transparent border-none p-0"
               >
                 {name}
               </button>
@@ -150,6 +150,23 @@ const TypeOne = ({ context, isLastItem, lastContextCallback, tileTemplate }) => 
           <h3 className="text-xs sm:text-sm font-semibold text-gray-900 leading-snug">
             {context.contextTitle}
           </h3>
+          
+          {/* Posts Section */}
+          {context.posts && context.posts.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {context.posts.slice(0, 2).map((post, i) => (
+                <div key={`post-${i}-${post._id || post.postTitle}`} className="border-l-2 border-blue-200 pl-2">
+                  <div className="text-xs text-blue-600 font-medium mb-1">
+                    {post.postType}
+                  </div>
+                  <div className="font-semibold text-gray-800 text-xs sm:text-sm">
+                    {post.postTitle}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
           <div className="mt-2 flex justify-end gap-2">
             <button
               onClick={handleSave}

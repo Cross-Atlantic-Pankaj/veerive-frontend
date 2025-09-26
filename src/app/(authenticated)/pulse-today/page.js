@@ -370,6 +370,7 @@ export default function PulseToday() {
               </div>
             </div>
           )}
+
           <div
             ref={mainContentRef}
             className={`w-full transition-all duration-300 ease-in-out ${activeFilter ? 'lg:w-full' : 'lg:w-[72%]'} order-2 lg:order-1`}
@@ -479,6 +480,26 @@ export default function PulseToday() {
               </div>
             )}
 
+            {/* Welcome Message for Non-Logged-In Users */}
+            {!user && (
+              <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 sm:p-8 text-center mb-4 sm:mb-6">
+                <div className="max-w-2xl mx-auto">
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 mb-4">
+                    Unlock Exclusive Fintech Insights
+                  </h1>
+                  <p className="text-gray-600 text-sm sm:text-base mb-4 sm:mb-6 leading-relaxed">
+                    Stay ahead with the latest trends, expert analysis, and actionable intelligence tailored for tomorrow's fintech leaders.
+                  </p>
+                  <Link
+                    href="/signup"
+                    className="inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors shadow-md hover:shadow-lg text-sm sm:text-base"
+                  >
+                    Sign Up to Get Started
+                  </Link>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white p-3 sm:p-4 lg:p-5 rounded-lg sm:rounded-xl shadow-md">
               <div className="mb-3 sm:mb-4">
                 <h2 className="text-lg font-semibold text-gray-900">Trending Themes</h2>
@@ -524,7 +545,7 @@ export default function PulseToday() {
               </div>
               
               {/* VIEW MORE button at bottom */}
-              <div className="mt-3 sm:mt-4 text-center">
+              <div className="mt-3 sm:mt-4 text-right">
                 <Link
                   href="/analyzer/trend-analyzer"
                   className="text-indigo-600 text-xs sm:text-sm font-medium hover:text-indigo-700 transition-colors"
@@ -556,12 +577,14 @@ export default function PulseToday() {
                     {post.subSectors && post.subSectors.length > 0 && (
                       <div className="flex flex-wrap gap-1 mt-1">
                         {post.subSectors.slice(0, 3).map((subSector, index) => (
-                          <span
+                          <Link
                             key={`expert-subsector-${index}-${subSector}`}
-                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition-colors"
+                            href={`/influencer-comment/expert-opinion?subSectorId=${encodeURIComponent(subSector)}`}
+                            className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition-colors cursor-pointer"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             {subSector}
-                          </span>
+                          </Link>
                         ))}
                         {post.subSectors.length > 3 && (
                           <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-600">

@@ -136,7 +136,7 @@ const TypeFour = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
             />
           </div>
           <div className="flex-1 flex flex-col">
-            <div className="text-red-600 text-[10px] sm:text-xs font-semibold mb-1">
+            <div className="text-red-600 text-[10px] sm:text-xs font-bold mb-1">
               {[...(context.sectors || []), ...(context.subSectors || [])].map((name, idx) => (
                 <React.Fragment key={`sector-${idx}-${name}`}>
                   <button

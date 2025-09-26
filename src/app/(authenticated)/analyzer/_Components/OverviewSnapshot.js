@@ -4,7 +4,7 @@ export default function OverviewSnapshot({ theme }) {
   const [showFullSummary, setShowFullSummary] = useState(false);
   const [showFullExecutiveSummary, setShowFullExecutiveSummary] = useState(false);
 
-  const executiveSummary = theme?.overviewSnapshot?.executiveSummary;
+  const trendSnapshot = theme?.overviewSnapshot?.trendSnapshot;
   const marketMetrics = theme?.overviewSnapshot?.marketMetrics || [];
 
   // Filter out empty market metrics
@@ -26,11 +26,11 @@ export default function OverviewSnapshot({ theme }) {
       {/* Executive Summary Container */}
       <div className="lg:col-span-6 rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
         <div className="flex items-center gap-3 mb-6">
-          {executiveSummary?.executiveSummaryIcon && (
+          {trendSnapshot?.trendSnapshotIcon && (
             <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
               <img 
-                src={executiveSummary.executiveSummaryIcon} 
-                alt="Executive Summary" 
+                src={trendSnapshot.trendSnapshotIcon} 
+                alt="Trend Snapshot" 
                 className="w-6 h-6"
               />
             </div>
@@ -41,7 +41,7 @@ export default function OverviewSnapshot({ theme }) {
         {/* Executive Summary Content - Direct Layout */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
           {/* Trend Significance */}
-          {executiveSummary?.trendSignificance?.content && (
+          {trendSnapshot?.trendSignificance?.content && (
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 mt-1 flex-shrink-0">
                 <img 
@@ -57,8 +57,8 @@ export default function OverviewSnapshot({ theme }) {
                   style={{fontFamily: 'Arial'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
-                      ? executiveSummary.trendSignificance.content 
-                      : getFirstParagraph(executiveSummary.trendSignificance.content)
+                      ? trendSnapshot.trendSignificance.content 
+                      : getFirstParagraph(trendSnapshot.trendSignificance.content)
                   }}
                 ></div>
               </div>
@@ -66,7 +66,7 @@ export default function OverviewSnapshot({ theme }) {
           )}
 
           {/* Potential Challenges */}
-          {executiveSummary?.potentialChallenges?.content && (
+          {trendSnapshot?.potentialChallenges?.content && (
             <div className="flex items-start gap-3">
               <div className="w-6 h-6 mt-1 flex-shrink-0">
                 <img 
@@ -82,8 +82,8 @@ export default function OverviewSnapshot({ theme }) {
                   style={{fontFamily: 'Arial'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
-                      ? executiveSummary.potentialChallenges.content 
-                      : getFirstParagraph(executiveSummary.potentialChallenges.content)
+                      ? trendSnapshot.potentialChallenges.content 
+                      : getFirstParagraph(trendSnapshot.potentialChallenges.content)
                   }}
                 ></div>
               </div>

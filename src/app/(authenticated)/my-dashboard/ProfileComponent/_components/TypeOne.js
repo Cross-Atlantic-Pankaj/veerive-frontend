@@ -76,7 +76,7 @@ const TypeOne = ({ context, handleUnsave, isLastItem, lastContextCallback }) => 
             {[...context.sectorNames, ...context.subSectorNames].slice(0, 3).map((name, idx) => (
               <span
                 key={idx}
-                className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
+                className="text-[10px] sm:text-xs text-red-600 font-bold"
               >
                 {name}
               </span>

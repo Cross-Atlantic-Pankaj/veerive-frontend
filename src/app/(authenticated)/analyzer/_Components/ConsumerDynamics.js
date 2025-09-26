@@ -7,6 +7,7 @@ export default function ConsumerDynamics({ theme }) {
   const consumerDynamics = theme?.trendAnalysis?.consumerDynamics;
   const behavioralInsights = consumerDynamics?.behavioralInsights || [];
   const impactAnalyser = consumerDynamics?.impactAnalyser || [];
+  const overallIcon = consumerDynamics?.overallIcon;
 
   const toggleInsightExpansion = (index) => {
     setExpandedInsights(prev => ({
@@ -42,7 +43,18 @@ export default function ConsumerDynamics({ theme }) {
       
       {/* Behavioral Insights Container */}
       <div className="rounded-xl shadow-sm border border-gray-400 p-4" style={{backgroundColor: '#f2fbfb'}}>
-           <h3 className="text-lg font-bold text-gray-800 mb-4">Behavioral Insights</h3>
+           <div className="flex items-center gap-3 mb-4">
+             {overallIcon && (
+               <div className="w-8 h-8 flex items-center justify-center">
+                 <img 
+                   src={overallIcon} 
+                   alt="Behavioral Insights Icon" 
+                   className="w-6 h-6 object-contain"
+                 />
+               </div>
+             )}
+             <h3 className="text-lg font-bold text-gray-800">Behavioral Insights</h3>
+           </div>
           
           {behavioralInsights.length > 0 ? (
             <div className="space-y-3">

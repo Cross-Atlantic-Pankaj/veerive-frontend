@@ -140,7 +140,8 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
    <Link href={`/context-details/${slug}`}>
       <div
         ref={isLastItem ? lastContextCallback : null}
-        className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
+        className="rounded-xl shadow-md hover:shadow-lg transition-all duration-300 p-4 sm:p-6 w-full cursor-pointer"
+        style={{ backgroundColor: '#ebf6fa' }}
       >
         {/* Main content area with image, title, summary, and bordered posts */}
         <div className="flex gap-4 mb-4">
@@ -158,7 +159,7 @@ const TypeFive = ({ context, isLastItem, lastContextCallback, tileTemplate }) =>
           <div className="flex-1 min-w-0">
             {/* Category/Tags */}
             {context.originalContextSector && context.originalContextSector.length > 0 && (
-              <div className="text-xs text-red-600 font-medium mb-1">
+              <div className="text-xs text-red-600 font-bold mb-1">
                 {context.originalContextSector.slice(0, 2).map((name, idx) => (
                   <React.Fragment key={`sector-${idx}-${name}`}>
                     <button

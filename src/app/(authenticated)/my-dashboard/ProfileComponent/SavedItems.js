@@ -1231,8 +1231,7 @@ export default function SavedItems() {
 																					<span className="sm:hidden"> </span>Pulse
 																				</div>
 																				<div className="text-sm sm:text-base font-bold text-blue-600">
-																					{theme.trendingScore?.toFixed(2) ||
-																						'N/A'}
+																					{theme.trendingScore ? Math.floor(theme.trendingScore * 10) / 10 : 'N/A'}
 																				</div>
 																			</div>
 
@@ -1241,8 +1240,7 @@ export default function SavedItems() {
 																					Disruption Potential
 																				</div>
 																				<div className="text-sm sm:text-base font-bold text-purple-600">
-																					{theme.impactScore?.toFixed(2) ||
-																						'N/A'}
+																					{theme.impactScore ? Math.floor(theme.impactScore * 10) / 10 : 'N/A'}
 																				</div>
 																			</div>
 
@@ -1251,9 +1249,7 @@ export default function SavedItems() {
 																					Predictive Momentum
 																				</div>
 																				<div className="text-sm sm:text-base font-bold text-indigo-600">
-																					{theme.predictiveMomentumScore?.toFixed(
-																						2
-																					) || 'N/A'}
+																					{theme.predictiveMomentumScore ? Math.floor(theme.predictiveMomentumScore * 10) / 10 : 'N/A'}
 																				</div>
 																			</div>
 																		</div>

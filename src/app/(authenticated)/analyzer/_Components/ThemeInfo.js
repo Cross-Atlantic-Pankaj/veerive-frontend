@@ -61,7 +61,7 @@ export default function ThemeInfo({ theme }) {
               Disruption Potential
             </div>
             <div className="bg-[#f76c3c] text-white font-bold w-16 h-9 p-2 flex items-center justify-center rounded">
-              {theme.impactScore?.toFixed(2)}
+              {theme.impactScore ? Math.floor(theme.impactScore * 10) / 10 : 'N/A'}
             </div>
           </div>
           <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
@@ -69,7 +69,7 @@ export default function ThemeInfo({ theme }) {
               Predictive Momentum
             </div>
             <div className="bg-[#f76c3c] text-white font-bold w-16 h-9 p-2 flex items-center justify-center rounded">
-              {theme.predictiveMomentumScore?.toFixed(2)}
+              {theme.predictiveMomentumScore ? Math.floor(theme.predictiveMomentumScore * 10) / 10 : 'N/A'}
             </div>
           </div>
           <div className="flex items-center bg-[#f1f8ff] border border-[#174c77] rounded px-2 py-1 gap-2">
@@ -77,7 +77,7 @@ export default function ThemeInfo({ theme }) {
               Trending Pulse
             </div>
             <div className="bg-[#f76c3c] text-white font-semibold w-16 h-9 p-2 flex items-center justify-center rounded">
-              {theme.trendingScore?.toFixed(2)}
+              {theme.trendingScore ? Math.floor(theme.trendingScore * 10) / 10 : 'N/A'}
             </div>
           </div>
           <button

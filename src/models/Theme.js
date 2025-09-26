@@ -84,21 +84,20 @@ const themeSchema = new Schema ({
             }
         },
         regionalDynamics: {
-            heatMapChartSection: [{
-                nameOfRegion: { type: String },
-                values: { type: Number }
-            }],
+            overallIcon: { type: String },
             regionalInsights: {
                 overallSummary: { type: String },
                 regions: [{
                     regionId: { type: Schema.Types.ObjectId, ref: 'Region', required: false },
                     regionMapIcon: { type: String },
                     regionName: { type: String },
-                    regionDescription: { type: String }
+                    regionDescription: { type: String },
+                    regionScore: { type: Number, default: 0 }
                 }]
             }
         },
         consumerDynamics: {
+            overallIcon: { type: String },
             behavioralInsights: [{
                 heading: { type: String },
                 icon: { type: String },
@@ -121,6 +120,14 @@ const themeSchema = new Schema ({
       },
 }, {timestamps: true})
 
-const Theme = model('Theme', themeSchema)
+// Check if model is already compiled to prevent overwrite errors
+let Theme;
+try {
+  Theme = model('Theme', themeSchema);
+} catch (error) {
+  // If model already exists, get it from mongoose
+  const mongoose = require('mongoose');
+  Theme = mongoose.models.Theme;
+}
 
 export default Theme

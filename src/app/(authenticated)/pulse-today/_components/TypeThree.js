@@ -138,7 +138,7 @@ const TypeThree = ({ context, isLastItem, lastContextCallback, tileTemplate }) =
                 />
               </div>
               <div className="flex-1">
-                <div className="text-red-600 text-xs font-semibold mb-1">
+                <div className="text-red-600 text-xs font-bold mb-1">
                   {[...(context.sectors || []), ...(context.subSectors || [])].map((name, idx) => (
                     <React.Fragment key={`sector-${idx}-${name}`}>
                       <button

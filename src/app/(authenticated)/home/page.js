@@ -156,11 +156,14 @@ export default function HomePage() {
           <div className="w-full max-w-[1200px] mx-auto px-2 sm:px-4 lg:px-6">
             <div className="flex flex-col max-[530px]:flex-col min-[531px]:flex-row items-center min-[531px]:items-start py-8 max-[530px]:py-6 min-[531px]:py-12">
               <div className="w-full min-[531px]:w-2/5 min-[531px]:pr-4 text-center min-[531px]:text-left">
+                <div className="text-white/80 text-sm sm:text-base mb-2">
+                  Quantified | Contextualized | Actionable
+                </div>
                 <h1 className="text-white block text-[20px] sm:text-[26px] md:text-[32px] lg:text-[38px] font-bold leading-tight">
-                One platform. Every fintech insight that matters - Quantified. Contextualized. Actionable.
+                  One platform. Every fintech insight that matters
                 </h1>
                 <p className="mt-3 max-[530px]:mt-2 text-white/90 text-xs max-[530px]:text-xs sm:text-sm md:text-base lg:text-xl leading-relaxed max-w-[400px] mx-auto min-[531px]:mx-0">
-                  Fintech information analytics platform that helps you see beyond the headlines. Anticipate the signals that define tomorrow's fintech landscape.
+                Fintech information analytics platform that helps you anticipate tomorrow's fintech landscape.
                 </p>
                 <div className="mt-4 max-[530px]:mt-3 flex justify-center min-[531px]:justify-start">
                   <div className="flex flex-col sm:flex-row gap-3 max-[530px]:gap-2 w-full max-w-[400px] max-[530px]:max-w-[300px]">
@@ -259,7 +262,7 @@ export default function HomePage() {
                 <div className="h-px bg-orange-500 w-8"></div>
               </div>
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                Predictive Models, Powered by Fintech Experts. Handpicked Data and Insights. Actionable Futures.
+              Predictive models, built by fintech experts. Analytics, anchored in credible data.
               </h1>
             </div>
             
@@ -280,10 +283,10 @@ export default function HomePage() {
                   </div>
                 </div>
                 <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">
-                  Assimilate handpicked credible datasets
+                Assimilate credible datasets & opinions
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  We curate and track thousands of high-quality datasets and insights, ensuring every signal comes from credible, expert-driven sources.
+                We curate and track high-quality datasets, insights, & opinions ensuring every signal comes from credible, expert-driven sources.
                 </p>
               </div>
 
@@ -312,10 +315,10 @@ export default function HomePage() {
                   </div>
                 </div>
                 <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">
-                  and underpin it with analyst-driven models
+                and apply market specific analytical context…
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  Our domain experts apply structured, sector-specific models to decode fintech value-chain dynamics, turning raw data into strategic clarity.
+                Apply structured, sector-specific contexts & analytics to decode fintech value-chain dynamics, turning raw data into strategic clarity.
                 </p>
               </div>
 
@@ -347,10 +350,10 @@ export default function HomePage() {
                   </div>
                 </div>
                 <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-4">
-                  to deliver sector-specific, market-ready futuristic view
+                to deliver quantified, actionable insights on fintech
                 </h3>
                 <p className="text-gray-600 leading-relaxed">
-                  We deliver sector-specific foresight and quantified opportunities, helping businesses and investors anticipate shifts and act with confidence.
+                Deliver sector-specific foresight and quantified opportunities, helping businesses and investors anticipate shifts and act with confidence.
                 </p>
               </div>
             </div>
@@ -363,10 +366,10 @@ export default function HomePage() {
             <div className="relative mb-8">
               <div className="text-center mb-6">
                 <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                  What's moving the market right now
+                Get deeper contextualization of market events
                 </h1>
                 <p className="text-base md:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                  Handpicked events, expert insights, and strategic spotlights, designed to transform information into actionable intelligence
+                Assess impact of key market events through a combination of news, expert opinions, think tank publications, and market data
                 </p>
               </div>
               <div className="flex justify-between items-center">
@@ -487,10 +490,10 @@ export default function HomePage() {
           <div className="max-w-[1400px] mx-auto px-2 sm:px-4 md:px-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                From opinion to evidence backed by numbers
+              Tap into the views of key influencers and unlock credible, verified datasets
               </h1>
               <p className="text-base md:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Decode emerging shifts, quantify momentum, and uncover actionable opportunities
+              Unite authoritative opinions with reliable datasets to uncover actionable insights and opportunities
               </p>
             </div>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8">
@@ -621,10 +624,10 @@ export default function HomePage() {
           <div className="max-w-[1400px] mx-auto px-4 md:px-8">
             <div className="text-center mb-6">
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
-                Trend predictive momentum and disruptive potential - quantified and actionable
+              Uncover emerging opportunities powered by quantified trend analysis
               </h1>
               <p className="text-base md:text-lg text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Decode emerging shifts, quantify momentum, uncover real impact, and compare opportunities and risks across fintech trends
+              Decode emerging shifts, quantify momentum, uncover impact, and benchmark opportunities against risks across fintech trends
               </p>
             </div>
             <div className="relative pb-4 mb-6">

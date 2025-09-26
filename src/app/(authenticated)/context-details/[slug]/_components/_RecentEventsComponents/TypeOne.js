@@ -149,7 +149,7 @@ const TypeOne = ({ context, isLastItem, lastContextCallback }) => {
             {[...(context.sectors || []), ...(context.subSectors || [])].slice(0, 3).map((item, idx) => (
               <span
                 key={idx}
-                className="text-[10px] sm:text-xs text-black-600 relative inline-block font-medium border-b-2 border-green-500"
+                className="text-[10px] sm:text-xs text-red-600 font-bold"
               >
                 {item.sectorName || item.subSectorName || 'Unknown'}
               </span>
