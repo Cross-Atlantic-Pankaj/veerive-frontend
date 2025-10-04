@@ -310,74 +310,106 @@ export default function ImpactAndOpinions({ theme }) {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
             ) : chartData.length > 0 ? (
-              <div className="h-80 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <ScatterChart
-                    data={chartData}
-                    margin={{ top: 60, right: 60, bottom: 40, left: 60 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                    <XAxis 
-                      type="number" 
-                      dataKey="predictiveMomentumScore" 
-                      name="Predictive Momentum"
-                      domain={[0, 5]}
-                      tickCount={6}
-                      tickFormatter={(value) => value.toFixed(1)}
-                      label={{ value: 'Predictive Momentum (1-5)', position: 'insideBottom', offset: -10 }}
-                    />
-                    <YAxis 
-                      type="number" 
-                      dataKey="impactScore" 
-                      name="Disruption Potential"
-                      domain={[0, 5]}
-                      tickCount={6}
-                      tickFormatter={(value) => value.toFixed(1)}
-                      label={{ value: 'Disruption Potential (1-5)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
-                    />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          const data = payload[0].payload;
-                          return (
-                            <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                              <p className="font-semibold text-gray-800">{data.label || data.name}</p>
-                              <p className="text-sm text-gray-600">
-                                Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
-                              </p>
-                              {data.isCurrent && (
-                                <p className="text-sm text-red-600 font-medium">Current Theme</p>
-                              )}
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Scatter dataKey="predictiveMomentumScore">
-                      {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                      <LabelList 
-                        dataKey="label" 
-                        position="top" 
-                        style={{ 
-                          fontSize: '10px', 
-                          fontWeight: 'bold',
-                          fill: '#374151'
-                        }}
-                        offset={12}
+              <>
+                <div className="h-80 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <ScatterChart
+                      data={chartData}
+                      margin={{ top: 60, right: 60, bottom: 40, left: 60 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                      <XAxis 
+                        type="number" 
+                        dataKey="predictiveMomentumScore" 
+                        name="Predictive Momentum"
+                        domain={[0, 5]}
+                        tickCount={6}
+                        tickFormatter={(value) => value.toFixed(1)}
+                        label={{ value: 'Predictive Momentum (1-5)', position: 'insideBottom', offset: -10 }}
                       />
-                    </Scatter>
-                  </ScatterChart>
-                </ResponsiveContainer>
-              </div>
+                      <YAxis 
+                        type="number" 
+                        dataKey="impactScore" 
+                        name="Disruption Potential"
+                        domain={[0, 5]}
+                        tickCount={6}
+                        tickFormatter={(value) => value.toFixed(1)}
+                        label={{ value: 'Disruption Potential (1-5)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                      />
+                      <Tooltip 
+                        content={({ active, payload }) => {
+                          if (active && payload && payload.length) {
+                            const data = payload[0].payload;
+                            return (
+                              <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
+                                <p className="font-semibold text-gray-800">{data.label || data.name}</p>
+                                <p className="text-sm text-gray-600">
+                                  Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
+                                </p>
+                                <p className="text-sm text-gray-600">
+                                  Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
+                                </p>
+                                {data.isCurrent && (
+                                  <p className="text-sm text-red-600 font-medium">Current Theme</p>
+                                )}
+                              </div>
+                            );
+                          }
+                          return null;
+                        }}
+                      />
+                      <Scatter dataKey="predictiveMomentumScore" r={8}>
+                        {chartData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Scatter>
+                    </ScatterChart>
+                  </ResponsiveContainer>
+                </div>
+                
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Legend</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {chartData.map((entry, index) => {
+                      const fullTitle = entry.themeTitle || entry.name || entry.title || `Theme ${index + 1}`;
+                      return (
+                        <div 
+                          key={`legend-${index}`} 
+                          className="flex items-center gap-2 text-xs group relative"
+                        >
+                          <div 
+                            className="w-3 h-3 rounded-full flex-shrink-0" 
+                            style={{ backgroundColor: entry.color }}
+                          ></div>
+                          <span className="text-gray-700 truncate">
+                            {fullTitle}
+                          </span>
+                          {entry.isCurrent && (
+                            <span className="text-red-600 font-medium text-xs">(Current)</span>
+                          )}
+                          
+                          {/* Hover tooltip */}
+                          <div 
+                            className="absolute bottom-full left-0 mb-2 px-3 py-2 text-black text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 max-w-xs"
+                            style={{ backgroundColor: entry.color }}
+                          >
+                            <div className="whitespace-normal break-words">
+                              {fullTitle}
+                            </div>
+                            <div 
+                              className="absolute top-full left-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent"
+                              style={{ borderTopColor: entry.color }}
+                            ></div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </>
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <p>No related themes found for comparison.</p>
