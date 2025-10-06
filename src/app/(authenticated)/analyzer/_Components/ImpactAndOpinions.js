@@ -67,7 +67,7 @@ export default function ImpactAndOpinions({ theme }) {
   };
 
   // Chart colors for different themes
-  const chartColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'];
+  const chartColors = ['#e61010', '#2445bf', '#bf24b5', '#bf2452', '#24bf39', '#bfb824', '#bf8b24', '#9824bf', '#060505', '#9adcde'];
   
   const getChartColor = (index) => {
     return chartColors[index % chartColors.length];
@@ -340,20 +340,21 @@ export default function ImpactAndOpinions({ theme }) {
                         content={({ active, payload }) => {
                           if (active && payload && payload.length) {
                             const data = payload[0].payload;
+                            const fullTitle = data.themeTitle || data.name || data.title || data.label || 'Unknown Theme';
                             return (
-                              <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                                <p className="font-semibold text-gray-800">{data.label || data.name}</p>
-                                <p className="text-sm text-gray-600">
+                              <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg max-w-xs">
+                                <p className="text-xs text-gray-800 font-medium leading-tight mb-2 break-words">{fullTitle}</p>
+                                <p className="text-xs text-gray-600">
                                   Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-xs text-gray-600">
                                   Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
                                 </p>
-                                <p className="text-sm text-gray-600">
+                                <p className="text-xs text-gray-600">
                                   Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
                                 </p>
                                 {data.isCurrent && (
-                                  <p className="text-sm text-red-600 font-medium">Current Theme</p>
+                                  <p className="text-xs text-red-600 font-medium">Current Theme</p>
                                 )}
                               </div>
                             );
@@ -393,7 +394,7 @@ export default function ImpactAndOpinions({ theme }) {
                           
                           {/* Hover tooltip */}
                           <div 
-                            className="absolute bottom-full left-0 mb-2 px-3 py-2 text-black text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 max-w-xs"
+                            className="absolute bottom-full left-0 mb-2 px-3 py-2 text-white text-xs rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 max-w-xs"
                             style={{ backgroundColor: entry.color }}
                           >
                             <div className="whitespace-normal break-words">
