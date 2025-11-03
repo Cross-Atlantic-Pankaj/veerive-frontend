@@ -43,18 +43,18 @@ export default function OverviewSnapshot({ theme }) {
           {/* Trend Significance */}
           {trendSnapshot?.trendSignificance?.content && (
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 mt-1 flex-shrink-0">
+              <div className="w-6 h-6 flex-shrink-0">
                 <img 
                   src="/assets/Picture1.png" 
                   alt="Trend Significance" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <h4 className="text-lg font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Trend Significance</h4>
                 <div 
                   className="text-gray-700 text-sm leading-relaxed executive-summary-content" 
-                  style={{fontFamily: 'Arial'}}
+                  style={{fontFamily: 'Arial', marginLeft: '-2.25rem'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
                       ? trendSnapshot.trendSignificance.content 
@@ -68,18 +68,18 @@ export default function OverviewSnapshot({ theme }) {
           {/* Potential Challenges */}
           {trendSnapshot?.potentialChallenges?.content && (
             <div className="flex items-start gap-3">
-              <div className="w-6 h-6 mt-1 flex-shrink-0">
+              <div className="w-6 h-6 flex-shrink-0">
                 <img 
                   src="/assets/Picture2.png" 
                   alt="Potential Challenges" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div>
+              <div className="flex-1">
                 <h4 className="text-lg font-bold text-gray-600 mb-2" style={{fontFamily: 'Arial'}}>Potential Challenges</h4>
                 <div 
                   className="text-gray-700 text-sm leading-relaxed executive-summary-content" 
-                  style={{fontFamily: 'Arial'}}
+                  style={{fontFamily: 'Arial', marginLeft: '-2.25rem'}}
                   dangerouslySetInnerHTML={{ 
                     __html: showFullExecutiveSummary 
                       ? trendSnapshot.potentialChallenges.content 
@@ -133,9 +133,9 @@ export default function OverviewSnapshot({ theme }) {
                  )}
                  
                  {/* Content */}
-                 <div className="flex-1">
+                 <div className="flex-1 text-center">
                    {/* Value */}
-                   <div className="font-bold text-lg text-orange-500 mb-1">
+                   <div className="font-bold text-xl text-orange-500 mb-1">
                      {metric.value}
                    </div>
                    

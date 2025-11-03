@@ -14,7 +14,7 @@ export default function ThemeInfo({ theme }) {
   };
 
   return (
-    <div className="max-w-full mx-auto md:py-6 p-3 md:px-8">
+    <div className="max-w-full mx-auto md:pt-6 md:pb-0 p-3 pb-0 md:px-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">{theme.themeTitle}</h1>
       
       {/* Teaser Text */}
@@ -25,7 +25,7 @@ export default function ThemeInfo({ theme }) {
         ></div>
       )}
       
-      <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-4">
+      <div className="flex flex-col md:flex-row md:items-start md:gap-8 mb-0">
         {/* Sectors and Subsectors */}
         <div className="flex-1">
           {theme.sectors?.length > 0 || theme.subSectors?.length > 0 ? (
@@ -91,7 +91,7 @@ export default function ThemeInfo({ theme }) {
 
       {theme.themeDescription && (
         <div
-          className="text-gray-600 mb-2 mt-4 text-base"
+          className="text-gray-600 mb-0 mt-4 text-base"
           dangerouslySetInnerHTML={{ __html: theme.themeDescription }}
         ></div>
       )}

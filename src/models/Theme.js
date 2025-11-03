@@ -65,20 +65,10 @@ const themeSchema = new Schema ({
                 explanation: { type: String }
             },
             disruptivePotential: {
-                highLowContainer: {
-                    icon: { type: String },
-                    impactArea: { type: String },
-                    impactRating: { type: String }
-                },
                 content: { type: String },
                 value: { type: String }
             },
             trendMomentum: {
-                highLowContainer: {
-                    icon: { type: String },
-                    impactArea: { type: String },
-                    impactRating: { type: String }
-                },
                 content: { type: String },
                 value: { type: String }
             }

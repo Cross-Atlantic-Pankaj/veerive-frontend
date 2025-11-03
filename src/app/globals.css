@@ -126,6 +126,26 @@ html {
   margin-bottom: 8px !important;
 }
 
+/* Summary Content Bullet Points Styling */
+.summary-content ul {
+  list-style-type: disc !important;
+  list-style-position: outside !important;
+  margin-left: 20px !important;
+  padding-left: 0 !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+.summary-content li {
+  margin-bottom: 8px !important;
+  display: list-item !important;
+  list-style-type: disc !important;
+}
+
+.summary-content p {
+  margin-bottom: 8px !important;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #FF0000;
 }

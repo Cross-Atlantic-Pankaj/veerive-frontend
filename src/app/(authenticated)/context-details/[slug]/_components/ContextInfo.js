@@ -134,9 +134,10 @@ const ContextInfo = ({ context, currentSlide, setCurrentSlide, sliderRef }) => {
 			{context.summary && context.summary.length > 0 && (
 				<div className="mb-4 sm:mb-6 ml-2">
 					<h2 className="text-base sm:text-lg font-bold text-gray-800 mb-2">Summary:</h2>
-					<ul className="text-gray-700 list-disc list-inside text-sm sm:text-base">
-						<div dangerouslySetInnerHTML={{ __html: context.summary }} />
-					</ul>
+					<div 
+						className="text-gray-700 text-sm sm:text-base summary-content"
+						dangerouslySetInnerHTML={{ __html: context.summary }}
+					/>
 				</div>
 			)}
 

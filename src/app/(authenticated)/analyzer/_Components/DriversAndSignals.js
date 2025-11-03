@@ -223,7 +223,7 @@ export default function DriversAndSignals({ theme }) {
                           className="whitespace-pre-wrap font-sans drivers-signals-content"
                           style={{
                             display: '-webkit-box',
-                            WebkitLineClamp: 2,
+                            WebkitLineClamp: 6,
                             WebkitBoxOrient: 'vertical',
                             overflow: 'hidden',
                             lineHeight: '1.4'
@@ -273,8 +273,8 @@ export default function DriversAndSignals({ theme }) {
           <Image 
             src={signalsInActionIcon} 
             alt="Signals in Action Icon" 
-            width={46} 
-            height={46} 
+            width={38} 
+            height={38} 
             className="object-contain"
           />
           Signals in Action
@@ -338,7 +338,7 @@ export default function DriversAndSignals({ theme }) {
                             className="whitespace-pre-wrap font-sans drivers-signals-content"
                             style={{
                               display: '-webkit-box',
-                              WebkitLineClamp: 2,
+                              WebkitLineClamp: 6,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
                               lineHeight: '1.4'
@@ -367,7 +367,7 @@ export default function DriversAndSignals({ theme }) {
                             className="whitespace-pre-wrap font-sans drivers-signals-content"
                             style={{
                               display: '-webkit-box',
-                              WebkitLineClamp: 2,
+                              WebkitLineClamp: 6,
                               WebkitBoxOrient: 'vertical',
                               overflow: 'hidden',
                               lineHeight: '1.4'

@@ -156,8 +156,7 @@ export default function ConsumerDynamics({ theme }) {
                   <div className="flex items-center justify-between mb-2">
                     <h4 className="font-semibold text-gray-600 text-sm">{item.consumerSegmentName}</h4>
                     <div className="flex items-center gap-2">
-                      {getTrendIcon(item.impactScore)}
-                      <span className="text-xs font-medium text-gray-500">{item.impactScore}%</span>
+                      <span className="text-xs font-bold text-gray-500">{item.impactScore}</span>
                     </div>
                   </div>
                   

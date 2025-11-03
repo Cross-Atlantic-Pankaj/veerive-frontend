@@ -55,19 +55,19 @@ export default function ImpactAndOpinions({ theme }) {
 
   const getSentimentColor = (sentiment) => {
     switch (sentiment?.toLowerCase()) {
-      case 'bullish':
+      case 'positive':
         return 'bg-green-500 text-white';
-      case 'bearish':
+      case 'negative':
         return 'bg-red-500 text-white';
       case 'neutral':
-        return 'bg-gray-500 text-white';
+        return 'bg-orange-500 text-white';
       default:
         return 'bg-gray-400 text-white';
     }
   };
 
   // Chart colors for different themes
-  const chartColors = ['#e61010', '#2445bf', '#bf24b5', '#bf2452', '#24bf39', '#bfb824', '#bf8b24', '#9824bf', '#060505', '#9adcde'];
+  const chartColors = ['#4A70A9', '#2445bf', '#bf24b5', '#bf2452', '#24bf39', '#bfb824', '#bf8b24', '#9824bf', '#060505', '#9adcde'];
   
   const getChartColor = (index) => {
     return chartColors[index % chartColors.length];
@@ -97,7 +97,8 @@ export default function ImpactAndOpinions({ theme }) {
       return {
         ...theme,
         color: getChartColor(index),
-        label: firstWord
+        label: firstWord,
+        size: 800 // Add size property for larger bubbles
       };
     });
 
@@ -122,7 +123,8 @@ export default function ImpactAndOpinions({ theme }) {
       ...currentTheme,
       color: '#FF0000', // Red for current theme
       isCurrent: true,
-      label: currentFirstWord
+      label: currentFirstWord,
+      size: 800 // Add size property for larger bubbles
     });
   }
 
@@ -146,37 +148,9 @@ export default function ImpactAndOpinions({ theme }) {
               <span className="text-xl">💣</span>
               Disruptive Potential
             </h3>
-            
-            {disruptivePotential?.highLowContainer && (
-              <div className="bg-white border-2 border-black rounded-lg p-3 mb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {disruptivePotential.highLowContainer.icon && (
-                      <div className="w-6 h-6 flex items-center justify-center">
-                        <img 
-                          src={disruptivePotential.highLowContainer.icon} 
-                          alt="Disruptive Potential Icon" 
-                          className="w-6 h-6 object-contain"
-                        />
-                      </div>
-                    )}
-                    <span className="text-sm font-medium text-gray-700">
-                      {disruptivePotential.highLowContainer.impactArea || 'Impact Area'}
-                    </span>
-                  </div>
-                  <span className={`px-3 py-1 rounded text-sm font-medium ${
-                    disruptivePotential.highLowContainer.impactRating?.toLowerCase() === 'high' 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-red-500 text-white'
-                  }`}>
-                    {disruptivePotential.highLowContainer.impactRating || 'Low'}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {disruptivePotential?.content && (
-              <div className="mt-3">
+              <div>
                 {expandedDisruptive ? (
                   <div 
                     className="text-sm text-gray-600 leading-relaxed impact-opinions-content"
@@ -187,7 +161,7 @@ export default function ImpactAndOpinions({ theme }) {
                     className="text-sm text-gray-600 leading-relaxed impact-opinions-content"
                     style={{
                       display: '-webkit-box',
-                      WebkitLineClamp: 2,
+                      WebkitLineClamp: 10,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       lineHeight: '1.4'
@@ -221,37 +195,9 @@ export default function ImpactAndOpinions({ theme }) {
               <span className="text-xl">📈</span>
               Trend Momentum
             </h3>
-            
-            {trendMomentum?.highLowContainer && (
-              <div className="bg-white border-2 border-black rounded-lg p-3 mb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {trendMomentum.highLowContainer.icon && (
-                      <div className="w-6 h-6 flex items-center justify-center">
-                        <img 
-                          src={trendMomentum.highLowContainer.icon} 
-                          alt="Trend Momentum Icon" 
-                          className="w-6 h-6 object-contain"
-                        />
-                      </div>
-                    )}
-                    <span className="text-sm font-medium text-gray-700">
-                      {trendMomentum.highLowContainer.impactArea || 'Impact Area'}
-                    </span>
-                  </div>
-                  <span className={`px-3 py-1 rounded text-sm font-medium ${
-                    trendMomentum.highLowContainer.impactRating?.toLowerCase() === 'high' 
-                      ? 'bg-green-500 text-white' 
-                      : 'bg-red-500 text-white'
-                  }`}>
-                    {trendMomentum.highLowContainer.impactRating || 'Low'}
-                  </span>
-                </div>
-              </div>
-            )}
 
             {trendMomentum?.content && (
-              <div className="mt-3">
+              <div>
                 {expandedMomentum ? (
                   <div 
                     className="text-sm text-gray-600 leading-relaxed impact-opinions-content"
@@ -262,7 +208,7 @@ export default function ImpactAndOpinions({ theme }) {
                     className="text-sm text-gray-600 leading-relaxed impact-opinions-content"
                     style={{
                       display: '-webkit-box',
-                      WebkitLineClamp: 2,
+                      WebkitLineClamp: 10,
                       WebkitBoxOrient: 'vertical',
                       overflow: 'hidden',
                       lineHeight: '1.4'
@@ -295,11 +241,11 @@ export default function ImpactAndOpinions({ theme }) {
         <div className="lg:col-span-2 space-y-6">
           {/* Scatter Plot Chart */}
           <div>
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-800 flex-1 pr-8">Fintech Trends Quadrant: Predictive Momentum vs Disruption Potential</h3>
+            <div className="relative mb-4">
+              <h3 className="text-lg font-bold text-gray-800 text-center">Fintech Trends Quadrant: Predictive Momentum vs Disruption Potential</h3>
               <button
                 onClick={() => setShowChartInfo(true)}
-                className="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors flex-shrink-0"
+                className="absolute top-0 right-0 w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
               >
                 <span className="text-xs font-bold">i</span>
               </button>
@@ -311,65 +257,72 @@ export default function ImpactAndOpinions({ theme }) {
               </div>
             ) : chartData.length > 0 ? (
               <>
-                <div className="h-80 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <ScatterChart
-                      data={chartData}
-                      margin={{ top: 60, right: 60, bottom: 40, left: 60 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                      <XAxis 
-                        type="number" 
-                        dataKey="predictiveMomentumScore" 
-                        name="Predictive Momentum"
-                        domain={[0, 5]}
-                        tickCount={6}
-                        tickFormatter={(value) => value.toFixed(1)}
-                        label={{ value: 'Predictive Momentum (1-5)', position: 'insideBottom', offset: -10 }}
-                      />
-                      <YAxis 
-                        type="number" 
-                        dataKey="impactScore" 
-                        name="Disruption Potential"
-                        domain={[0, 5]}
-                        tickCount={6}
-                        tickFormatter={(value) => value.toFixed(1)}
-                        label={{ value: 'Disruption Potential (1-5)', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
-                      />
-                      <Tooltip 
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const data = payload[0].payload;
+                <div className="w-full" style={{ aspectRatio: '1 / 1', maxHeight: '600px' }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <ScatterChart
+                    data={chartData}
+                    margin={{ top: 60, right: 60, bottom: 40, left: 60 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      type="number" 
+                      dataKey="predictiveMomentumScore" 
+                      name="Predictive Momentum"
+                        domain={[0, 10]}
+                        ticks={[0, 2, 4, 6, 8, 10]}
+                        tickFormatter={(value) => value.toString()}
+                        label={{ value: 'Predictive Momentum', position: 'insideBottom', offset: -10 }}
+                    />
+                    <YAxis 
+                      type="number" 
+                      dataKey="impactScore" 
+                      name="Disruption Potential"
+                        domain={[0, 10]}
+                        ticks={[0, 2, 4, 6, 8, 10]}
+                        tickFormatter={(value) => value.toString()}
+                        label={{ value: 'Disruption Potential', angle: -90, position: 'insideLeft', style: { textAnchor: 'middle' } }}
+                    />
+                    <Tooltip 
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0].payload;
                             const fullTitle = data.themeTitle || data.name || data.title || data.label || 'Unknown Theme';
-                            return (
+                          return (
                               <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg max-w-xs">
                                 <p className="text-xs text-gray-800 font-medium leading-tight mb-2 break-words">{fullTitle}</p>
                                 <p className="text-xs text-gray-600">
-                                  Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
-                                </p>
+                                Predictive Momentum: {data.predictiveMomentumScore?.toFixed(1) || 'N/A'}
+                              </p>
                                 <p className="text-xs text-gray-600">
-                                  Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
-                                </p>
+                                Disruption Potential: {data.impactScore?.toFixed(1) || 'N/A'}
+                              </p>
                                 <p className="text-xs text-gray-600">
-                                  Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
-                                </p>
-                                {data.isCurrent && (
+                                Overall Score: {data.overallScore?.toFixed(1) || 'N/A'}
+                              </p>
+                              {data.isCurrent && (
                                   <p className="text-xs text-red-600 font-medium">Current Theme</p>
-                                )}
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                      />
-                      <Scatter dataKey="predictiveMomentumScore" r={8}>
-                        {chartData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                      </Scatter>
-                    </ScatterChart>
-                  </ResponsiveContainer>
-                </div>
+                              )}
+                            </div>
+                          );
+                        }
+                        return null;
+                      }}
+                    />
+                      <Scatter 
+                        data={chartData}
+                        fill="#8884d8"
+                        shape="circle"
+                      >
+                      {chartData.map((entry, index) => (
+                          <Cell 
+                            key={`cell-${index}`} 
+                            fill={entry.color}
+                          />
+                      ))}
+                    </Scatter>
+                  </ScatterChart>
+                </ResponsiveContainer>
+              </div>
                 
                 <div className="mt-4 p-4 bg-gray-50 rounded-lg">
                   <h4 className="text-sm font-semibold text-gray-700 mb-3">Legend</h4>

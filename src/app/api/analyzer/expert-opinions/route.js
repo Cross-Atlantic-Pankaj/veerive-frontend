@@ -51,16 +51,28 @@ export async function GET(request) {
       .lean();
 
     // Transform the data to include source information
-    const transformedOpinions = expertOpinions.map(opinion => ({
-      _id: opinion._id,
-      postTitle: opinion.postTitle,
-      summary: opinion.summary,
-      sentiment: opinion.sentiment,
-      sourceName: opinion.source?.sourceName || 'Unknown Source',
-      sourceType: opinion.source?.sourceType || 'Industry Expert',
-      sourceUrl: opinion.sourceUrl,
-      createdAt: opinion.createdAt
-    }));
+    const transformedOpinions = expertOpinions.map(opinion => {
+      // Handle source as array (new format) or single object (legacy format)
+      const source = Array.isArray(opinion.source) && opinion.source.length > 0 
+        ? opinion.source[0] 
+        : (opinion.source || null);
+      
+      // Handle sourceUrls as array (new format) or single sourceUrl (legacy format)
+      const sourceUrl = Array.isArray(opinion.sourceUrls) && opinion.sourceUrls.length > 0
+        ? opinion.sourceUrls[0]
+        : (opinion.sourceUrl || null);
+
+      return {
+        _id: opinion._id,
+        postTitle: opinion.postTitle,
+        summary: opinion.summary,
+        sentiment: opinion.sentiment,
+        sourceName: source?.sourceName || 'Unknown Source',
+        sourceType: source?.sourceType || 'Industry Expert',
+        sourceUrl: sourceUrl,
+        createdAt: opinion.createdAt
+      };
+    });
 
     return NextResponse.json({ expertOpinions: transformedOpinions });
 

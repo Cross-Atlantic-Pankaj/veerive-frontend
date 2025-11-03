@@ -54,7 +54,7 @@ export default function RegionalDynamics({ theme }) {
             </div>
           )}
           <h3 className="text-lg font-bold text-gray-800">Regional Insights</h3>
-        </div>
+      </div>
         
         {/* Overall Summary */}
         {overallSummary && (
@@ -65,9 +65,9 @@ export default function RegionalDynamics({ theme }) {
         )}
 
         {/* Regions Grid - 2 columns */}
-        {regions.length > 0 && (
+          {regions.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {regions.map((region, index) => (
+              {regions.map((region, index) => (
               <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 relative">
                 {/* Region Score in upper right corner */}
                 {region.regionScore && (
@@ -78,63 +78,63 @@ export default function RegionalDynamics({ theme }) {
                 
                 <div className="flex items-center gap-3 mb-3 pr-12">
                   {/* Region Icon */}
-                  <div className="w-8 h-8 flex items-center justify-center">
-                    {region.regionId?.regionIcon ? (
-                      <img 
-                        src={region.regionId.regionIcon} 
-                        alt="Region Map Icon" 
-                        className="w-6 h-6 object-contain"
-                      />
-                    ) : region.regionMapIcon ? (
-                      <img 
-                        src={region.regionMapIcon} 
-                        alt="Region Map Icon" 
-                        className="w-6 h-6 object-contain"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
-                        <span className="text-xs text-gray-500">🌍</span>
-                      </div>
-                    )}
+                    <div className="w-8 h-8 flex items-center justify-center">
+                      {region.regionId?.regionIcon ? (
+                        <img 
+                          src={region.regionId.regionIcon} 
+                          alt="Region Map Icon" 
+                          className="w-6 h-6 object-contain"
+                        />
+                      ) : region.regionMapIcon ? (
+                        <img 
+                          src={region.regionMapIcon} 
+                          alt="Region Map Icon" 
+                          className="w-6 h-6 object-contain"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 bg-gray-200 rounded flex items-center justify-center">
+                          <span className="text-xs text-gray-500">🌍</span>
+                        </div>
+                      )}
+                    </div>
+                    <h4 className="font-semibold text-gray-800">
+                      {region.regionId?.regionName || region.regionName || `Region ${index + 1}`}
+                    </h4>
                   </div>
-                  <h4 className="font-semibold text-gray-800">
-                    {region.regionId?.regionName || region.regionName || `Region ${index + 1}`}
-                  </h4>
-                </div>
-                
+                  
                 {/* Region Description */}
-                {(region.regionId?.regionDescription || region.regionDescription) && (
-                  <div className="text-sm text-gray-600 leading-relaxed">
-                    <div 
-                      className="whitespace-pre-wrap font-sans"
-                      dangerouslySetInnerHTML={{ __html: formatDescription(
-                        region.regionId?.regionDescription || region.regionDescription, 
-                        expandedRegions[index]
-                      ) }}
-                    ></div>
-                    
+                  {(region.regionId?.regionDescription || region.regionDescription) && (
+                    <div className="text-sm text-gray-600 leading-relaxed">
+                      <div 
+                        className="whitespace-pre-wrap font-sans"
+                        dangerouslySetInnerHTML={{ __html: formatDescription(
+                          region.regionId?.regionDescription || region.regionDescription, 
+                          expandedRegions[index]
+                        ) }}
+                      ></div>
+                      
                     {(region.regionId?.regionDescription || region.regionDescription)?.length > 225 && (
-                      <button
-                        onClick={() => toggleRegionExpansion(index)}
-                        className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1 mt-2 transition-colors"
-                      >
-                        {expandedRegions[index] ? 'View Less' : 'View More'}
-                        <svg 
-                          className={`w-4 h-4 transition-transform ${expandedRegions[index] ? 'rotate-180' : ''}`} 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
+                        <button
+                          onClick={() => toggleRegionExpansion(index)}
+                          className="text-blue-600 hover:text-blue-800 font-medium text-sm flex items-center gap-1 mt-2 transition-colors"
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
+                          {expandedRegions[index] ? 'View Less' : 'View More'}
+                          <svg 
+                            className={`w-4 h-4 transition-transform ${expandedRegions[index] ? 'rotate-180' : ''}`} 
+                            fill="none" 
+                            stroke="currentColor" 
+                            viewBox="0 0 24 24"
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
 
         {/* No regions available */}
         {regions.length === 0 && (

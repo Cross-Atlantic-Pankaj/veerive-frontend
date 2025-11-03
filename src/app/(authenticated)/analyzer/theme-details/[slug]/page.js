@@ -88,7 +88,7 @@ export default function ThemeDetails() {
       <ThemeInfo theme={theme} />
       
       {/* Overview/Snapshot - Full Width */}
-      <div className="mx-auto mb-4">
+      <div className="mx-auto mb-0 -mt-3">
         <OverviewSnapshot theme={theme} />
       </div>
 
