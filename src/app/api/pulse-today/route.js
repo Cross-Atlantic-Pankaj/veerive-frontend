@@ -109,7 +109,7 @@ export async function POST(request) {
         .populate({
 				path: 'tileTemplates',
 				model: 'TileTemplate',
-				select: 'name type jsxCode',
+				select: 'name type jsxCode iconName backgroundColor iconColor iconSize',
 				options: { strictPopulate: false },
 			})
 				.exec(),
@@ -180,6 +180,10 @@ export async function POST(request) {
           name: tile.name,
           type: tile.type,
           jsxCode: tile.jsxCode,
+          iconName: tile.iconName,
+          backgroundColor: tile.backgroundColor,
+          iconColor: tile.iconColor,
+          iconSize: tile.iconSize,
         })),
 			};
 		});

@@ -13,20 +13,33 @@ import {
   TypeNum,
 } from './_components';
 
-const parseJsxCode = (jsxCode) => {
-  if (!jsxCode) return null;
-  const regex = /bg="([^"]+)"\s+icon="([^"]+)"\s+color="([^"]+)"\s+size=\{(\d+)\}/;
-  const match = jsxCode.match(regex);
-  if (match) {
-    return {
-      bg: match[1],
-      icon: match[2],
-      color: match[3],
-      size: parseInt(match[4], 10),
-    };
+const parseJsxCode = (tile) => {
+  if (!tile) return null;
+  
+  // Priority: Use direct fields from TileTemplate model first (iconName, backgroundColor, etc.)
+  // These are the source of truth in the database
+  let result = {
+    bg: tile.backgroundColor || '#f8f9fa',
+    icon: tile.iconName || 'Image',
+    color: tile.iconColor || '#000000',
+    size: tile.iconSize || 32,
+  };
+  
+  // If jsxCode exists, parse it but ONLY use parsed values if the corresponding database field is missing
+  if (tile.jsxCode) {
+    const regex = /bg="([^"]+)"\s+icon="([^"]+)"\s+color="([^"]+)"\s+size=\{(\d+)\}/;
+    const match = tile.jsxCode.match(regex);
+    if (match) {
+      // Only override if the specific field is missing from database
+      // NEVER override database values with jsxCode values
+      if (!tile.backgroundColor) result.bg = match[1];
+      if (!tile.iconName) result.icon = match[2];
+      if (!tile.iconColor) result.color = match[3];
+      if (!tile.iconSize) result.size = parseInt(match[4], 10);
+    }
   }
-  console.warn(`Invalid jsxCode format: ${jsxCode}`);
-  return null;
+  
+  return result;
 };
 
 export default function PulseToday() {
@@ -302,7 +315,36 @@ export default function PulseToday() {
   };
 
   const renderContextBox = (context, isLastItem, key) => {
-    const tileTemplate = context.tileTemplates?.length > 0 ? parseJsxCode(context.tileTemplates[0].jsxCode) : null;
+    // Only create tileTemplate if tileTemplates array exists and has at least one element
+    let tileTemplate = null;
+    if (context.tileTemplates && 
+        Array.isArray(context.tileTemplates) && 
+        context.tileTemplates.length > 0 && 
+        context.tileTemplates[0]) {
+      
+      // Debug: Print jsxCode and all tileTemplate data
+      console.log('=== TILETEMPLATE DEBUG ===');
+      console.log('Context ID:', context.id);
+      console.log('Context Title:', context.contextTitle);
+      console.log('Raw tileTemplate[0]:', JSON.stringify(context.tileTemplates[0], null, 2));
+      console.log('jsxCode:', context.tileTemplates[0].jsxCode);
+      console.log('iconName:', context.tileTemplates[0].iconName);
+      console.log('backgroundColor:', context.tileTemplates[0].backgroundColor);
+      console.log('iconColor:', context.tileTemplates[0].iconColor);
+      console.log('iconSize:', context.tileTemplates[0].iconSize);
+      
+      tileTemplate = parseJsxCode(context.tileTemplates[0]);
+      
+      console.log('Parsed tileTemplate result:', JSON.stringify(tileTemplate, null, 2));
+      console.log('=== END DEBUG ===');
+    } else {
+      console.log('=== TILETEMPLATE DEBUG ===');
+      console.log('Context ID:', context.id);
+      console.log('Context Title:', context.contextTitle);
+      console.log('tileTemplates is empty or missing');
+      console.log('tileTemplates:', context.tileTemplates);
+      console.log('=== END DEBUG ===');
+    }
     const props = {
       context,
       isLastItem,

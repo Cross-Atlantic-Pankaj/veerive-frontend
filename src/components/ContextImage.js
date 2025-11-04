@@ -4,8 +4,26 @@ import * as LucideIcons from 'lucide-react';
 const Tile = ({ bg, icon, color, size }) => {
   // Default to 'Image' icon if icon is undefined or invalid
   const iconName = icon && typeof icon === 'string' ? icon : 'Image';
-  const IconComponent =
-    LucideIcons[iconName.charAt(0).toUpperCase() + iconName.slice(1)] || LucideIcons.Image;
+  
+  // Convert icon name to PascalCase to match Lucide icon naming
+  // Examples: "Badge-Dollar-Sign" → "BadgeDollarSign", "image" → "Image"
+  const convertToPascalCase = (name) => {
+    if (!name) return 'Image';
+    // Split by hyphens, spaces, or underscores
+    return name
+      .split(/[-_\s]+/)
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('');
+  };
+  
+  const pascalCaseIconName = convertToPascalCase(iconName);
+  const IconComponent = LucideIcons[pascalCaseIconName] || LucideIcons.Image;
+  
+  // Debug: Log if icon is not found
+  if (!LucideIcons[pascalCaseIconName] && iconName !== 'Image') {
+    console.warn(`Icon "${iconName}" (converted to "${pascalCaseIconName}") not found in LucideIcons. Using fallback Image icon.`);
+    console.log('Available Lucide icons containing "Badge":', Object.keys(LucideIcons).filter(k => k.toLowerCase().includes('badge')));
+  }
 
   return (
     <div
@@ -81,6 +99,14 @@ const ContextImage = ({
   
   // No specific image found, fallback to tile template or placeholder
   if (tileTemplate) {
+    // Debug: Log tileTemplate data being passed to Tile component
+    console.log('ContextImage: Rendering Tile with tileTemplate:', {
+      bg: tileTemplate.bg,
+      icon: tileTemplate.icon,
+      color: tileTemplate.color,
+      size: tileTemplate.size
+    });
+    
     return (
       <div className={`${className} rounded-lg overflow-hidden`}>
         <Tile

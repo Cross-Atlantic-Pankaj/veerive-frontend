@@ -63,14 +63,14 @@ export async function GET(request) {
         : (opinion.sourceUrl || null);
 
       return {
-        _id: opinion._id,
-        postTitle: opinion.postTitle,
-        summary: opinion.summary,
-        sentiment: opinion.sentiment,
+      _id: opinion._id,
+      postTitle: opinion.postTitle,
+      summary: opinion.summary,
+      sentiment: opinion.sentiment,
         sourceName: source?.sourceName || 'Unknown Source',
         sourceType: source?.sourceType || 'Industry Expert',
         sourceUrl: sourceUrl,
-        createdAt: opinion.createdAt
+      createdAt: opinion.createdAt
       };
     });
 
