@@ -6,7 +6,8 @@ export default function ConsumerDynamics({ theme }) {
 
   const consumerDynamics = theme?.trendAnalysis?.consumerDynamics;
   const behavioralInsights = consumerDynamics?.behavioralInsights || [];
-  const impactAnalyser = consumerDynamics?.impactAnalyser || [];
+  const impactAnalyser = consumerDynamics?.impactAnalyser?.data || [];
+  const impactAnalyserInfo = consumerDynamics?.impactAnalyser?.info;
   const overallIcon = consumerDynamics?.overallIcon;
 
   const toggleInsightExpansion = (index) => {
@@ -209,6 +210,24 @@ export default function ConsumerDynamics({ theme }) {
             </div>
             
             <div className="space-y-6">
+              {/* Info Field Content */}
+              {impactAnalyserInfo && (
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h4 className="text-lg font-semibold text-gray-800">Information</h4>
+                  </div>
+                  <div 
+                    className="text-gray-700 leading-relaxed"
+                    dangerouslySetInnerHTML={{ __html: impactAnalyserInfo }}
+                  ></div>
+                </div>
+              )}
+
               <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-100">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">

@@ -60,6 +60,7 @@ const themeSchema = new Schema ({
             }]
         },
         impactAndOpinions: {
+            info: { type: String },
             title: {
                 content: { type: String },
                 explanation: { type: String }
@@ -74,6 +75,7 @@ const themeSchema = new Schema ({
             }
         },
         regionalDynamics: {
+            info: { type: String },
             overallIcon: { type: String },
             regionalInsights: {
                 overallSummary: { type: String },
@@ -94,6 +96,7 @@ const themeSchema = new Schema ({
                 text: { type: String }
             }],
             impactAnalyser: [{
+                info: { type: String },
                 consumerSegmentName: { type: String },
                 impactScore: { type: Number } // in percentage
             }]

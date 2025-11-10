@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function RegionalDynamics({ theme }) {
   const [expandedRegions, setExpandedRegions] = useState({});
+  const [showRegionalInfo, setShowRegionalInfo] = useState(false);
 
   const regionalDynamics = theme?.trendAnalysis?.regionalDynamics;
   const regionalInsights = regionalDynamics?.regionalInsights;
@@ -43,18 +44,26 @@ export default function RegionalDynamics({ theme }) {
       {/* Regional Insights Container */}
       <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
         {/* Header with Icon */}
-        <div className="flex items-center gap-3 mb-6">
-          {overallIcon && (
-            <div className="w-8 h-8 flex items-center justify-center">
-              <img 
-                src={overallIcon} 
-                alt="Regional Insights Icon" 
-                className="w-6 h-6 object-contain"
-              />
-            </div>
-          )}
-          <h3 className="text-lg font-bold text-gray-800">Regional Insights</h3>
-      </div>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            {overallIcon && (
+              <div className="w-8 h-8 flex items-center justify-center">
+                <img 
+                  src={overallIcon} 
+                  alt="Regional Insights Icon" 
+                  className="w-6 h-6 object-contain"
+                />
+              </div>
+            )}
+            <h3 className="text-lg font-bold text-gray-800">Regional Insights</h3>
+          </div>
+          <button
+            onClick={() => setShowRegionalInfo(true)}
+            className="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+          >
+            <span className="text-xs font-bold">i</span>
+          </button>
+        </div>
         
         {/* Overall Summary */}
         {overallSummary && (
@@ -148,6 +157,36 @@ export default function RegionalDynamics({ theme }) {
           </div>
         )}
       </div>
+
+      {/* Regional Dynamics Info Modal */}
+      {showRegionalInfo && (
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200 ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800">Regional Dynamics Information</h3>
+              <button
+                onClick={() => setShowRegionalInfo(false)}
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-all duration-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {regionalDynamics?.info ? (
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: regionalDynamics.info }}
+                ></div>
+              ) : (
+                <p className="text-gray-500">No information available for this section.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

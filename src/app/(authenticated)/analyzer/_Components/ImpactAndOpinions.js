@@ -8,6 +8,7 @@ export default function ImpactAndOpinions({ theme }) {
   const [loading, setLoading] = useState(true);
   const [chartLoading, setChartLoading] = useState(true);
   const [showChartInfo, setShowChartInfo] = useState(false);
+  const [showImpactInfo, setShowImpactInfo] = useState(false);
   const [expandedDisruptive, setExpandedDisruptive] = useState(false);
   const [expandedMomentum, setExpandedMomentum] = useState(false);
 
@@ -19,10 +20,18 @@ export default function ImpactAndOpinions({ theme }) {
   useEffect(() => {
     const fetchExpertOpinions = async () => {
       try {
+        console.log('Fetching expert opinions for theme:', theme._id);
         const response = await fetch(`/api/analyzer/expert-opinions?themeId=${theme._id}`);
+        console.log('Expert opinions response status:', response.status);
+        
         if (response.ok) {
           const data = await response.json();
+          console.log('Expert opinions data received:', data);
+          console.log('Number of expert opinions:', data.expertOpinions?.length || 0);
           setExpertOpinions(data.expertOpinions || []);
+        } else {
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error response from API:', errorData);
         }
       } catch (error) {
         console.error('Error fetching expert opinions:', error);
@@ -98,7 +107,7 @@ export default function ImpactAndOpinions({ theme }) {
         ...theme,
         color: getChartColor(index),
         label: firstWord,
-        size: 800 // Add size property for larger bubbles
+        size: 30 // Bubble size in pixels (diameter)
       };
     });
 
@@ -124,7 +133,7 @@ export default function ImpactAndOpinions({ theme }) {
       color: '#FF0000', // Red for current theme
       isCurrent: true,
       label: currentFirstWord,
-      size: 800 // Add size property for larger bubbles
+      size: 24 // Bubble size in pixels
     });
   }
 
@@ -132,7 +141,15 @@ export default function ImpactAndOpinions({ theme }) {
     <div className="bg-white border border-gray-200 rounded-lg p-6">
       {/* Title and Explanation Section */}
       <div className="mb-8">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">{title?.content || 'Context and Explanation'}</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-gray-800">{title?.content || 'Context and Explanation'}</h2>
+          <button
+            onClick={() => setShowImpactInfo(true)}
+            className="w-6 h-6 bg-gray-800 text-white rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
+          >
+            <span className="text-xs font-bold">i</span>
+          </button>
+        </div>
         <div 
           className="text-gray-600 leading-relaxed impact-opinions-content"
           dangerouslySetInnerHTML={{ __html: title?.explanation || 'No explanation available for this trend.' }}
@@ -311,7 +328,20 @@ export default function ImpactAndOpinions({ theme }) {
                       <Scatter 
                         data={chartData}
                         fill="#8884d8"
-                        shape="circle"
+                        shape={(props) => {
+                          const { cx, cy, payload } = props;
+                          const fixedSize = 40; // Fixed size for all bubbles
+                          return (
+                            <circle
+                              cx={cx}
+                              cy={cy}
+                              r={fixedSize / 2}
+                              fill={payload.color}
+                              stroke={payload.color}
+                              strokeWidth={1}
+                            />
+                          );
+                        }}
                       >
                       {chartData.map((entry, index) => (
                           <Cell 
@@ -424,6 +454,36 @@ export default function ImpactAndOpinions({ theme }) {
           </div>
         </div>
       </div>
+
+      {/* Impact and Opinions Info Modal */}
+      {showImpactInfo && (
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200 ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
+              <h3 className="text-xl font-bold text-gray-800">Impact and Opinions Information</h3>
+              <button
+                onClick={() => setShowImpactInfo(false)}
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-all duration-200"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              {impactAndOpinions?.info ? (
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: impactAndOpinions.info }}
+                ></div>
+              ) : (
+                <p className="text-gray-500">No information available for this section.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Chart Info Modal */}
       {showChartInfo && (

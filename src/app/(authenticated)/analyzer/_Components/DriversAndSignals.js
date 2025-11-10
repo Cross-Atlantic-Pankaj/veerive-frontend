@@ -166,8 +166,8 @@ export default function DriversAndSignals({ theme }) {
           <Image 
             src={keyDriverIcon} 
             alt="Key Drivers Icon" 
-            width={32} 
-            height={32} 
+            width={38} 
+            height={38} 
             className="object-contain"
           />
           Key Drivers
