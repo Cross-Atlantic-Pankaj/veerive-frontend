@@ -21,7 +21,7 @@ export default function OverviewSnapshot({ theme }) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-6">
+    <div className="grid grid-cols-1 lg:grid-cols-10 gap-6 mb-6 mt-8">
       
       {/* Executive Summary Container */}
       <div className="lg:col-span-6 rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
