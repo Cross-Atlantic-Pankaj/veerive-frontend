@@ -9,6 +9,8 @@ export default function ConsumerDynamics({ theme }) {
   const impactAnalyser = consumerDynamics?.impactAnalyser?.data || [];
   const impactAnalyserInfo = consumerDynamics?.impactAnalyser?.info;
   const overallIcon = consumerDynamics?.overallIcon;
+  const consumerDynamicsInfo = consumerDynamics?.info;
+  const methodologyIcon = consumerDynamics?.methodologyIcon;
 
   const toggleInsightExpansion = (index) => {
     setExpandedInsights(prev => ({
@@ -183,97 +185,43 @@ export default function ConsumerDynamics({ theme }) {
           )}
       </div>
 
-      {/* Impact Analyzer Info Modal */}
+      {/* Consumer Dynamics Info Modal */}
       {showImpactInfo && (
-        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-3xl p-8 max-w-lg w-full mx-4 shadow-2xl border border-gray-100 ring-1 ring-gray-50 relative overflow-hidden">
-            {/* Decorative gradient background */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500"></div>
-            
-            <div className="flex items-center justify-between mb-8">
+        <div className="fixed inset-0 backdrop-blur-md flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 max-w-2xl w-full mx-4 max-h-[80vh] overflow-y-auto shadow-2xl border border-gray-200 ring-1 ring-gray-100">
+            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold text-gray-800">Impact Analyzer</h3>
+                {methodologyIcon && (
+                  <div className="w-8 h-8 flex items-center justify-center">
+                    <img 
+                      src={methodologyIcon} 
+                      alt="Methodology Icon" 
+                      className="w-6 h-6 object-contain"
+                    />
+                  </div>
+                )}
+                <h3 className="text-xl font-bold text-gray-800">Consumer Dynamics Information</h3>
               </div>
               <button
                 onClick={() => setShowImpactInfo(false)}
-                className="text-gray-400 hover:text-gray-600 hover:bg-gray-50 rounded-full p-2 transition-all duration-200 group"
+                className="text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full p-2 transition-all duration-200"
               >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
             
-            <div className="space-y-6">
-              {/* Info Field Content */}
-              {impactAnalyserInfo && (
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <h4 className="text-lg font-semibold text-gray-800">Information</h4>
-                  </div>
-                  <div 
-                    className="text-gray-700 leading-relaxed"
-                    dangerouslySetInnerHTML={{ __html: impactAnalyserInfo }}
-                  ></div>
-                </div>
+            <div className="space-y-4">
+              {consumerDynamicsInfo ? (
+                <div 
+                  className="text-gray-700 leading-relaxed"
+                  dangerouslySetInnerHTML={{ __html: consumerDynamicsInfo }}
+                ></div>
+              ) : (
+                <p className="text-gray-500">No information available for this section.</p>
               )}
-
-              <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-2xl p-6 border border-gray-100">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                  <h4 className="text-lg font-semibold text-gray-800">How to Read</h4>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
-                    <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <div className="w-4 h-2 bg-green-500 rounded-full"></div>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-gray-800 mb-1">Progress Bar</h5>
-                      <p className="text-sm text-gray-600">Visual representation of impact percentage with color-coded segments</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
-                    <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <svg className="w-4 h-4 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-gray-800 mb-1">Trend Icons</h5>
-                      <p className="text-sm text-gray-600">Up (70%+), Flat (50-69%), Down (&lt;50%) indicating performance direction</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start gap-4 p-3 bg-white rounded-xl border border-gray-100">
-                    <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-purple-600 font-bold text-sm">%</span>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-gray-800 mb-1">Percentage</h5>
-                      <p className="text-sm text-gray-600">Direct impact score for each consumer segment</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
             </div>
-            
           </div>
         </div>
       )}

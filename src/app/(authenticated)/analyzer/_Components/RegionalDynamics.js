@@ -8,7 +8,7 @@ export default function RegionalDynamics({ theme }) {
   const regionalInsights = regionalDynamics?.regionalInsights;
   const overallSummary = regionalInsights?.overallSummary;
   const regions = regionalInsights?.regions || [];
-  const overallIcon = regionalDynamics?.overallIcon;
+  const methodologyIcon = regionalDynamics?.methodologyIcon;
 
   const toggleRegionExpansion = (index) => {
     setExpandedRegions(prev => ({
@@ -44,12 +44,12 @@ export default function RegionalDynamics({ theme }) {
       {/* Regional Insights Container */}
       <div className="rounded-xl shadow-sm border border-gray-100 p-6" style={{backgroundColor: '#f2fbfb'}}>
         {/* Header with Icon */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-1">
           <div className="flex items-center gap-3">
-            {overallIcon && (
+            {methodologyIcon && (
               <div className="w-8 h-8 flex items-center justify-center">
                 <img 
-                  src={overallIcon} 
+                  src={methodologyIcon} 
                   alt="Regional Insights Icon" 
                   className="w-6 h-6 object-contain"
                 />
@@ -68,7 +68,7 @@ export default function RegionalDynamics({ theme }) {
         {/* Overall Summary */}
         {overallSummary && (
           <div 
-            className="text-sm text-gray-600 leading-relaxed mb-6"
+            className="text-sm text-gray-600 leading-relaxed mb-1"
             dangerouslySetInnerHTML={{ __html: overallSummary }}
           ></div>
         )}
@@ -140,6 +140,16 @@ export default function RegionalDynamics({ theme }) {
                       )}
                     </div>
                   )}
+
+                {/* Region Insight */}
+                {region.regionInsight && (
+                  <div className="text-sm text-gray-600 leading-relaxed mt-3">
+                    <div 
+                      className="whitespace-pre-wrap font-sans regional-insights-content"
+                      dangerouslySetInnerHTML={{ __html: region.regionInsight }}
+                    ></div>
+                  </div>
+                )}
                 </div>
               ))}
             </div>

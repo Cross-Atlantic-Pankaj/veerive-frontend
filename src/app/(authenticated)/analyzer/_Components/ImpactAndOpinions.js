@@ -417,7 +417,23 @@ export default function ImpactAndOpinions({ theme }) {
           ) : expertOpinions.length > 0 ? (
             <div className="space-y-4">
               {expertOpinions.map((opinion, index) => (
-                <div key={index} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div 
+                  key={index} 
+                  className={`bg-gray-50 border border-gray-200 rounded-lg p-4 ${opinion.sourceUrl ? 'cursor-pointer hover:bg-gray-100 transition-colors' : ''}`}
+                  onClick={() => {
+                    if (opinion.sourceUrl) {
+                      window.open(opinion.sourceUrl, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  role={opinion.sourceUrl ? 'button' : undefined}
+                  tabIndex={opinion.sourceUrl ? 0 : undefined}
+                  onKeyDown={(e) => {
+                    if (opinion.sourceUrl && (e.key === 'Enter' || e.key === ' ')) {
+                      e.preventDefault();
+                      window.open(opinion.sourceUrl, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                >
                   <div className="flex items-start justify-between gap-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">

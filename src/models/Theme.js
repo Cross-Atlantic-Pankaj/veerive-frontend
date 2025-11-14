@@ -76,30 +76,32 @@ const themeSchema = new Schema ({
         },
         regionalDynamics: {
             info: { type: String },
-            overallIcon: { type: String },
+            methodologyIcon: { type: String },
             regionalInsights: {
                 overallSummary: { type: String },
                 regions: [{
                     regionId: { type: Schema.Types.ObjectId, ref: 'Region', required: false },
                     regionMapIcon: { type: String },
                     regionName: { type: String },
-                    regionDescription: { type: String },
+                    regionInsight: { type: String },
                     regionScore: { type: Number, default: 0 }
                 }]
             }
         },
         consumerDynamics: {
-            overallIcon: { type: String },
+            info: { type: String }, // New info field
+            methodologyIcon: { type: String },
             behavioralInsights: [{
                 heading: { type: String },
                 icon: { type: String },
                 text: { type: String }
             }],
-            impactAnalyser: [{
-                info: { type: String },
-                consumerSegmentName: { type: String },
-                impactScore: { type: Number } // in percentage
-            }]
+            impactAnalyser: {
+                data: [{
+                    consumerSegmentName: { type: String },
+                    impactScore: { type: Number } // in percentage
+                }]
+            }
         }
     },
 
