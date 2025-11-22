@@ -35,13 +35,23 @@ export async function GET(req) {
 
 async function handleLinkedInAuth(code, req) {
   try {
+    // Construct redirect URI dynamically from request to match what was sent to LinkedIn
+    // This ensures it works regardless of environment (localhost, IP, or domain)
+    const url = new URL(req.url);
+    const dynamicRedirectUri = `${url.origin}/api/auth/linkedin/callback`;
+    
+    // Use dynamic redirect URI, but fallback to env variable if needed
+    const redirectUriToUse = dynamicRedirectUri || REDIRECT_URI;
+    
     console.log("🔄 Exchanging authorization code for access token...");
+    console.log("🔹 Using redirect URI:", redirectUriToUse);
+    
     const tokenResponse = await axios.post(
       "https://www.linkedin.com/oauth/v2/accessToken",
       new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        redirect_uri: REDIRECT_URI,
+        redirect_uri: redirectUriToUse,
         client_id: LINKEDIN_CLIENT_ID,
         client_secret: LINKEDIN_CLIENT_SECRET,
       }).toString(),
@@ -95,7 +105,7 @@ async function handleLinkedInAuth(code, req) {
     const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
 
     // Construct absolute URL from request to ensure it works with any origin
-    const url = new URL(req.url);
+    const requestUrl = new URL(req.url);
     const userData = {
       id: user._id,
       name: user.name,
@@ -103,7 +113,7 @@ async function handleLinkedInAuth(code, req) {
       avatar: user.avatar
     };
     
-    const redirectUrl = new URL('/home', url.origin);
+    const redirectUrl = new URL('/home', requestUrl.origin);
     redirectUrl.searchParams.set('token', token);
     redirectUrl.searchParams.set('user', JSON.stringify(userData));
     

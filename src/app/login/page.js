@@ -96,13 +96,19 @@ export default function LoginPage() {
   };
 
   const handleLinkedInLogin = () => {
+    // Construct redirect URI dynamically from current origin to avoid localhost issues
+    // This ensures it works in both development and production
+    const currentOrigin = window.location.origin;
+    const redirectUri = `${currentOrigin}/api/auth/linkedin/callback`;
+    
     // Add prompt=consent to force LinkedIn to show consent screen every time
     // Remove this parameter if you want LinkedIn to auto-approve for returning users
     const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(
-      LINKEDIN_REDIRECT_URI
+      redirectUri
     )}&scope=openid%20profile%20email&prompt=consent`;
 
     console.log('🔹 Redirecting to LinkedIn:', linkedInAuthUrl);
+    console.log('🔹 Using redirect URI:', redirectUri);
     window.location.href = linkedInAuthUrl;
   };
 
