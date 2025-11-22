@@ -96,9 +96,11 @@ export default function LoginPage() {
   };
 
   const handleLinkedInLogin = () => {
+    // Add prompt=consent to force LinkedIn to show consent screen every time
+    // Remove this parameter if you want LinkedIn to auto-approve for returning users
     const linkedInAuthUrl = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${LINKEDIN_CLIENT_ID}&redirect_uri=${encodeURIComponent(
       LINKEDIN_REDIRECT_URI
-    )}&scope=openid%20profile%20email`;
+    )}&scope=openid%20profile%20email&prompt=consent`;
 
     console.log('🔹 Redirecting to LinkedIn:', linkedInAuthUrl);
     window.location.href = linkedInAuthUrl;
