@@ -8,10 +8,8 @@ export async function GET(req) {
     return NextResponse.json({ error: "Authorization code is missing" }, { status: 400 });
   }
 
-  // Construct absolute URL from request to ensure it works with any origin
-  const url = new URL(req.url);
-  const redirectUrl = new URL('/api/auth/linkedin', url.origin);
-  redirectUrl.searchParams.set('code', code);
+  // Use relative URL for internal redirect
+  const redirectUrl = `/api/auth/linkedin?code=${encodeURIComponent(code)}`;
 
-  return NextResponse.redirect(redirectUrl.toString());
+  return NextResponse.redirect(redirectUrl);
 }

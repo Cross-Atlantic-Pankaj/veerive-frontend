@@ -21,7 +21,7 @@ export async function GET(request, { params }) {
     // In a real implementation, you might want to use a PDF-to-image conversion library
     // like pdf2pic or similar to convert each page to an image
     
-    const baseUrl = `${request.nextUrl.origin}/api/ppt-file/${contextId}`;
+    const baseUrl = `/api/ppt-file/${contextId}`;
     const totalSlides = 10; // You can get this from the page-count endpoint
     
     // Generate slide URLs - each slide will be a PDF page

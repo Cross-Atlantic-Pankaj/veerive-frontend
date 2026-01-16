@@ -104,8 +104,7 @@ async function handleLinkedInAuth(code, req) {
     // Generate JWT token
     const token = jwt.sign({ userId: user._id, email: user.email }, JWT_SECRET, { expiresIn: "7d" });
 
-    // Construct absolute URL from request to ensure it works with any origin
-    const requestUrl = new URL(req.url);
+    // Use relative URL for internal redirect
     const userData = {
       id: user._id,
       name: user.name,
@@ -113,11 +112,9 @@ async function handleLinkedInAuth(code, req) {
       avatar: user.avatar
     };
     
-    const redirectUrl = new URL('/home', requestUrl.origin);
-    redirectUrl.searchParams.set('token', token);
-    redirectUrl.searchParams.set('user', JSON.stringify(userData));
+    const redirectUrl = `/home?token=${encodeURIComponent(token)}&user=${encodeURIComponent(JSON.stringify(userData))}`;
     
-    return NextResponse.redirect(redirectUrl.toString());
+    return NextResponse.redirect(redirectUrl);
 
   } catch (error) {
     console.error("❌ LinkedIn login error:", error.response ? error.response.data : error.message);
